@@ -31,6 +31,15 @@
 ### 🟡 勾画系统 (RTFactory)
 **状态**: 规划中
 
+### 🟣 组件画廊 (Component Gallery)
+**路径**: `component-gallery/`
+- 组件列表展示与搜索
+- 分类筛选（医学影像、数据分析、治疗计划等）
+- 实时预览与交互测试
+- 代码示例与功能说明
+
+📖 [查看详细文档](./component-gallery/README.md)
+
 ---
 
 ## 项目架构
@@ -53,7 +62,7 @@
 │
 ├── shared/                  # 共享资源库
 │   ├── scripts/
-│   │   └── components/     # 通用组件 (30+ 组件)
+│   │   └── components/     # 通用组件 (35+ 组件)
 │   │       ├── PatientManagementComponent.js  # 患者管理组件
 │   │       ├── ROIComponent.js
 │   │       ├── POIComponent.js
@@ -70,7 +79,14 @@
 │       ├── icons/
 │       └── fonts/
 │
-├── index.html              # (已废弃，请使用各产品线入口)
+├── component-gallery/      # 组件展示系统
+│   ├── index.html          # 组件画廊入口
+│   ├── gallery.css
+│   ├── gallery.js
+│   ├── components-config.js
+│   └── README.md
+│
+├── index.html              # 产品导航入口（选择不同产品线）
 └── README.md               # 本文件
 ```
 
@@ -130,16 +146,22 @@
 
 ### 快速开始
 
-**启动质子系统：**
+**方式一：通过导航页面（推荐）**
 ```bash
-# 在浏览器中打开
-open proton-client/index.html
+# 在浏览器中打开根目录入口，选择要使用的产品线
+open index.html
 ```
 
-**启动后装系统：**
+**方式二：直接访问产品线**
 ```bash
-# 在浏览器中打开
+# 质子系统
+open proton-client/index.html
+
+# 后装系统
 open brachy-client/index.html
+
+# 组件画廊
+open component-gallery/index.html
 ```
 
 ### 开发指南
@@ -157,9 +179,9 @@ cp -r proton-client/ mozi-client/
 ```
 
 #### 2. 添加共享组件
-所有产品通用的组件放在 `shared/components/`：
+所有产品通用的组件放在 `shared/scripts/components/`：
 ```javascript
-// shared/components/NewComponent.js
+// shared/scripts/components/NewComponent.js
 function NewComponent() {
     // 组件逻辑
 }
@@ -210,3 +232,4 @@ function ProtonSpecificComponent() {
 ### 路径引用规则
 - 产品入口 → 共享资源：`../shared/`
 - 产品模块 → 共享资源：`../../shared/`
+- 共享组件路径：`shared/scripts/components/`（不是 `shared/components/`）
