@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOZI 4.0 - 放射治疗计划系统平台</title>
+    <title>功能系统原型</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -292,17 +292,6 @@
                     
         <!-- 产品网格 -->
         <div class="products-grid">
-            <!-- 质子系统 -->
-            <div class="product-card proton" onclick="navigateTo('proton-client/index.html')">
-                <div class="card-icon">
-                                <i class="fas fa-atom"></i>
-                        </div>
-                <div class="card-header">
-                    <h2 class="card-title">质子治疗系统</h2>
-                    <p class="card-subtitle">MOZI-PROTON</p>
-                    </div>
-                                </div>
-                                
             <!-- 后装系统 -->
             <div class="product-card brachy" onclick="navigateTo('brachy-client/index.html')">
                 <div class="card-icon">
@@ -312,6 +301,17 @@
                     <h2 class="card-title">后装治疗系统</h2>
                     <p class="card-subtitle">MOZI-BRACHY</p>
                                     </div>
+                                </div>
+                                
+            <!-- 质子系统 -->
+            <div class="product-card proton" onclick="navigateTo('proton-client/index.html')">
+                <div class="card-icon">
+                                <i class="fas fa-atom"></i>
+                        </div>
+                <div class="card-header">
+                    <h2 class="card-title">质子治疗系统</h2>
+                    <p class="card-subtitle">MOZI-PROTON</p>
+                    </div>
                                 </div>
                                 
             <!-- 光子系统 -->
@@ -361,8 +361,8 @@
 
         // 添加键盘快捷键
         document.addEventListener('keydown', function(e) {
-            if (e.key === '1') navigateTo('proton-client/index.html');
-            if (e.key === '2') navigateTo('brachy-client/index.html');
+            if (e.key === '1') navigateTo('brachy-client/index.html');
+            if (e.key === '2') navigateTo('proton-client/index.html');
             if (e.key === '3') navigateTo('component-gallery/index.html');
         });
 
