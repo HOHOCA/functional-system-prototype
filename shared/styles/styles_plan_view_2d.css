@@ -1,0 +1,382 @@
+/* Plan Design View 2D Styles */
+/* CrossSectionView2D Component Styles */
+.cross-section-view2d-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    background: #2a2a2a;
+    border-bottom: 1px solid #444;
+    padding: 0 10px;
+    z-index: 100;
+}
+
+.cross-section-view2d-toolbar .toolbar-title {
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.cross-section-view2d-toolbar .toolbar-group-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.cross-section-view2d-toolbar .toolbar-btn-svg {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.cross-section-view2d-toolbar .toolbar-btn-svg:hover {
+    opacity: 0.9;
+}
+
+.cross-section-view2d-toolbar .toolbar-btn-svg[data-active="true"] {
+    opacity: 1;
+}
+
+.plan-view-2d-toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+.plan-view-2d-toolbar .tool-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #555;
+    color: #00ffff; /* Cyan color from image */
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.plan-view-2d-toolbar .tool-btn:hover,
+.plan-view-2d-toolbar .tool-btn.active {
+    background: #3AACDE;
+    border-color: #00aaff;
+    color: #fff;
+}
+
+.plan-view-2d-info {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #fff;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.plan-view-2d-info .view-type-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.plan-view-2d-info .slice-info {
+    position: absolute;
+    bottom: -100%; /* Move to bottom left of screen effectively? No, this is top left info */
+    /* Wait, image shows View Label "2D" at top left, and Slice info at Bottom Left. */
+}
+
+/* Re-adjusting info layout based on image */
+.plan-view-2d-info {
+    /* Top Left */
+}
+/* But slice info is bottom left */
+.plan-view-2d-canvas + .plan-view-2d-info {
+    /* Let's keep top left for now, or split */
+}
+
+/* Let's use specific classes for positioning */
+.plan-view-2d-dose-legend {
+    position: absolute;
+    top: 50px; /* Below toolbar */
+    right: 10px;
+    background: transparent;
+    color: #ccc;
+    font-size: 12px;
+    text-align: right;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.plan-view-2d-dose-legend .legend-header {
+    color: #ccc;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.plan-view-2d-dose-legend .legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 2px;
+    font-family: monospace;
+}
+
+.plan-view-2d-dose-legend .color-box {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+}
+
+.plan-view-2d-dose-legend .value {
+    min-width: 50px;
+    text-align: right;
+}
+
+/* CrossSectionView2D Container and Canvas Styles */
+.cross-section-view2d-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #000;
+    position: relative;
+}
+
+.cross-section-view2d-main {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+.cross-section-view2d-canvas-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.cross-section-view2d-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: default;
+}
+
+.cross-section-view2d-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.cross-section-view2d-info-bottom-left {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #00d4ff;
+    font-size: 14px;
+    font-family: monospace;
+}
+
+.cross-section-view2d-slice-info {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+/* Right Panel for Dose Legend */
+.cross-section-view2d-right-panel {
+    width: 100px;
+    background: #1a1a1a;
+    border-left: 1px solid #444;
+    padding: 10px;
+}
+
+.cross-section-view2d-dose-legend {
+    color: #ccc;
+}
+
+.dose-legend-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #00d4ff;
+}
+
+.dose-legend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dose-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.dose-legend-color {
+    width: 20px;
+    height: 12px;
+    border: 1px solid #666;
+}
+
+.dose-legend-label {
+    color: #ccc;
+}
+
+/* 悬浮的剂量线图例 */
+.cross-section-view2d-dose-legend-overlay {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 8px;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.cross-section-view2d-dose-legend-overlay .dose-legend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cross-section-view2d-dose-legend-overlay .dose-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.cross-section-view2d-dose-legend-overlay .dose-legend-color {
+    width: 16px;
+    height: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.cross-section-view2d-dose-legend-overlay .dose-legend-label {
+    color: #fff;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* Context Menu */
+.cross-section-view2d-context-menu {
+    position: fixed;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 4px 0;
+    min-width: 150px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.context-menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.context-menu-item:hover {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+.context-menu-divider {
+    height: 1px;
+    background: #444;
+    margin: 4px 0;
+}
+
+.context-menu-checkbox {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #666;
+    border-radius: 2px;
+    display: inline-block;
+}
+
+.context-menu-checkbox.checked {
+    background: #00d4ff;
+    border-color: #00d4ff;
+}
+
+.context-menu-checkbox.checked::after {
+    content: '✓';
+    color: #000;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.plan-view-2d-dose-legend .percent {
+    min-width: 30px;
+    text-align: right;
+    color: #aaa;
+}
+
+.plan-view-2d-orientation {
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.orientation-marker {
+    position: absolute;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.marker-top { top: 10px; left: 50%; transform: translateX(-50%); }
+.marker-bottom { bottom: 10px; left: 50%; transform: translateX(-50%); }
+.marker-left { left: 10px; top: 50%; transform: translateY(-50%); }
+.marker-right { right: 10px; top: 50%; transform: translateY(-50%); }
+
+.orientation-cube {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: #ccc;
+}
+
+/* Bottom Left Info */
+.plan-view-2d-bottom-info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #aaa;
+    font-size: 12px;
+    pointer-events: none;
+}
+

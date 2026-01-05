@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOZI Brachy - 后装治疗计划系统</title>
+    <link rel="stylesheet" href="../shared/styles/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            background: #1a1a1a;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #404040;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #3AACDE;
+            white-space: nowrap;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 2px;
+        }
+
+        .nav-icon-btn {
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: none;
+            color: #ddd;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .nav-icon-btn:hover {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .nav-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 2px;
+        }
+
+        .nav-item {
+            padding: 8px 20px;
+            color: #ddd;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background-color: rgba(33, 143, 191, 0.2);
+            color: #ffffff;
+            border-bottom: 3px solid #3AACDE;
+            position: relative;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ddd;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            color: #ffffff;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            color: #ddd;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .window-control-btn:hover {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .window-control-btn.close-btn:hover {
+            background: #e53935;
+            color: #ffffff;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #1a1a1a;
+            display: none;
+        }
+
+        .module-frame.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header class="top-nav">
+            <div class="nav-left">
+                <div class="logo">MOZI-Brachy</div>
+                <div class="nav-icons">
+                    <button class="nav-icon-btn" id="navWorkflowBtn" title="工作流">
+                        <i class="fas fa-project-diagram"></i>
+                    </button>
+                    <button class="nav-icon-btn" id="navSaveBtn" title="保存">
+                        <i class="fas fa-save"></i>
+                    </button>
+                    <button class="nav-icon-btn" id="navCloseBtn" title="关闭">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="nav-icon-btn" id="navUndoBtn" title="撤销">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="nav-icon-btn" id="navRedoBtn" title="恢复">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="nav-center">
+                <nav class="main-nav">
+                    <a href="#" class="nav-item active" data-module="patient">患者管理</a>
+                    <a href="#" class="nav-item" data-module="image">图像处理</a>
+                    <a href="#" class="nav-item" data-module="target">靶区勾画</a>
+                    <a href="#" class="nav-item" data-module="plan">计划设计</a>
+                    <a href="#" class="nav-item" data-module="evaluation">计划评估</a>
+                </nav>
+            </div>
+            
+            <div class="nav-right">
+                <i class="fas fa-cog" style="cursor: pointer;"></i>
+                <div class="user-profile">
+                    张三 <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="window-controls">
+                    <button class="window-control-btn" title="最小化">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="window-control-btn close-btn" title="关闭">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 - 使用 iframe 加载各个模块 -->
+        <main class="main-content">
+            <iframe id="patientFrame" class="module-frame active" src="modules/patient-management-module.html" loading="lazy"></iframe>
+            <iframe id="imageFrame" class="module-frame" src="modules/image-processing-module.html" loading="lazy"></iframe>
+            <iframe id="targetFrame" class="module-frame" src="modules/target-delineation-module.html" loading="lazy"></iframe>
+            <iframe id="planFrame" class="module-frame" src="modules/plan-design-module.html" loading="lazy"></iframe>
+            <iframe id="evaluationFrame" class="module-frame" src="modules/plan-evaluation-module.html" loading="lazy"></iframe>
+        </main>
+    </div>
+
+    <script>
+        // 模块导航逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const moduleFrames = document.querySelectorAll('.module-frame');
+            
+            // 模块与iframe的映射
+            const moduleFrameMap = {
+                'patient': 'patientFrame',
+                'image': 'imageFrame',
+                'target': 'targetFrame',
+                'plan': 'planFrame',
+                'evaluation': 'evaluationFrame'
+            };
+            
+            // 导航切换处理
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const moduleName = this.getAttribute('data-module');
+                    const frameId = moduleFrameMap[moduleName];
+                    
+                    if (!frameId) return;
+                    
+                    // 更新导航激活状态
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 切换iframe显示
+                    moduleFrames.forEach(frame => frame.classList.remove('active'));
+                    document.getElementById(frameId).classList.add('active');
+                });
+            });
+            
+            // 工具栏按钮事件（可根据需要添加功能）
+            document.getElementById('navWorkflowBtn').addEventListener('click', function() {
+                console.log('工作流按钮点击');
+            });
+            
+            document.getElementById('navSaveBtn').addEventListener('click', function() {
+                console.log('保存按钮点击');
+            });
+            
+            document.getElementById('navCloseBtn').addEventListener('click', function() {
+                console.log('关闭按钮点击');
+            });
+            
+            document.getElementById('navUndoBtn').addEventListener('click', function() {
+                console.log('撤销按钮点击');
+            });
+            
+            document.getElementById('navRedoBtn').addEventListener('click', function() {
+                console.log('恢复按钮点击');
+            });
+        });
+    </script>
+</body>
+</html>

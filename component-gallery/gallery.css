@@ -1,0 +1,519 @@
+/* 组件展示页面样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #0a0a0a;
+    color: #e5e7eb;
+    overflow: hidden;
+}
+
+.gallery-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ==================== 左侧边栏 ==================== */
+.gallery-sidebar {
+    width: 320px;
+    background: #1a1a1a;
+    border-right: 1px solid #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.gallery-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.gallery-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.gallery-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 搜索框 */
+.gallery-search {
+    padding: 16px 20px;
+    border-bottom: 1px solid #2a2a2a;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    background: #0a0a0a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    color: #e5e7eb;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #21a1f1;
+    background: #1a1a1a;
+}
+
+.search-input::placeholder {
+    color: #6b7280;
+}
+
+.gallery-search .search-icon {
+    position: absolute;
+    right: 32px !important;
+    left: auto !important;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    pointer-events: none;
+    font-size: 14px;
+}
+
+/* 组件树 */
+.gallery-component-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+/* 项目节点 */
+.tree-project {
+    margin-bottom: 4px;
+}
+
+.tree-project-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #e5e7eb;
+    font-weight: 500;
+    user-select: none;
+}
+
+.tree-project-header:hover {
+    background: #2a2a2a;
+}
+
+.tree-project.expanded .tree-project-header {
+    background: #2a2a2a;
+}
+
+.tree-project-icon {
+    width: 20px;
+    margin-right: 8px;
+    font-size: 14px;
+    transition: transform 0.2s;
+}
+
+.tree-project.expanded .tree-project-icon {
+    transform: rotate(90deg);
+}
+
+.tree-project-label {
+    flex: 1;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tree-project-label i {
+    font-size: 13px;
+}
+
+.tree-project-count {
+    font-size: 12px;
+    background: #3a3a3a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 24px;
+    text-align: center;
+    color: #9ca3af;
+}
+
+/* 组件列表 */
+.tree-component-list {
+    display: none;
+    padding-left: 12px;
+}
+
+.tree-project.expanded .tree-component-list {
+    display: block;
+}
+
+.tree-component-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px 8px 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #9ca3af;
+    border-left: 2px solid transparent;
+    margin-left: 16px;
+}
+
+.tree-component-item:hover {
+    background: #2a2a2a;
+    color: #e5e7eb;
+}
+
+.tree-component-item.active {
+    background: #2a2a2a;
+    color: #21a1f1;
+    border-left-color: #21a1f1;
+}
+
+.tree-component-item-icon {
+    width: 16px;
+    margin-right: 8px;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.tree-component-item-name {
+    flex: 1;
+    font-size: 13px;
+}
+
+.tree-component-item-desc {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+    padding-left: 24px;
+}
+
+/* ==================== 右侧详情区 ==================== */
+.gallery-main {
+    flex: 1;
+    background: #0a0a0a;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-detail {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+}
+
+.detail-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #6b7280;
+}
+
+.detail-empty i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.detail-empty p {
+    font-size: 16px;
+}
+
+/* 组件详情内容 */
+.detail-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.detail-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.detail-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.detail-subtitle {
+    font-size: 16px;
+    color: #9ca3af;
+    margin-bottom: 16px;
+}
+
+.detail-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.detail-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.detail-meta-item i {
+    color: #21a1f1;
+}
+
+.detail-meta-item strong {
+    color: #e5e7eb;
+}
+
+/* 组件预览区 */
+.detail-preview {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.detail-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.detail-preview-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.detail-preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.preview-action-btn {
+    padding: 6px 12px;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    color: #e5e7eb;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.preview-action-btn:hover {
+    background: #3a3a3a;
+    border-color: #21a1f1;
+}
+
+.preview-action-btn i {
+    font-size: 12px;
+}
+
+.detail-preview-container {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    min-height: 400px;
+    position: relative;
+    overflow: auto; /* 让预览内容可滚动，避免被裁剪 */
+}
+
+/* 侧边栏布局样式 - 用于ROI列表等左侧栏组件 */
+.detail-preview-container.sidebar-layout {
+    max-width: 280px;
+    height: 800px;
+    min-height: 800px;
+    max-height: 800px;
+    margin: 0 auto;
+    overflow: auto; /* 侧边栏预览也允许纵向滚动 */
+    display: flex;
+}
+
+/* 组件信息区 */
+.detail-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.info-section {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.info-section-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-section-title i {
+    color: #21a1f1;
+}
+
+.info-section-content {
+    font-size: 14px;
+    color: #9ca3af;
+    line-height: 1.6;
+}
+
+.info-list {
+    list-style: none;
+}
+
+.info-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.info-list li:last-child {
+    border-bottom: none;
+}
+
+.info-list li::before {
+    content: "•";
+    color: #21a1f1;
+    margin-right: 8px;
+}
+
+/* 代码示例区 */
+.detail-code {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 32px;
+}
+
+.detail-code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.detail-code-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.code-copy-btn {
+    padding: 6px 12px;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 4px;
+    color: #e5e7eb;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.code-copy-btn:hover {
+    background: #3a3a3a;
+}
+
+.code-block {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 16px;
+    overflow-x: auto;
+}
+
+.code-block pre {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #e5e7eb;
+}
+
+.code-block code {
+    color: #e5e7eb;
+}
+
+/* 滚动条样式 */
+.gallery-component-list::-webkit-scrollbar,
+.gallery-detail::-webkit-scrollbar,
+.code-block::-webkit-scrollbar,
+.detail-preview-container.sidebar-layout::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.gallery-component-list::-webkit-scrollbar-track,
+.gallery-detail::-webkit-scrollbar-track,
+.code-block::-webkit-scrollbar-track,
+.detail-preview-container.sidebar-layout::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.gallery-component-list::-webkit-scrollbar-thumb,
+.gallery-detail::-webkit-scrollbar-thumb,
+.code-block::-webkit-scrollbar-thumb,
+.detail-preview-container.sidebar-layout::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 4px;
+}
+
+.gallery-component-list::-webkit-scrollbar-thumb:hover,
+.gallery-detail::-webkit-scrollbar-thumb:hover,
+.code-block::-webkit-scrollbar-thumb:hover,
+.detail-preview-container.sidebar-layout::-webkit-scrollbar-thumb:hover {
+    background: #4a4a4a;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .gallery-sidebar {
+        width: 280px;
+    }
+    
+    .detail-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .gallery-sidebar {
+        position: absolute;
+        left: -320px;
+        z-index: 1000;
+        transition: left 0.3s;
+    }
+    
+    .gallery-sidebar.open {
+        left: 0;
+    }
+}

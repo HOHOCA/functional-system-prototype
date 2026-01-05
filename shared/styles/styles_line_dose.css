@@ -1,0 +1,565 @@
+/* 线剂量分布弹窗样式 */
+.line-dose-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+.line-dose-modal-content {
+    width: 96%;
+    height: 92%;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    border: 1px solid #333;
+}
+
+.line-dose-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+    border-bottom: 2px solid #404040;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-title {
+    margin: 0;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.line-dose-close {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #ddd;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.line-dose-close:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.line-dose-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+/* 左侧面板 */
+.line-dose-left-panel {
+    width: 280px;
+    background: linear-gradient(180deg, #1f1f1f 0%, #1a1a1a 100%);
+    border-right: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-table-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #444 #1a1a1a;
+}
+
+.line-dose-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.line-dose-table-container::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.line-dose-table-container::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+.line-dose-table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.line-dose-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.line-dose-table thead {
+    background: linear-gradient(180deg, #2d2d2d 0%, #252525 100%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-table th {
+    padding: 10px 12px;
+    text-align: left;
+    color: #ffffff;
+    font-weight: 600;
+    border-bottom: 2px solid #404040;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+.line-dose-table td {
+    padding: 6px 6px;
+    color: #e0e0e0;
+    border-bottom: 1px solid #2a2a2a;
+    transition: background-color 0.2s;
+    height: 32px;
+    line-height: 20px;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.line-dose-table tbody tr {
+    height: 32px;
+    max-height: 32px;
+    min-height: 32px;
+}
+
+.line-dose-table-row {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.line-dose-table-row:hover {
+    background-color: #252525;
+    transform: translateX(2px);
+}
+
+.line-dose-table-row.selected {
+    background: linear-gradient(90deg, #24364a 0%, #1e2d3f 100%);
+    border-left: 3px solid #3AACDE;
+    box-shadow: inset 0 0 8px rgba(74, 158, 255, 0.2);
+}
+
+.line-dose-visibility-toggle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #555;
+    cursor: pointer;
+    display: inline-block;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.line-dose-visibility-toggle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.line-dose-visibility-toggle.visible {
+    background-color: #3AACDE;
+    border-color: #3AACDE;
+    box-shadow: 0 0 8px rgba(74, 158, 255, 0.4);
+}
+
+.line-dose-visibility-toggle.visible::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.line-dose-color-indicator {
+    width: 24px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid #555;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+}
+
+.line-dose-color-indicator:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.line-dose-delete-btn {
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 4px;
+    color: #ff6b6b;
+    cursor: pointer;
+    padding: 6px 8px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.line-dose-delete-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 107, 107, 0.3);
+    border-color: #ff6b6b;
+    transform: scale(1.1);
+}
+
+.line-dose-add-btn {
+    margin: 12px;
+    margin-bottom: 8px;
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #3AACDE 0%, #3AACDE 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.line-dose-add-btn:hover {
+    background: linear-gradient(135deg, #5aaeff 0%, #3AACDE 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
+.line-dose-add-btn:active {
+    transform: translateY(0);
+}
+
+/* 中部面板 */
+.line-dose-center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, #1f1f1f 0%, #1a1a1a 100%);
+    overflow: hidden;
+}
+
+.line-dose-view-tabs {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    border-bottom: 2px solid #404040;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-tab {
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid #404040;
+    color: #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.line-dose-tab:hover {
+    background-color: #2A2A2A;
+    border-color: #555;
+    transform: translateY(-1px);
+}
+
+.line-dose-tab.active {
+    background: linear-gradient(135deg, #3AACDE 0%, #3AACDE 100%);
+    border-color: #3AACDE;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+}
+
+.line-dose-view-tools {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.line-dose-tool-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.line-dose-tool-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-views-container {
+    flex: 1;
+    display: flex;
+    gap: 2px;
+    overflow: hidden;
+    padding: 2px;
+}
+
+.line-dose-2d-view,
+.line-dose-let-view {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.line-dose-view-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 10;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+.line-dose-slice-info {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.6) 100%);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-legend {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.7) 100%);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #ffffff;
+    z-index: 10;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    min-width: 120px;
+}
+
+.line-dose-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 4px 0;
+    transition: all 0.2s;
+}
+
+.line-dose-legend-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.line-dose-legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 右侧面板 */
+.line-dose-right-panel {
+    width: 420px;
+    background: linear-gradient(180deg, #1f1f1f 0%, #1a1a1a 100%);
+    border-left: 2px solid #333;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-graph-header {
+    padding: 16px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    border-bottom: 2px solid #404040;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-plan-name {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+}
+
+.line-dose-line-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.line-dose-color-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #e0e0e0;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s;
+}
+
+.line-dose-color-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.line-dose-color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-graph-container {
+    flex: 1;
+    padding: 24px;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
+}
+
+.line-dose-graph-canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+/* 底部按钮 */
+.line-dose-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+    border-top: 2px solid #404040;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.line-dose-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+    justify-content: center;
+}
+
+.line-dose-btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.line-dose-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.line-dose-btn-primary {
+    background: linear-gradient(135deg, #3AACDE 0%, #3AACDE 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+}
+
+.line-dose-btn-primary:hover {
+    background: linear-gradient(135deg, #5aaeff 0%, #3AACDE 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
+}
+
+.line-dose-btn:active {
+    transform: translateY(0);
+}
+

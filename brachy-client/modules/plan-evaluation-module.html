@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计划评估 - MOZI Brachy</title>
+        <link rel="stylesheet" href="../../shared/styles/styles.css">
+        <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
+        <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+        <!-- Three.js Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            overflow: hidden;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        .plan-design-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: #1a1a1a;
+        }
+
+        /* 顶部区域（患者概览 + 工具栏） */
+        .top-area {
+            display: flex;
+            height: 80px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #404040;
+        }
+
+        /* 患者概览区域 */
+        .patient-overview {
+            width: 328px; /* 48px (页签) + 280px (内容) */
+            background: #2a2a2a;
+            border-right: 1px solid #404040;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+        }
+
+        .patient-card {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            width: 100%;
+        }
+
+        .patient-name-line {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .patient-info-line {
+            font-size: 13px;
+            color: #cccccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 工具栏区域 */
+        .toolbar-area {
+            flex: 1;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        /* 下方内容区域（包含左侧栏和主显示区） */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 右侧主内容区域（包含主显示区和底部控制面板） */
+        .main-content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* 左侧栏页签区域 */
+        .left-sidebar-tabs {
+            width: 48px;
+            background: #252525;
+            border-right: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 4px;
+        }
+
+        .sidebar-tab {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 13px;
+            letter-spacing: 4px;
+            font-weight: 500;
+        }
+
+        .sidebar-tab:hover {
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+
+        .sidebar-tab.active {
+            background: #2a2a2a;
+            color: #3AACDE;
+            border-left-color: #3AACDE;
+        }
+
+        /* 左侧栏内容区域 */
+        .left-sidebar-content {
+            width: 280px;
+            background: #2a2a2a;
+            border-right: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-content-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar-content-panel.active {
+            display: flex;
+        }
+
+        .sidebar-panel-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 序列树样式 */
+        .sequence-tree {
+            padding: 8px 12px;
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .tree-line {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 3px;
+            min-height: 32px;
+            position: relative;
+        }
+
+        .tree-line:hover {
+            background: #404040;
+        }
+
+        .tree-line.level-0 {
+            padding-left: 0;
+        }
+
+        .tree-line.level-1 {
+            padding-left: 20px;
+        }
+
+        .tree-line.level-2 {
+            padding-left: 40px;
+        }
+
+        .tree-line.level-3 {
+            padding-left: 60px;
+        }
+
+        .tree-line.level-4 {
+            padding-left: 80px;
+        }
+
+        .tree-line.level-1::before,
+        .tree-line.level-2::before,
+        .tree-line.level-3::before,
+        .tree-line.level-4::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 50%;
+            width: 1px;
+            border-left: 1px dashed #666;
+        }
+
+        .tree-line.level-1::after,
+        .tree-line.level-2::after,
+        .tree-line.level-3::after,
+        .tree-line.level-4::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 10px;
+            height: 1px;
+            border-top: 1px dashed #666;
+        }
+
+        .tree-line.level-2::before {
+            left: 30px;
+        }
+
+        .tree-line.level-2::after {
+            left: 30px;
+        }
+
+        .tree-line.level-3::before {
+            left: 50px;
+        }
+
+        .tree-line.level-3::after {
+            left: 50px;
+        }
+
+        .tree-line.level-4::before {
+            left: 70px;
+        }
+
+        .tree-line.level-4::after {
+            left: 70px;
+        }
+
+        .tree-line.selected {
+            background-color: rgba(33, 143, 191, 0.2);
+        }
+
+        .tree-line.selected:hover {
+            background-color: rgba(33, 143, 191, 0.3);
+        }
+
+        .tree-toggle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            line-height: 14px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #888;
+            border: 1px solid #888;
+            border-radius: 2px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .tree-line i {
+            margin-right: 8px;
+            width: 16px;
+            color: #3AACDE;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .tree-line.selected i {
+            color: #fff;
+        }
+
+        .tree-line > span:not(.tree-toggle) {
+            color: #ddd;
+        }
+
+        .tree-line.selected > span:not(.tree-toggle) {
+            color: #fff;
+        }
+
+        /* ROI容器需要占满空间 */
+        #roiContainer {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* DOSE容器需要占满空间 */
+        #doseContainer {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 主显示区域 - 左右各占50%的布局 */
+        .main-display-area {
+            display: contents; /* 让子元素直接参与父级的flex布局 */
+        }
+
+        /* 主容器：左右各占50% */
+        .main-view-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 50% 50%; /* 强制左右各占50% */
+            gap: 2px;
+            background: #1a1a1a;
+            padding: 2px;
+            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 左侧区域：横断面（上）+ 矢状面+冠状面（下） */
+        .left-view-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* 右侧区域：3D视图（上）+ 数据表格（下） */
+        .right-view-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* 左侧上半部分：横断面视图 */
+        .view-panel.axial {
+            flex: 1.3;
+        }
+
+        /* 左侧下半部分：矢状面+冠状面 */
+        .left-bottom-views {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 矢状面视图 */
+        .view-panel.sagittal {
+            grid-column: 1;
+        }
+
+        /* 冠状面视图 */
+        .view-panel.coronal {
+            grid-column: 2;
+        }
+
+        /* 右侧上半部分：3D视图 */
+        .view-panel.view3d {
+            flex: 1.3;
+            display: flex;
+            flex-direction: column;
+            background: #2a2a2a;
+            min-height: 0;
+        }
+
+        /* 右侧下半部分：数据表格视图 */
+        .view-panel.data-table {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #2a2a2a;
+            min-height: 0;
+        }
+
+        .view-panel {
+            background: #000000;
+            border: 1px solid #404040;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0; /* 允许收缩 */
+        }
+
+        /* 视图标签页 - 通用样式 */
+        .view-tabs {
+            display: flex;
+            align-items: center;
+            background: #252525;
+            border-bottom: 1px solid #404040;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        /* 工具栏宿主容器 - 放在标签页右侧 */
+        .view-toolbar-host {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 8px;
+            height: 100%;
+        }
+
+        /* 当工具栏在外层时，调整工具栏样式 */
+        .view-tabs .cross-section-view2d-toolbar {
+            background: transparent;
+            border: none;
+            padding: 0;
+            height: auto;
+            min-height: auto;
+        }
+
+        .view-tabs .cross-section-view2d-toolbar .toolbar-group-right {
+            margin-left: 0;
+        }
+
+        /* 画布宿主容器 - 占据全部内容区域 */
+        .view-canvas-host {
+            width: 100%;
+            height: 100%;
+        }
+
+        .view-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .view-tab:hover {
+            color: #ffffff;
+            background: #2a2a2a;
+        }
+
+        .view-tab.active {
+            color: #3AACDE;
+            border-bottom-color: #3AACDE;
+            background: #2a2a2a;
+        }
+
+        .view-content {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+            min-height: 0;
+            position: relative;
+        }
+
+        .view-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 确保非激活的内容完全隐藏 */
+        .view-content:not(.active) {
+            display: none !important;
+        }
+
+        /* 确保组件填满面板 */
+        .view-panel.axial > *,
+        .view-panel.sagittal > *,
+        .view-panel.coronal > * {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 3D和数据表格面板已有自己的flex布局 */
+        .view-panel.view3d,
+        .view-panel.data-table {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 滚动条样式 */
+        .sidebar-panel-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 4px;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* 确保 stacked icons 与其他图标高度一致 */
+        .module-tool-btn .fa-stack {
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            vertical-align: middle;
+            display: inline-block;
+            font-size: 20px;
+        }
+
+        .module-tool-btn .fa-stack-2x {
+            font-size: 1em;
+            line-height: 1em;
+        }
+
+        .module-tool-btn .fa-stack-1x {
+            font-size: 0.5em;
+            line-height: 1em;
+        }
+
+        /* 数据表格面板的标签页区域 */
+        .view-panel.data-table .bottom-control-tabs {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #252525;
+            border-bottom: 1px solid #404040;
+            padding: 0;
+            flex-shrink: 0;
+            height: 40px;
+        }
+
+        .bottom-control-tabs-left {
+            display: flex;
+            flex: 1;
+        }
+
+        .bottom-control-tabs-right {
+            display: flex;
+            align-items: center;
+            padding-right: 8px;
+        }
+
+        .bottom-control-fullscreen-btn {
+            padding: 4px 8px;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all 0.2s;
+            border-radius: 3px;
+            height: 24px;
+            margin-left: 8px;
+            opacity: 0.6;
+        }
+
+        .bottom-control-fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+
+        .bottom-control-fullscreen-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            opacity: 1;
+        }
+
+        /* 全屏模式样式 - 针对数据表格区域 */
+        .plan-design-content.fullscreen-mode .top-area,
+        .plan-design-content.fullscreen-mode .content-wrapper > .left-sidebar-tabs,
+        .plan-design-content.fullscreen-mode .content-wrapper > .left-sidebar-content,
+        .plan-design-content.fullscreen-mode .main-view-container {
+            display: none;
+        }
+
+        .plan-design-content.fullscreen-mode .main-content-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: #2a2a2a;
+        }
+
+        .plan-design-content.fullscreen-mode .view-panel.data-table {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            background: #2a2a2a;
+        }
+
+        .bottom-control-tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .bottom-control-tab:hover {
+            color: #ffffff;
+            background: #2a2a2a;
+        }
+
+        .bottom-control-tab.active {
+            color: #3AACDE;
+            border-bottom-color: #3AACDE;
+            background: #2a2a2a;
+        }
+
+        .bottom-control-content {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+            min-height: 0;
+        }
+
+        .bottom-control-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bottom-control-panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        /* 底部工具栏 */
+        .bottom-control-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #252525;
+            border-top: 1px solid #404040;
+        }
+
+        .bottom-control-toolbar-btn {
+            width: 24px;
+            height: 24px;
+            background: #404040;
+            border: 1px solid #555;
+            border-radius: 3px;
+            color: #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .bottom-control-toolbar-btn:hover {
+            background: #555;
+            color: #fff;
+        }
+
+        /* 计划评估模块：隐藏临床目标和通道列表的底部工具栏 */
+        #clinicalTargetContainer .clinical-target-toolbar,
+        #channelListContainer .channel-list-toolbar {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="plan-design-content">
+        <!-- 顶部区域 -->
+        <div class="top-area">
+            <!-- 患者概览区域 -->
+            <div class="patient-overview">
+                <div id="patientOverviewCard"></div>
+            </div>
+
+            <!-- 工具栏区域 -->
+            <div class="toolbar-area" id="moduleToolbarContainer">
+                <!-- 模块工具栏组件将在这里渲染 -->
+            </div>
+        </div>
+
+        <!-- 下方内容区域 -->
+        <div class="content-wrapper">
+            <!-- 左侧栏页签区域 -->
+            <div class="left-sidebar-tabs">
+            <button class="sidebar-tab active" data-panel="series" title="序列树">序列树</button>
+            <button class="sidebar-tab" data-panel="roi" title="ROI">ROI</button>
+            <button class="sidebar-tab" data-panel="poi" title="POI">POI</button>
+            <button class="sidebar-tab" data-panel="reg" title="REG">REG</button>
+            <button class="sidebar-tab" data-panel="dose" title="DOSE">DOSE</button>
+        </div>
+
+        <!-- 左侧栏内容区域 -->
+        <div class="left-sidebar-content">
+            <!-- 序列树面板 -->
+            <div class="sidebar-content-panel active" id="seriesPanel">
+                <div class="sidebar-panel-body">
+                    <div id="planSequenceContainer">
+                        <!-- 序列树组件将通过JavaScript动态加载 -->
+                        <div class="loading-indicator" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #888;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span style="margin-left: 10px;">加载序列树组件...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROI面板 -->
+            <div class="sidebar-content-panel" id="roiPanel">
+                <div class="sidebar-panel-body" id="roiContainer">
+                    <!-- ROI组件将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- POI面板 -->
+            <div class="sidebar-content-panel" id="poiPanel">
+                <div class="sidebar-panel-body" id="poiContainer">
+                    <!-- POI组件将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- REG面板 -->
+            <div class="sidebar-content-panel" id="regPanel">
+                <div class="sidebar-panel-body">
+                    <div class="registration-container" id="planRegistrationContainer">
+                        <div class="loading-indicator" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #888;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span style="margin-left: 10px;">加载配准组件...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dose面板 -->
+            <div class="sidebar-content-panel" id="dosePanel">
+                <div class="sidebar-panel-body" id="doseContainer">
+                    <!-- DOSE组件将在这里渲染 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧主内容区域（左右各占50%布局）-->
+        <div class="main-content-area">
+            <div class="main-view-container">
+                <!-- 左侧区域：横断面（上）+ 矢状面+冠状面（下） -->
+                <div class="left-view-area">
+                    <!-- 横断面视图 - 左侧上半部分 -->
+                    <div class="view-panel axial" id="axialViewContainer">
+                        <!-- 2D横截面视图组件将在这里渲染 -->
+                    </div>
+
+                    <!-- 左侧下半部分：矢状面+冠状面 -->
+                    <div class="left-bottom-views">
+                        <!-- 矢状面视图 - 左下 -->
+                        <div class="view-panel sagittal" id="sagittalViewContainer">
+                            <!-- 2D矢状面视图组件将在这里渲染 -->
+                        </div>
+
+                        <!-- 冠状面视图 - 右下 -->
+                        <div class="view-panel coronal" id="coronalViewContainer">
+                            <!-- 2D冠状面视图组件将在这里渲染 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧区域：3D视图（上）+ 数据表格（下） -->
+                <div class="right-view-area">
+                    <!-- 3D视图 - 右侧上半部分 -->
+                    <div class="view-panel view3d" id="view3dViewContainer">
+                        <div class="view-tabs">
+                            <button class="view-tab active" data-tab="view3d">3D</button>
+                            <button class="view-tab" data-tab="dvh">DVH</button>
+                            <div id="view3dToolbarHost" class="view-toolbar-host"></div>
+                            <div id="dvhToolbarHost" class="view-toolbar-host" style="display: none;"></div>
+                        </div>
+                        <div class="view-content active" id="view3dContent">
+                            <div id="view3dCanvasHost" class="view-canvas-host"></div>
+                        </div>
+                        <div class="view-content" id="dvhContent">
+                            <div id="dvhCanvasHost" class="view-canvas-host"></div>
+                        </div>
+                    </div>
+
+                    <!-- 数据表格视图 - 右侧下半部分 -->
+                    <div class="view-panel data-table" id="dataTableContainer">
+                        <div class="bottom-control-tabs">
+                            <div class="bottom-control-tabs-left">
+                                <button class="bottom-control-tab active" data-tab="doseStats">剂量统计</button>
+                                <button class="bottom-control-tab" data-tab="clinicalTarget">临床目标</button>
+                                <button class="bottom-control-tab" data-tab="channelList">通道列表</button>
+                                <button class="bottom-control-tab" data-tab="dwellControl">驻留控制</button>
+                            </div>
+                            <div class="bottom-control-tabs-right">
+                                <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏数据表格">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                        <defs>
+                                            <linearGradient id="gradient-bottom-maximize" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                                <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                            </linearGradient>
+                                        </defs>
+                                        <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 剂量统计内容 -->
+                        <div class="bottom-control-content active" id="doseStatsContent">
+                            <div class="bottom-control-panel-body" id="doseStatsContainer">
+                                <!-- 剂量统计组件将在这里渲染 -->
+                            </div>
+                        </div>
+
+                        <!-- 临床目标内容 -->
+                        <div class="bottom-control-content" id="clinicalTargetContent">
+                            <div class="bottom-control-panel-body" id="clinicalTargetContainer">
+                                <!-- 临床目标组件将在这里渲染 -->
+                            </div>
+                        </div>
+
+                        <!-- 通道列表内容 -->
+                        <div class="bottom-control-content" id="channelListContent">
+                            <div class="bottom-control-panel-body" id="channelListContainer">
+                                <!-- 通道列表组件将在这里渲染 -->
+                            </div>
+                        </div>
+
+                        <!-- 驻留控制内容 -->
+                        <div class="bottom-control-content" id="dwellControlContent">
+                            <div class="bottom-control-panel-body" id="dwellControlContainer">
+                                <!-- 驻留控制列表组件将在这里渲染 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div> <!-- 关闭 content-wrapper -->
+    </div>
+
+    <!-- 加载组件脚本 -->
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js"></script>
+    <script src="../../shared/scripts/components/POIComponent.js"></script>
+    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
+        <script src="../scripts/BrachyView3DComponent.js"></script>
+    <script src="../../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
+    <script src="../scripts/ChannelListComponent.js"></script>
+    <script src="../scripts/DwellControlComponent.js"></script>
+    <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
+    <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
+
+    <script>
+        // 组件实例
+        let planSequenceTreeComponent = null;
+        let roiComponent = null;
+        let poiComponent = null;
+        let registrationComponent = null;
+        let axialViewComponent = null;
+        let coronalViewComponent = null;
+        let sagittalViewComponent = null;
+        let brachyView3DComponent = null;
+        let moduleToolbar = null;
+        let doseComponent = null;
+        let patientOverviewComponent = null;
+        let channelListComponent = null;
+        let dwellControlListComponent = null;
+        let clinicalTargetComponent = null;
+        let doseStatisticsComponent = null;
+        const defaultPatient = {
+            name: 'Li Shan',
+            id: 'WP4TR3',
+            birthDate: '19760613',
+            gender: 'F'
+        };
+
+        // 左侧栏页签切换逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            // 患者概览
+            patientOverviewComponent = new PatientOverviewComponent('patientOverviewCard', {
+                patient: defaultPatient
+            });
+
+            const sidebarTabs = document.querySelectorAll('.sidebar-tab');
+            const contentPanels = document.querySelectorAll('.sidebar-content-panel');
+
+            const panelMap = {
+                'series': 'seriesPanel',
+                'roi': 'roiPanel',
+                'poi': 'poiPanel',
+                'reg': 'regPanel',
+                'dose': 'dosePanel'
+            };
+
+            sidebarTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const panelName = this.getAttribute('data-panel');
+                    const panelId = panelMap[panelName];
+
+                    if (!panelId) return;
+
+                    // 更新页签激活状态
+                    sidebarTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 切换内容面板
+                    contentPanels.forEach(p => p.classList.remove('active'));
+                    document.getElementById(panelId).classList.add('active');
+                });
+            });
+
+            // 底部控制面板标签切换逻辑
+            const bottomControlTabs = document.querySelectorAll('.bottom-control-tab');
+            const bottomControlContents = document.querySelectorAll('.bottom-control-content');
+
+            bottomControlTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    const contentId = tabName + 'Content';
+
+                    // 更新标签激活状态
+                    bottomControlTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 切换内容面板
+                    bottomControlContents.forEach(c => c.classList.remove('active'));
+                    const targetContent = document.getElementById(contentId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+
+                    // 如果切换到剂量统计，初始化组件（默认已初始化）
+                    if (tabName === 'doseStats') {
+                        // 剂量统计组件在页面加载时已初始化
+                    }
+                });
+            });
+
+            // 全屏按钮功能
+            const fullscreenBtn = document.getElementById('bottomControlFullscreenBtn');
+            const planDesignContent = document.querySelector('.plan-design-content');
+            if (fullscreenBtn && planDesignContent) {
+                fullscreenBtn.addEventListener('click', function() {
+                    const isFullscreen = planDesignContent.classList.contains('fullscreen-mode');
+                    
+                    if (isFullscreen) {
+                        // 退出全屏
+                        planDesignContent.classList.remove('fullscreen-mode');
+                        this.classList.remove('active');
+                        this.title = '全屏下边栏';
+                    } else {
+                        // 进入全屏
+                        planDesignContent.classList.add('fullscreen-mode');
+                        this.classList.add('active');
+                        this.title = '退出全屏';
+                    }
+                });
+            }
+
+            // 初始化组件
+            initComponents();
+            
+            // 默认初始化剂量统计组件（因为默认显示剂量统计标签页）
+            initDoseStatisticsComponent();
+        });
+
+        // 初始化所有组件
+        function initComponents() {
+            // 初始化序列树组件
+            if (window.SequenceTreeComponent) {
+                const container = document.getElementById('planSequenceContainer');
+                if (container) {
+                    // 移除加载指示器
+                    container.innerHTML = '';
+                    
+                    planSequenceTreeComponent = new SequenceTreeComponent('planSequenceContainer', {
+                        prefix: 'plan-',
+                        onSequenceSelect: function(sequenceName, element) {
+                            console.log('计划设计序列选择:', sequenceName);
+                            // 可以在这里添加序列选择后的处理逻辑
+                        },
+                        onFileSelect: function(fileName, element) {
+                            console.log('计划设计文件选择:', fileName);
+                            // 可以在这里添加文件选择后的处理逻辑
+                        },
+                        showFileInfo: false // 计划设计模块不需要显示文件信息
+                    });
+                }
+            }
+            // 初始化模块工具栏（计划评估专用）
+            if (typeof ModuleToolbarComponent !== 'undefined') {
+                // 计划评估工具栏：与截图一致的 5 个功能
+                const evaluationTools = [
+                    {
+                        id: 'export-report',
+                        icon: 'fas fa-file-export',
+                        label: '导出报告',
+                        tooltip: '导出报告',
+                        category: '常规'
+                    },
+                    {
+                        id: 'export-locator',
+                        icon: 'fas fa-crosshairs',
+                        label: '导出定位器',
+                        tooltip: '导出定位器',
+                        category: '常规'
+                    },
+                    {
+                        id: 'export-plane-dose',
+                        icon: 'fas fa-bullseye',
+                        label: '导出平面剂量',
+                        tooltip: '导出平面剂量',
+                        category: '常规'
+                    },
+                    {
+                        id: 'approve-plan',
+                        icon: 'fas fa-clipboard-check',
+                        label: '审核计划',
+                        tooltip: '审核计划',
+                        category: '审核'
+                    },
+                    {
+                        id: 'unlock-plan',
+                        icon: 'fas fa-unlock-alt',
+                        label: '解除计划',
+                        tooltip: '解除计划',
+                        category: '审核'
+                    }
+                ];
+
+                moduleToolbar = new ModuleToolbarComponent('moduleToolbarContainer', {
+                    tools: evaluationTools,
+                    categories: ['常规', '审核'], // 计划评估模块的工具分组
+                    moduleId: 'plan-evaluation', // 区分于计划设计模块
+                    onToolClick: (toolId) => {
+                        console.log('计划评估工具点击:', toolId);
+                        // TODO: 在这里实现各个工具的实际业务逻辑
+                    }
+                });
+            }
+
+            // 初始化ROI组件
+            if (typeof ROIComponent !== 'undefined') {
+                roiComponent = new ROIComponent('roiContainer', {
+                    prefix: 'plan-design-',
+                    onROISelect: (roiName) => {
+                        console.log('选中ROI:', roiName);
+                    }
+                });
+            }
+
+            // 初始化POI组件
+            if (typeof POIComponent !== 'undefined') {
+                poiComponent = new POIComponent('poiContainer', {
+                    prefix: 'plan-design-',
+                    onPOISelect: (poiName) => {
+                        console.log('选中POI:', poiName);
+                    },
+                    onToolClick: (buttonId) => {
+                        console.log('POI工具点击:', buttonId);
+                    }
+                });
+            }
+
+            // 初始化配准组件
+            if (typeof RegistrationComponent !== 'undefined') {
+                const registrationContainer = document.getElementById('planRegistrationContainer');
+                if (registrationContainer) {
+                    // 移除加载指示器
+                    registrationContainer.innerHTML = '';
+                    
+                    registrationComponent = new RegistrationComponent('planRegistrationContainer', {
+                        prefix: 'plan-',
+                        onRegistrationSelect: function(registrationId, element) {
+                            console.log('计划设计配准选择:', registrationId);
+                            // 可以在这里添加配准选择后的处理逻辑
+                        },
+                        onSequenceSelect: function(sequenceName, element) {
+                            console.log('计划设计配准序列选择:', sequenceName);
+                            // 可以在这里添加序列选择后的处理逻辑
+                        },
+                        onFileSelect: function(fileName, element) {
+                            console.log('计划设计配准文件选择:', fileName);
+                            // 可以在这里添加文件选择后的处理逻辑
+                        },
+                        showFileInfo: true
+                    });
+                }
+            }
+
+            // 初始化横断面视图组件
+            if (typeof CrossSectionView2DComponent !== 'undefined') {
+                if (document.getElementById('axialViewContainer')) {
+                    axialViewComponent = new CrossSectionView2DComponent('axialViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: true,  // 显示等剂量线图例
+                        contoursVisible: true  // 计划设计模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        // 等待图像加载完成后再添加轮廓
+                        if (!axialViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = axialViewComponent.imageData.width;
+                        const imageHeight = axialViewComponent.imageData.height;
+                        
+                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
+                        // 创建一个在图像中心附近的轮廓
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        axialViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        axialViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                        
+                        console.log('轮廓已添加:', {
+                            target: axialViewComponent.contours.filter(c => c.type === 'target'),
+                            processing: axialViewComponent.contours.filter(c => c.type === 'processing')
+                        });
+                    }, 300);
+                }
+            }
+
+            // 初始化冠状面视图组件
+            if (typeof CoronalView2DComponent !== 'undefined') {
+                if (document.getElementById('coronalViewContainer')) {
+                    coronalViewComponent = new CoronalView2DComponent('coronalViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: true,  // 显示等剂量线图例
+                        contoursVisible: true  // 计划设计模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        // 等待图像加载完成后再添加轮廓
+                        if (!coronalViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = coronalViewComponent.imageData.width;
+                        const imageHeight = coronalViewComponent.imageData.height;
+                        
+                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
+                        // 创建一个在图像中心附近的轮廓
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        coronalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        coronalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                    }, 300);
+                }
+            }
+
+            // 初始化矢状面视图组件
+            if (typeof SagittalView2DComponent !== 'undefined') {
+                if (document.getElementById('sagittalViewContainer')) {
+                    sagittalViewComponent = new SagittalView2DComponent('sagittalViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: true,  // 显示等剂量线图例
+                        contoursVisible: true  // 计划设计模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        // 等待图像加载完成后再添加轮廓
+                        if (!sagittalViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = sagittalViewComponent.imageData.width;
+                        const imageHeight = sagittalViewComponent.imageData.height;
+                        
+                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
+                        // 创建一个在图像中心附近的轮廓
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        sagittalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        sagittalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                    }, 300);
+                }
+            }
+
+            // 初始化3D视图组件（3D页签）
+            if (typeof BrachyView3DComponent !== 'undefined') {
+                if (document.getElementById('view3dCanvasHost')) {
+                    brachyView3DComponent = new BrachyView3DComponent('view3dCanvasHost', {
+                        prefix: 'plan-design-3d-',
+                        toolbarContainerId: 'view3dToolbarHost', // 工具栏挂载到外部容器，避免双标题
+                        showHeader: false
+                    });
+                    // 确保工具栏容器显示（默认3D页签激活）
+                    const toolbarHost = document.getElementById('view3dToolbarHost');
+                    if (toolbarHost) {
+                        toolbarHost.style.display = 'flex';
+                    }
+                }
+            }
+
+            // 初始化DOSE组件
+            if (typeof DOSEComponent !== 'undefined') {
+                if (document.getElementById('doseContainer')) {
+                    doseComponent = new DOSEComponent('doseContainer', {
+                        prefix: 'plan-design-',
+                        onDoseTypeChange: (doseType) => {
+                            console.log('剂量类型变更:', doseType);
+                        },
+                        onDoseSourceChange: (doseSource) => {
+                            console.log('剂量源变更:', doseSource);
+                        },
+                        onGlobalVisibilityToggle: (visible) => {
+                            console.log('全局可见性切换:', visible);
+                        },
+                        onFillToggle: (fillEnabled) => {
+                            console.log('填充切换:', fillEnabled);
+                        },
+                        onBoldToggle: (boldEnabled) => {
+                            console.log('加粗切换:', boldEnabled);
+                        }
+                    });
+                }
+            }
+
+            // 3D/DVH视图标签切换逻辑
+            const viewTabs = document.querySelectorAll('.view-tab');
+            const viewContents = document.querySelectorAll('.view-content');
+            const view3dToolbarHost = document.getElementById('view3dToolbarHost');
+            const dvhToolbarHost = document.getElementById('dvhToolbarHost');
+
+            viewTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    const contentId = tabName + 'Content';
+
+                    // 更新标签激活状态
+                    viewTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 切换内容面板
+                    viewContents.forEach(c => c.classList.remove('active'));
+                    const targetContent = document.getElementById(contentId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+
+                    // 根据页签切换工具栏显示
+                    if (tabName === 'view3d') {
+                        // 3D页签：显示3D工具栏，隐藏DVH工具栏
+                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'flex';
+                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'none';
+                    } else if (tabName === 'dvh') {
+                        // DVH页签：隐藏3D工具栏，显示DVH工具栏
+                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'none';
+                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'flex';
+                        // 由于DVH组件初始化时容器是隐藏的，这里切换到DVH时重新计算尺寸并重绘
+                        if (typeof dvhComponent !== 'undefined' && dvhComponent) {
+                            if (dvhComponent.setupCanvas && dvhComponent.draw) {
+                                dvhComponent.setupCanvas();
+                                dvhComponent.draw();
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 初始化DVH组件（应用方案B：工具栏外置）
+            let dvhComponent = null;
+            const dvhCanvasHost = document.getElementById('dvhCanvasHost');
+            if (typeof DVHComponent !== 'undefined' && dvhCanvasHost) {
+                dvhComponent = new DVHComponent('dvhCanvasHost', {
+                    toolbarContainerId: 'dvhToolbarHost', // 工具栏挂载到外部容器
+                    showHeader: false,
+                    enableToolbar: true,
+                    enableContextMenu: true,
+                    onCurveClick: (curve) => {
+                        console.log('DVH曲线点击:', curve.roiName);
+                    }
+                });
+            }
+
+            // 初始化通道列表组件
+            if (typeof ChannelListComponent !== 'undefined') {
+                const channelListContainer = document.getElementById('channelListContainer');
+                if (channelListContainer) {
+                    channelListComponent = new ChannelListComponent('channelListContainer', {
+                        prefix: 'plan-design-',
+                        onChannelSelect: (channel) => {
+                            console.log('选中通道:', channel);
+                        },
+                        onChannelChange: (channel, field, value) => {
+                            console.log('通道字段变更:', channel, field, value);
+                        },
+                        onChannelDelete: (channel) => {
+                            console.log('删除通道:', channel);
+                        },
+                        onChannelAdd: (channel) => {
+                            console.log('添加通道:', channel);
+                        },
+                        onManualRebuild: (channel) => {
+                            console.log('手动重建:', channel);
+                            // TODO: 打开手动重建弹窗
+                        },
+                        onAutoRebuild: (channel) => {
+                            console.log('自动重建:', channel);
+                            // TODO: 打开自动重建弹窗
+                        },
+                        onModelRebuild: (channel) => {
+                            console.log('模型重建:', channel);
+                            // TODO: 打开模型重建弹窗
+                        },
+                        onLoadTemplate: () => {
+                            console.log('加载模板');
+                            // TODO: 打开加载模板弹窗
+                        },
+                        onCreateTemplate: (channels) => {
+                            console.log('创建模板:', channels);
+                            // TODO: 打开创建模板弹窗
+                        }
+                    });
+                }
+            }
+
+            // 初始化驻留控制组件
+            if (typeof DwellControlComponent !== 'undefined') {
+                const dwellControlContainer = document.getElementById('dwellControlContainer');
+                if (dwellControlContainer) {
+                    dwellControlListComponent = new DwellControlComponent('dwellControlContainer', {
+                        prefix: 'plan-design-',
+                        onDwellPointSelect: (point) => {
+                            console.log('选中驻留点:', point);
+                        },
+                        onDwellPointChange: (point, field, value) => {
+                            console.log('驻留点字段变更:', point, field, value);
+                        },
+                        onDwellPointLockToggle: (point, locked) => {
+                            console.log('驻留点锁定切换:', point, locked);
+                        }
+                    });
+                }
+            }
+
+            // 初始化临床目标组件
+            if (typeof ClinicalTargetComponent !== 'undefined') {
+                const clinicalTargetContainer = document.getElementById('clinicalTargetContainer');
+                if (clinicalTargetContainer) {
+                    clinicalTargetComponent = new ClinicalTargetComponent('clinicalTargetContainer', {
+                        prefix: 'plan-design-',
+                        onTargetSelect: (target) => {
+                            console.log('选中临床目标:', target);
+                        },
+                        onTargetAdd: () => {
+                            console.log('添加临床目标');
+                            // TODO: 打开添加弹窗
+                        },
+                        onTargetEdit: (target) => {
+                            console.log('编辑临床目标:', target);
+                            // TODO: 打开编辑弹窗
+                        },
+                        onTargetDelete: (target) => {
+                            console.log('删除临床目标:', target);
+                        },
+                        onTargetExport: (targets) => {
+                            console.log('导出临床目标:', targets);
+                            // TODO: 打开导出弹窗
+                        },
+                        onTargetImport: () => {
+                            console.log('导入临床目标');
+                            // TODO: 打开导入弹窗
+                        }
+                    });
+                }
+            }
+        }
+
+        // 初始化剂量统计组件
+        function initDoseStatisticsComponent() {
+            if (typeof DoseStatisticsComponent !== 'undefined') {
+                const doseStatsContainer = document.getElementById('doseStatsContainer');
+                if (doseStatsContainer && !doseStatsContainer.dataset.inited) {
+                    doseStatisticsComponent = new DoseStatisticsComponent('doseStatsContainer', {
+                        showDoseType: false, // 后装计划设计模块不显示剂量类型列
+                        getRoiStats: () => {
+                            // TODO: 从实际数据源获取ROI统计
+                            // 返回 null 或空数组会使用组件的默认数据
+                            // 实际使用时应该从剂量计算结果中获取真实数据
+                            return null; // 使用默认数据
+                        },
+                        getPoiStats: () => {
+                            // TODO: 从实际数据源获取POI统计
+                            // 返回 null 或空数组会使用组件的默认数据
+                            // 实际使用时应该从剂量计算结果中获取真实数据
+                            return null; // 使用默认数据
+                        },
+                        onExport: (data) => {
+                            // TODO: 实现Excel导出功能
+                            console.log('导出剂量统计:', data);
+                            if (doseStatisticsComponent) {
+                                doseStatisticsComponent.defaultExportToExcel({
+                                    planName: 'PlanA',
+                                    patientId: defaultPatient.id,
+                                    patientName: defaultPatient.name,
+                                    comparisonMode: null
+                                });
+                            }
+                        }
+                    });
+                    doseStatsContainer.dataset.inited = 'true';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

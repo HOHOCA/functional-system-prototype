@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOZI 4.0 - 放射治疗计划系统平台</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* 顶部Logo和标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #999;
+            margin-bottom: 30px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* 产品网格 */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* 产品卡片 */
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--card-color) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--card-color);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .product-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .product-card.disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+
+        /* 产品颜色 */
+        .product-card.proton { --card-color: #4a9eff; }
+        .product-card.brachy { --card-color: #10b981; }
+        .product-card.photon { --card-color: #ef4444; }
+        .product-card.contour { --card-color: #f59e0b; }
+        .product-card.gallery { --card-color: #8b5cf6; }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 25px;
+            background: var(--card-color);
+            color: white;
+        }
+
+        .card-header {
+            width: 100%;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .card-features li {
+            font-size: 12px;
+            color: #666;
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .card-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--card-color);
+            font-weight: bold;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.ready {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.coming {
+            background: rgba(156, 163, 175, 0.2);
+            color: #9ca3af;
+        }
+
+        .card-arrow {
+            font-size: 20px;
+            color: var(--card-color);
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 底部信息 */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .footer a {
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #fff;
+        }
+
+        /* 动画 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 36px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部标题 - 简化版 -->
+        <div class="header">
+                            </div>
+                    
+        <!-- 产品网格 -->
+        <div class="products-grid">
+            <!-- 质子系统 -->
+            <div class="product-card proton" onclick="navigateTo('proton-client/index.html')">
+                <div class="card-icon">
+                                <i class="fas fa-atom"></i>
+                        </div>
+                <div class="card-header">
+                    <h2 class="card-title">质子治疗系统</h2>
+                    <p class="card-subtitle">MOZI-PROTON</p>
+                    </div>
+                                </div>
+                                
+            <!-- 后装系统 -->
+            <div class="product-card brachy" onclick="navigateTo('brachy-client/index.html')">
+                <div class="card-icon">
+                    <i class="fas fa-syringe"></i>
+                    </div>
+                <div class="card-header">
+                    <h2 class="card-title">后装治疗系统</h2>
+                    <p class="card-subtitle">MOZI-BRACHY</p>
+                                    </div>
+                                </div>
+                                
+            <!-- 光子系统 -->
+            <div class="product-card photon disabled">
+                <div class="card-icon">
+                    <i class="fas fa-radiation"></i>
+                                </div>
+                <div class="card-header">
+                    <h2 class="card-title">光子治疗系统</h2>
+                    <p class="card-subtitle">MOZI</p>
+                            </div>
+            </div>
+
+            <!-- 勾画系统 -->
+            <div class="product-card contour disabled">
+                <div class="card-icon">
+                    <i class="fas fa-draw-polygon"></i>
+                    </div>
+                <div class="card-header">
+                    <h2 class="card-title">勾画系统</h2>
+                    <p class="card-subtitle">RTFactory</p>
+                        </div>
+                    </div>
+
+            <!-- 组件画廊 -->
+            <div class="product-card gallery" onclick="navigateTo('component-gallery/index.html')">
+                <div class="card-icon">
+                    <i class="fas fa-cubes"></i>
+                </div>
+                <div class="card-header">
+                    <h2 class="card-title">组件画廊</h2>
+                    <p class="card-subtitle">Component Gallery</p>
+                </div>
+            </div>
+                </div>
+
+            </div>
+
+    <script>
+        function navigateTo(url) {
+            // 检查是否是disabled卡片
+            if (event.currentTarget.classList.contains('disabled')) {
+                return;
+            }
+            window.location.href = url;
+        }
+
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1') navigateTo('proton-client/index.html');
+            if (e.key === '2') navigateTo('brachy-client/index.html');
+            if (e.key === '3') navigateTo('component-gallery/index.html');
+        });
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

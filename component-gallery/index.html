@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组件展示 - Component Gallery</title>
+    <link rel="stylesheet" href="gallery.css">
+    <link rel="stylesheet" href="../shared/styles/styles.css">
+    <link rel="stylesheet" href="../shared/styles/styles_plan_view_2d.css">
+    <link rel="stylesheet" href="../shared/styles/styles_dvh.css">
+    <link rel="stylesheet" href="../shared/styles/styles_view_3d.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="gallery-container">
+        <!-- 左侧导航栏 -->
+        <aside class="gallery-sidebar">
+            <div class="gallery-header">
+                <h1 class="gallery-title">组件库</h1>
+                <div class="gallery-subtitle">Component Gallery</div>
+            </div>
+            
+            <!-- 搜索框 -->
+            <div class="gallery-search">
+                <input type="text" id="searchInput" placeholder="搜索组件..." class="search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
+            <!-- 组件树 -->
+            <div class="gallery-component-tree" id="componentTree">
+                <!-- 动态生成树状结构 -->
+            </div>
+        </aside>
+        
+        <!-- 右侧详情区 -->
+        <main class="gallery-main">
+            <div class="gallery-detail" id="componentDetail">
+                <div class="detail-empty">
+                    <i class="fas fa-cube"></i>
+                    <p>请从左侧选择一个组件查看详情</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 加载组件配置 -->
+    <script src="components-config.js"></script>
+    
+    <!-- 加载Three.js（3D组件依赖） -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- 加载所有共享组件（按字母顺序） -->
+    <script src="../shared/scripts/components/BeamOptimizationSettingsComponent.js"></script>
+    <script src="../shared/scripts/components/CreateQaPlanComponent.js"></script>
+    <script src="../shared/scripts/components/CrossSectionView2DComponent.js"></script>
+    <script src="../shared/scripts/components/CoronalView2DComponent.js"></script>
+    <script src="../shared/scripts/components/SagittalView2DComponent.js"></script>
+    <script src="../shared/scripts/components/CuttingModalComponent.js"></script>
+    <script src="../shared/scripts/components/DOSEComponent.js"></script>
+    <script src="../shared/scripts/components/DoseStatisticsComponent.js"></script>
+    <script src="../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../shared/scripts/components/ExportPlanComponent.js"></script>
+    <script src="../shared/scripts/components/OptimizationSettingsModalComponent.js"></script>
+    <script src="../shared/scripts/components/PatientInfoComponent.js"></script>
+    <script src="../shared/scripts/components/PatientManagementComponent.js"></script>
+    <script src="../shared/scripts/components/PlanComparisonDoseStatisticsComponent.js"></script>
+    <script src="../shared/scripts/components/POIComponent.js"></script>
+    <script src="../shared/scripts/components/RegistrationComponent.js"></script>
+    <script src="../shared/scripts/components/RegistrationPanel.js"></script>
+    <script src="../shared/scripts/components/RobustnessSettingsComponent.js"></script>
+    <script src="../shared/scripts/components/ROIComponent.js"></script>
+    <script src="../shared/scripts/components/SequenceTree.js"></script>
+    <script src="../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../shared/scripts/components/SettingsModalComponent.js"></script>
+    <script src="../shared/scripts/components/SpectralCTAnalysisComponent.js"></script>
+    <script src="../shared/scripts/components/SpectralHistogramComponent.js"></script>
+    <script src="../shared/scripts/components/SpectralLinearAnalysisComponent.js"></script>
+    <script src="../shared/scripts/components/SPRDelineationComponent.js"></script>
+    <script src="../shared/scripts/components/ThreePlansComparisonDoseStatisticsComponent.js"></script>
+    <script src="../shared/scripts/components/VirtualMonoEnergyComponent.js"></script>
+    <script src="../shared/scripts/components/ModuleToolbarComponent.js"></script>
+    <script src="../shared/scripts/components/PatientOverviewComponent.js"></script>
+    <script src="../brachy-client/scripts/ChannelListComponent.js"></script>
+    <script src="../brachy-client/scripts/ChannelListBII2Component.js"></script>
+    <script src="../brachy-client/scripts/DwellControlComponent.js"></script>
+    <script src="../shared/scripts/components/ClinicalTargetComponent.js"></script>
+    <!-- 加载质子项目组件 -->
+    <script src="../proton-client/scripts/BeamEyeViewComponent.js"></script>
+    <script src="../proton-client/scripts/ViewingFrameComponent.js"></script>
+    <script src="../proton-client/scripts/EnergyLayerViewComponent.js"></script>
+    <!-- 加载展示逻辑 -->
+    <script src="gallery.js"></script>
+</body>
+</html>

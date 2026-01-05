@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>患者管理 - MOZI Brachy</title>
+    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link rel="stylesheet" href="../../shared/styles/patient-management.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+        
+        .patient-management-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: #1a1a1a;
+        }
+        
+        /* 主内容区域包装器 - 横向布局左右面板 */
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            height: calc(100vh - 60px);
+        }
+        
+        /* 左侧面板 */
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        
+        /* 右侧面板 */
+        .right-panel {
+            flex: 0 0 350px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        /* 统一的底部操作栏 - 横跨整个容器 */
+        .bottom-action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #2a2a2a;
+            border-top: 1px solid #404040;
+            flex-shrink: 0;
+            height: 60px;
+        }
+        
+        .bottom-action-bar .left-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .bottom-action-bar .right-actions {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+        
+        .bottom-action-bar .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .bottom-action-bar .btn-primary {
+            background: #3AACDE;
+            color: #fff;
+        }
+        
+        .bottom-action-bar .btn-primary:hover {
+            background: #2a9cc8;
+        }
+        
+        .bottom-action-bar .btn-secondary {
+            background: #404040;
+            color: #ddd;
+        }
+        
+        .bottom-action-bar .btn-secondary:hover {
+            background: #505050;
+        }
+        
+        .bottom-action-bar .btn-danger {
+            background: #e53935;
+            color: #fff;
+        }
+        
+        .bottom-action-bar .btn-danger:hover {
+            background: #c62828;
+        }
+        
+        /* 患者摘要、搜索框、标签页 - 固定高度 */
+        .patient-summary,
+        .right-search,
+        .right-tabs {
+            flex-shrink: 0;
+        }
+        
+        /* 序列树容器 - 占据剩余空间，滚动由 SequenceTreeComponent 内部处理 */
+        .sequence-tree-container {
+            flex: 1;
+            overflow: hidden; /* 移除滚动，由组件内部处理 */
+            min-height: 0;
+        }
+        
+        /* 配准容器 */
+        .registration-container {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        
+        /* 文件信息 - 固定在右侧面板底部 */
+        .file-info {
+            flex-shrink: 0;
+            border-top: 1px solid #404040;
+            padding: 10px;
+        }
+        
+        /* 序列树样式 - 纵向树，一行一个节点 */
+        .sequence-tree {
+            padding: 8px 12px;
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        /* 纵向树的每一行 */
+        .tree-line {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 3px;
+            min-height: 32px;
+            position: relative;
+        }
+
+        .tree-line:hover {
+            background: #404040;
+        }
+
+        /* 根据层级缩进 */
+        .tree-line.level-0 {
+            padding-left: 0;
+        }
+
+        .tree-line.level-1 {
+            padding-left: 20px;
+        }
+
+        .tree-line.level-2 {
+            padding-left: 40px;
+        }
+
+        .tree-line.level-3 {
+            padding-left: 60px;
+        }
+
+        .tree-line.level-4 {
+            padding-left: 80px;
+        }
+
+        /* 树形连接线 - 垂直虚线 */
+        .tree-line.level-1::before,
+        .tree-line.level-2::before,
+        .tree-line.level-3::before,
+        .tree-line.level-4::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 50%;
+            width: 1px;
+            border-left: 1px dashed #666;
+        }
+
+        /* 水平虚线连接到节点 */
+        .tree-line.level-1::after,
+        .tree-line.level-2::after,
+        .tree-line.level-3::after,
+        .tree-line.level-4::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 10px;
+            height: 1px;
+            border-top: 1px dashed #666;
+        }
+
+        /* level-2 的线条位置调整 */
+        .tree-line.level-2::before {
+            left: 30px;
+        }
+
+        .tree-line.level-2::after {
+            left: 30px;
+        }
+
+        /* level-3 的线条位置调整 */
+        .tree-line.level-3::before {
+            left: 50px;
+        }
+
+        .tree-line.level-3::after {
+            left: 50px;
+        }
+
+        /* level-4 的线条位置调整 */
+        .tree-line.level-4::before {
+            left: 70px;
+        }
+
+        .tree-line.level-4::after {
+            left: 70px;
+        }
+
+        /* 最后一个子节点不显示向下的垂直线 */
+        .tree-line.last-child::before {
+            display: none;
+        }
+
+        /* 选中状态 - 与患者列表一致 */
+        .tree-line.selected {
+            background-color: rgba(33, 143, 191, 0.2);
+        }
+
+        .tree-line.selected:hover {
+            background-color: rgba(33, 143, 191, 0.3);
+        }
+
+        /* 展开/折叠按钮 */
+        .tree-toggle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            line-height: 14px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #888;
+            border: 1px solid #888;
+            border-radius: 2px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        /* 图标 */
+        .tree-line i {
+            margin-right: 8px;
+            width: 16px;
+            color: #3AACDE;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .tree-line.selected i {
+            color: #fff;
+        }
+
+        /* 文本 */
+        .tree-line > span:not(.tree-toggle) {
+            color: #ddd;
+        }
+
+        .tree-line.selected > span:not(.tree-toggle) {
+            color: #fff;
+        }
+        
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .modal-dialog {
+            background: #2a2a2a;
+            border-radius: 8px;
+            width: 700px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #404040;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background: #404040;
+            color: #fff;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #ddd;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3AACDE;
+        }
+        
+        .form-input.readonly {
+            background: #333;
+            color: #888;
+            cursor: not-allowed;
+        }
+        
+        .form-hint {
+            margin-top: 6px;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .chart-section {
+            margin-top: 24px;
+        }
+        
+        .chart-section h4 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .chart-subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .chart-placeholder {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #404040;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="patient-management-container">
+        <!-- 主内容区域 -->
+        <div class="main-content-wrapper">
+            <!-- 左侧患者列表 -->
+            <div class="left-panel">
+            <!-- 搜索栏 -->
+            <div class="search-section">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="请输入患者姓名或ID,点击搜索图标或按下回车键开始搜索" id="searchInput">
+                </div>
+                <div class="search-actions">
+                    <i class="fas fa-sync-alt refresh-icon"></i>
+                    <i class="fas fa-cog settings-icon"></i>
+                </div>
+            </div>
+
+            <!-- 患者表格 -->
+            <div class="table-section">
+                <table class="patient-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-folder"></i></th>
+                            <th>患者ID</th>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>出生日期</th>
+                            <th>年龄</th>
+                            <th>医生</th>
+                            <th>物理师</th>
+                            <th>导入时间</th>
+                            <th>保存时间</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientTableBody">
+                        <!-- 患者数据将通过JavaScript动态加载 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页控制 -->
+            <div class="pagination-section">
+                <span class="pagination-total">共399条</span>
+                <select class="page-size-select">
+                    <option value="20">20条/页</option>
+                    <option value="50">50条/页</option>
+                    <option value="100">100条/页</option>
+                    <option value="200">200条/页</option>
+                </select>
+                <button class="page-btn page-prev" disabled>&lt;</button>
+                <button class="page-btn page-num active">1</button>
+                <button class="page-btn page-num">2</button>
+                <button class="page-btn page-next">&gt;</button>
+                <span class="jump-to-label">跳至</span>
+                <input type="number" class="jump-to-input" value="1" min="1">
+                <span class="jump-to-label">页</span>
+            </div>
+        </div>
+
+        <!-- 右侧患者详情 -->
+            <div class="right-panel">
+            <!-- 患者摘要 -->
+            <div class="patient-summary">
+                <div id="patientOverviewCard"></div>
+            </div>
+
+            <!-- 序列树 -->
+            <div class="sequence-tree-container" id="patientSequenceContainer">
+                <!-- 序列树组件将通过JavaScript动态加载 -->
+                <div class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <span>加载序列树组件...</span>
+                </div>
+            </div>
+
+            <!-- 文件信息 -->
+            <div class="file-info" id="fileInfo">
+                <h4>文件信息</h4>
+                <div class="info-grid" id="imageFileInfo">
+                    <div class="info-item">
+                        <span class="label">扫描设备</span>
+                        <span class="value">
+                            <span id="scanDeviceValue">GE Discovery CT750 HD</span>
+                            <button class="edit-icon-btn" id="editScanDeviceBtn" title="修改">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">患者摆位</span>
+                        <span class="value">HFS</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">图像模态</span>
+                        <span class="value">CT</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">图像层数</span>
+                        <span class="value">102</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">拍摄日期</span>
+                        <span class="value">2019.01.03</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">拍摄时间</span>
+                        <span class="value">17:02:12</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">序列号</span>
+                        <span class="value">3</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">序列ID</span>
+                        <span class="value">38467.39468.342</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">序列描述</span>
+                        <span class="value">HearCewity</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">检查描述</span>
+                        <span class="value">Chest Routine</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div><!-- 关闭 main-content-wrapper -->
+        
+        <!-- 统一的底部操作栏 -->
+        <div class="bottom-action-bar">
+            <div class="left-actions">
+                <button class="btn btn-primary">导入</button>
+                <button class="btn btn-secondary">导出</button>
+                <button class="btn btn-danger">删除</button>
+                <button class="btn btn-secondary">编辑</button>
+            </div>
+            <div class="right-actions">
+                <button class="btn btn-primary btn-open">打开</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图像属性弹窗 -->
+    <div class="modal-overlay" id="imagePropertiesModal" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>图像属性</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>CT图像</label>
+                    <input type="text" value="CT 65" readonly class="form-input readonly">
+                </div>
+                <div class="form-group">
+                    <label>扫描设备</label>
+                    <select class="form-input">
+                        <option>GE MEDICAL SYSTEMS</option>
+                        <option>SIEMENS</option>
+                        <option>PHILIPS</option>
+                    </select>
+                    <p class="form-hint">根据DICOM数据中指定字段自动匹配扫描设备</p>
+                </div>
+                <div class="chart-section">
+                    <h4>电子密度对照表</h4>
+                    <p class="chart-subtitle">CT转电子密度</p>
+                    <div class="chart-placeholder">
+                        <canvas id="densityChart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">取消</button>
+                <button class="btn btn-primary" id="confirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 组件引用 -->
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../../shared/scripts/components/RegistrationPanel.js"></script>
+    <script src="../../shared/scripts/components/PatientManagementComponent.js"></script>
+    
+    <script>
+        // 模拟患者数据
+        const mockPatients = [
+            {
+                id: '0000576304',
+                name: 'Dong, Wuping',
+                gender: 'M',
+                birthDate: '1973-03-07',
+                age: 52,
+                doctor: 'Dr. Wang',
+                physicist: 'Liu Ming',
+                importTime: '2019.01.21 13:23:12',
+                saveTime: '2019.01.21 13:23:12',
+                remarks: 'Y0139-RECTUM'
+            },
+            {
+                id: 'WP4TR3',
+                name: 'Li Shan',
+                gender: 'F',
+                birthDate: '1976-06-13',
+                age: 48,
+                doctor: 'Dr. Chen',
+                physicist: 'Zhang Wei',
+                importTime: '2019.01.15 10:15:30',
+                saveTime: '2019.01.20 16:45:20',
+                remarks: 'Cervical Cancer'
+            },
+            {
+                id: 'PA001234',
+                name: 'Wang, Xiaoming',
+                gender: 'M',
+                birthDate: '1985-03-20',
+                age: 39,
+                doctor: 'Dr. Li',
+                physicist: 'Chen Jing',
+                importTime: '2019.02.10 09:30:00',
+                saveTime: '2019.02.15 14:20:00',
+                remarks: 'Prostate Cancer'
+            },
+            {
+                id: 'PB005678',
+                name: 'Zhang, Mei',
+                gender: 'F',
+                birthDate: '1990-08-15',
+                age: 34,
+                doctor: 'Dr. Liu',
+                physicist: 'Wang Lei',
+                importTime: '2019.03.05 11:45:00',
+                saveTime: '2019.03.08 10:30:00',
+                remarks: 'Breast Cancer'
+            },
+            {
+                id: 'PC009876',
+                name: 'Liu, Qiang',
+                gender: 'M',
+                birthDate: '1968-12-01',
+                age: 56,
+                doctor: 'Dr. Zhou',
+                physicist: 'Zhao Min',
+                importTime: '2019.04.12 15:20:00',
+                saveTime: '2019.04.18 09:10:00',
+                remarks: 'Lung Cancer'
+            }
+        ];
+        
+        let patientOverviewComponent = null;
+
+        function toPatientOverviewData(patient) {
+            if (!patient) return { name: '--', id: '--', birthDate: '', gender: '' };
+            return {
+                name: patient.name,
+                id: patient.id,
+                birthDate: (patient.birthDate || '').replace(/-/g, ''),
+                gender: patient.gender || ''
+            };
+        }
+
+        // 加载患者数据到表格
+        function loadPatientData() {
+            const tbody = document.getElementById('patientTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = mockPatients.map((patient, index) => `
+                <tr class="${index === 0 ? 'selected' : ''}" onclick="selectPatient(this, ${index})">
+                    <td><i class="fas fa-folder"></i></td>
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.gender}</td>
+                    <td>${patient.birthDate}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.doctor}</td>
+                    <td>${patient.physicist}</td>
+                    <td>${patient.importTime}</td>
+                    <td>${patient.saveTime}</td>
+                    <td>${patient.remarks}</td>
+                </tr>
+            `).join('');
+        }
+        
+        // 选择患者
+        function selectPatient(row, index) {
+            // 移除所有选中状态
+            const rows = document.querySelectorAll('.patient-table tbody tr');
+            rows.forEach(r => r.classList.remove('selected'));
+            
+            // 添加选中状态
+            row.classList.add('selected');
+            
+            // 更新右侧患者信息
+            const patient = mockPatients[index];
+            if (patientOverviewComponent) {
+                patientOverviewComponent.setPatient(toPatientOverviewData(patient));
+            }
+        }
+        
+        // 不同类型节点的文件信息数据
+        const fileInfoData = {
+            'CT': {
+                title: '文件信息',
+                fields: [
+                    { label: '数据类型', value: 'CT' },
+                    { label: '扫描设备', value: 'GE MEDICAL SYSTEMS', editable: true },
+                    { label: '患者摆位', value: 'Head First-Prone', isDropdown: true },
+                    { label: '图像层数', value: '185' },
+                    { label: '拍摄时间', value: '2025-10-01 10:00:00' },
+                    { label: '序列号', value: '3' },
+                    { label: '序列ID', value: '1.2.586.698.5588456.636851.5' },
+                    { label: '序列描述', value: 'CT SIMoooooooooooooooo' },
+                    { label: '检查描述', value: 'xxxxx' }
+                ]
+            },
+            'RTSTRUCT': {
+                title: '文件信息',
+                fields: [
+                    { label: '数据类型', value: 'RTStruct' },
+                    { label: '创建者', value: 'xxxx' },
+                    { label: '创建时间', value: '2025-10-01 10:00:00' },
+                    { label: '序列号', value: '3' },
+                    { label: '序列ID', value: '1.2.586.698.5588456.636851.5' },
+                    { label: '序列描述', value: 'CT SIMoooooooooooooooo' },
+                    { label: '检查描述', value: 'xxxxx' },
+                    { label: '审批人', value: 'NONE' },
+                    { label: '审批时间', value: '2025-10-01 10:00:00' }
+                ]
+            },
+            'RTPLAN': {
+                title: '文件信息',
+                fields: [
+                    { label: '数据类型', value: 'RTPlan' },
+                    { label: '计划名称', value: 'Pelvis4ARC' },
+                    { label: '计划描述', value: 'xxxxxx' },
+                    { label: '治疗机器', value: 'Halycen' },
+                    { label: '辐射类型', value: 'PHOTON' },
+                    { label: '治疗技术', value: 'mARC' },
+                    { label: '剂型处方', value: '靶区_PTV，总剂量-5040，分次数-28' },
+                    { label: '审批人', value: 'xxxx' },
+                    { label: '审批时间', value: '2025-10-01 10:00:00' }
+                ]
+            }
+        };
+
+        // 更新文件信息显示
+        function updateFileInfo(type) {
+            const fileInfoContainer = document.getElementById('imageFileInfo');
+            if (!fileInfoContainer) return;
+
+            const data = fileInfoData[type];
+            if (!data) return;
+
+            let html = '';
+            data.fields.forEach(field => {
+                if (field.editable) {
+                    html += `
+                        <div class="info-item">
+                            <span class="label">${field.label}</span>
+                            <span class="value">
+                                <span id="scanDeviceValue">${field.value}</span>
+                                <button class="edit-icon-btn" id="editScanDeviceBtn" title="修改">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </span>
+                        </div>
+                    `;
+                } else if (field.isDropdown) {
+                    html += `
+                        <div class="info-item">
+                            <span class="label">${field.label}</span>
+                            <span class="value">${field.value}</span>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="info-item">
+                            <span class="label">${field.label}</span>
+                            <span class="value">${field.value}</span>
+                        </div>
+                    `;
+                }
+            });
+
+            fileInfoContainer.innerHTML = html;
+
+            // 重新绑定编辑按钮事件
+            const editBtn = document.getElementById('editScanDeviceBtn');
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('imagePropertiesModal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        drawChart();
+                    }
+                });
+            }
+        }
+
+        // 选择树节点
+        function selectTreeNode(element, type) {
+            // 移除所有选中状态
+            const allTreeLines = document.querySelectorAll('.tree-line');
+            allTreeLines.forEach(line => line.classList.remove('selected'));
+
+            // 添加选中状态
+            element.classList.add('selected');
+
+            // 更新文件信息
+            updateFileInfo(type);
+        }
+
+        // 序列树组件实例
+        let patientSequenceTreeComponent = null;
+
+        // 初始化序列树组件
+        function initializeSequenceTree() {
+            const container = document.getElementById('patientSequenceContainer');
+            if (!container) return;
+
+            // 移除加载指示器
+            container.innerHTML = '';
+
+            // 使用 SequenceTreeComponent 组件
+            if (window.SequenceTreeComponent) {
+                patientSequenceTreeComponent = new SequenceTreeComponent('patientSequenceContainer', {
+                    prefix: 'patient-',
+                    onSequenceSelect: function(sequenceName, element) {
+                        console.log('患者管理序列选择:', sequenceName);
+                        // 点击文件夹时不更新文件信息，保持原有内容不变
+                        // 只有点击文件节点时才更新文件信息
+                    },
+                    onFileSelect: function(fileName, element) {
+                        console.log('患者管理文件选择:', fileName);
+                        // 可以根据文件类型更新文件信息
+                        const fileType = element.getAttribute('data-type') || 'CT';
+                        updateFileInfo(fileType);
+                    },
+                    showFileInfo: false // 患者管理模块已有独立的文件信息显示区域
+                });
+            } else {
+                console.error('SequenceTreeComponent 未加载');
+            }
+        }
+        
+        // 弹窗相关功能
+        function initializeModal() {
+            const modal = document.getElementById('imagePropertiesModal');
+            const editBtn = document.getElementById('editScanDeviceBtn');
+            const closeBtn = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            // 打开弹窗
+            if (editBtn) {
+                editBtn.addEventListener('click', function() {
+                    modal.style.display = 'flex';
+                    drawChart();
+                });
+            }
+            
+            // 关闭弹窗
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+            
+            if (closeBtn) closeBtn.addEventListener('click', closeModal);
+            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+            
+            // 点击遮罩层关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // 确定按钮
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function() {
+                    // 这里可以添加保存逻辑
+                    console.log('确定修改');
+                    closeModal();
+                });
+            }
+        }
+        
+        // 绘制图表
+        function drawChart() {
+            const canvas = document.getElementById('densityChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, width, height);
+            
+            // 绘制网格背景
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, width, height);
+            
+            // 绘制网格线
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            
+            // 垂直网格线
+            for (let i = 0; i <= 10; i++) {
+                const x = (width / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            // 水平网格线
+            for (let i = 0; i <= 10; i++) {
+                const y = (height / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+            
+            // 绘制蓝色曲线
+            ctx.strokeStyle = '#3AACDE';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            // 模拟数据点
+            const points = [
+                {x: 0, y: 0.5},
+                {x: 0.2, y: 0.45},
+                {x: 0.4, y: 0.4},
+                {x: 0.6, y: 0.35},
+                {x: 0.8, y: 0.3},
+                {x: 1, y: 0.25}
+            ];
+            
+            points.forEach((point, index) => {
+                const x = point.x * width;
+                const y = point.y * height;
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化患者概览组件
+            patientOverviewComponent = new PatientOverviewComponent('patientOverviewCard', {
+                patient: toPatientOverviewData(mockPatients[0])
+            });
+
+            loadPatientData();
+            initializeSequenceTree();
+            initializeModal();
+        });
+    </script>
+</body>
+</html>
+

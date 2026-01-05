@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>靶区勾画 - MOZI Brachy</title>
+    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            overflow: hidden;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        .target-delineation-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: #1a1a1a;
+        }
+
+        /* 顶部区域（患者概览 + 工具栏） */
+        .top-area {
+            display: flex;
+            height: 80px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #404040;
+        }
+
+        /* 患者概览区域 */
+        .patient-overview {
+            width: 328px; /* 48px (页签) + 280px (内容) */
+            background: #2a2a2a;
+            border-right: 1px solid #404040;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+        }
+
+        .patient-card {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 12px 16px;
+            width: 100%;
+        }
+
+        .patient-name-line {
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .patient-info-line {
+            font-size: 13px;
+            color: #cccccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 工具栏区域 */
+        .toolbar-area {
+            flex: 1;
+            background: #2a2a2a;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        /* 下方内容区域（包含左侧栏和主显示区） */
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 左侧栏页签区域 */
+        .left-sidebar-tabs {
+            width: 48px;
+            background: #252525;
+            border-right: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 4px;
+        }
+
+        .sidebar-tab {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 13px;
+            letter-spacing: 4px;
+            font-weight: 500;
+        }
+
+        .sidebar-tab:hover {
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+
+        .sidebar-tab.active {
+            background: #2a2a2a;
+            color: #3AACDE;
+            border-left-color: #3AACDE;
+        }
+
+        /* 左侧栏内容区域 */
+        .left-sidebar-content {
+            width: 280px;
+            background: #2a2a2a;
+            border-right: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-content-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar-content-panel.active {
+            display: flex;
+        }
+
+        .sidebar-panel-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 序列树样式 */
+        .sequence-tree {
+            padding: 8px 12px;
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .tree-line {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 3px;
+            min-height: 32px;
+            position: relative;
+        }
+
+        .tree-line:hover {
+            background: #404040;
+        }
+
+        .tree-line.level-0 {
+            padding-left: 0;
+        }
+
+        .tree-line.level-1 {
+            padding-left: 20px;
+        }
+
+        .tree-line.level-2 {
+            padding-left: 40px;
+        }
+
+        .tree-line.level-3 {
+            padding-left: 60px;
+        }
+
+        .tree-line.level-4 {
+            padding-left: 80px;
+        }
+
+        .tree-line.level-1::before,
+        .tree-line.level-2::before,
+        .tree-line.level-3::before,
+        .tree-line.level-4::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 50%;
+            width: 1px;
+            border-left: 1px dashed #666;
+        }
+
+        .tree-line.level-1::after,
+        .tree-line.level-2::after,
+        .tree-line.level-3::after,
+        .tree-line.level-4::after {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            width: 10px;
+            height: 1px;
+            border-top: 1px dashed #666;
+        }
+
+        .tree-line.level-2::before {
+            left: 30px;
+        }
+
+        .tree-line.level-2::after {
+            left: 30px;
+        }
+
+        .tree-line.level-3::before {
+            left: 50px;
+        }
+
+        .tree-line.level-3::after {
+            left: 50px;
+        }
+
+        .tree-line.level-4::before {
+            left: 70px;
+        }
+
+        .tree-line.level-4::after {
+            left: 70px;
+        }
+
+        .tree-line.selected {
+            background-color: rgba(33, 143, 191, 0.2);
+        }
+
+        .tree-line.selected:hover {
+            background-color: rgba(33, 143, 191, 0.3);
+        }
+
+        .tree-toggle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            line-height: 14px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #888;
+            border: 1px solid #888;
+            border-radius: 2px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .tree-line i {
+            margin-right: 8px;
+            width: 16px;
+            color: #3AACDE;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .tree-line.selected i {
+            color: #fff;
+        }
+
+        .tree-line > span:not(.tree-toggle) {
+            color: #ddd;
+        }
+
+        .tree-line.selected > span:not(.tree-toggle) {
+            color: #fff;
+        }
+
+        /* ROI容器需要占满空间 */
+        #roiContainer {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* DOSE容器需要占满空间 */
+        #doseContainer {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* 主显示区域 */
+        .main-display-area {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
+            background: #1a1a1a;
+            padding: 2px;
+        }
+
+        /* 横断面视图 - 占据左侧整列 */
+        .view-panel.axial {
+            grid-column: 1;
+            grid-row: 1 / 3;
+        }
+
+        /* 冠状面视图 - 右上 */
+        .view-panel.coronal {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        /* 矢状面视图 - 右下 */
+        .view-panel.sagittal {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .view-panel {
+            background: #000000;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 确保组件填满面板 */
+        .view-panel > * {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 滚动条样式 */
+        .sidebar-panel-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 4px;
+        }
+
+        .sidebar-panel-body::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="target-delineation-content">
+        <!-- 顶部区域 -->
+        <div class="top-area">
+            <!-- 患者概览区域 -->
+            <div class="patient-overview">
+                <div id="patientOverviewCard"></div>
+            </div>
+
+            <!-- 工具栏区域 -->
+            <div class="toolbar-area" id="moduleToolbarContainer">
+                <!-- 模块工具栏组件将在这里渲染 -->
+            </div>
+        </div>
+
+        <!-- 下方内容区域 -->
+        <div class="content-wrapper">
+            <!-- 左侧栏页签区域 -->
+            <div class="left-sidebar-tabs">
+            <button class="sidebar-tab active" data-panel="series" title="序列树">序列树</button>
+            <button class="sidebar-tab" data-panel="roi" title="ROI">ROI</button>
+            <button class="sidebar-tab" data-panel="poi" title="POI">POI</button>
+            <button class="sidebar-tab" data-panel="reg" title="REG">REG</button>
+            <button class="sidebar-tab" data-panel="dose" title="DOSE">DOSE</button>
+        </div>
+
+        <!-- 左侧栏内容区域 -->
+        <div class="left-sidebar-content">
+            <!-- 序列树面板 -->
+            <div class="sidebar-content-panel active" id="seriesPanel">
+                <div class="sidebar-panel-body">
+                    <div id="targetSequenceContainer">
+                        <!-- 序列树组件将通过JavaScript动态加载 -->
+                        <div class="loading-indicator" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #888;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span style="margin-left: 10px;">加载序列树组件...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROI面板 -->
+            <div class="sidebar-content-panel" id="roiPanel">
+                <div class="sidebar-panel-body" id="roiContainer">
+                    <!-- ROI组件将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- POI面板 -->
+            <div class="sidebar-content-panel" id="poiPanel">
+                <div class="sidebar-panel-body" id="poiContainer">
+                    <!-- POI组件将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- REG面板 -->
+            <div class="sidebar-content-panel" id="regPanel">
+                <div class="sidebar-panel-body">
+                    <div class="registration-container" id="targetRegistrationContainer">
+                        <div class="loading-indicator" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #888;">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span style="margin-left: 10px;">加载配准组件...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dose面板 -->
+            <div class="sidebar-content-panel" id="dosePanel">
+                <div class="sidebar-panel-body" id="doseContainer">
+                    <!-- DOSE组件将在这里渲染 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 主显示区域 - 三个2D视图 -->
+        <div class="main-display-area">
+            <!-- 横断面视图 - 左侧 -->
+            <div class="view-panel axial" id="axialViewContainer">
+                <!-- 2D横截面视图组件将在这里渲染 -->
+            </div>
+
+            <!-- 冠状面视图 - 右上 -->
+            <div class="view-panel coronal" id="coronalViewContainer">
+                <!-- 2D冠状面视图组件将在这里渲染 -->
+            </div>
+
+            <!-- 矢状面视图 - 右下 -->
+            <div class="view-panel sagittal" id="sagittalViewContainer">
+                <!-- 2D矢状面视图组件将在这里渲染 -->
+            </div>
+        </div>
+        </div> <!-- 关闭 content-wrapper -->
+    </div>
+
+    <!-- 加载组件脚本 -->
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js"></script>
+    <script src="../../shared/scripts/components/POIComponent.js"></script>
+    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
+
+    <script>
+        // 组件实例
+        let targetSequenceTreeComponent = null;
+        let roiComponent = null;
+        let poiComponent = null;
+        let registrationComponent = null;
+        let axialViewComponent = null;
+        let coronalViewComponent = null;
+        let sagittalViewComponent = null;
+        let moduleToolbar = null;
+        let doseComponent = null;
+        let patientOverviewComponent = null;
+        const defaultPatient = {
+            name: 'Dong, Wuping',
+            id: '0000576304',
+            birthDate: '19730307',
+            gender: 'M'
+        };
+
+        // 左侧栏页签切换逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            // 患者概览
+            patientOverviewComponent = new PatientOverviewComponent('patientOverviewCard', {
+                patient: defaultPatient
+            });
+
+            const sidebarTabs = document.querySelectorAll('.sidebar-tab');
+            const contentPanels = document.querySelectorAll('.sidebar-content-panel');
+
+            const panelMap = {
+                'series': 'seriesPanel',
+                'roi': 'roiPanel',
+                'poi': 'poiPanel',
+                'reg': 'regPanel',
+                'dose': 'dosePanel'
+            };
+
+            sidebarTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const panelName = this.getAttribute('data-panel');
+                    const panelId = panelMap[panelName];
+
+                    if (!panelId) return;
+
+                    // 更新页签激活状态
+                    sidebarTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // 切换内容面板
+                    contentPanels.forEach(p => p.classList.remove('active'));
+                    document.getElementById(panelId).classList.add('active');
+                });
+            });
+
+            // 初始化组件
+            initComponents();
+        });
+
+        // 初始化所有组件
+        function initComponents() {
+            // 初始化序列树组件
+            if (window.SequenceTreeComponent) {
+                const container = document.getElementById('targetSequenceContainer');
+                if (container) {
+                    // 移除加载指示器
+                    container.innerHTML = '';
+                    
+                    targetSequenceTreeComponent = new SequenceTreeComponent('targetSequenceContainer', {
+                        prefix: 'target-',
+                        onSequenceSelect: function(sequenceName, element) {
+                            console.log('靶区勾画序列选择:', sequenceName);
+                            // 可以在这里添加序列选择后的处理逻辑
+                        },
+                        onFileSelect: function(fileName, element) {
+                            console.log('靶区勾画文件选择:', fileName);
+                            // 可以在这里添加文件选择后的处理逻辑
+                        },
+                        showFileInfo: false // 靶区勾画模块不需要显示文件信息
+                    });
+                }
+            }
+            // 初始化模块工具栏
+            if (typeof ModuleToolbarComponent !== 'undefined') {
+                const targetDelineationTools = [
+                    { id: 'auto-delineation', icon: 'fas fa-magic', label: '自动勾画', tooltip: '自动勾画', category: '常规' },
+                    { id: 'brush', icon: 'fas fa-paint-brush', label: '画刷', tooltip: '画刷', category: '常规' },
+                    { id: 'pen', icon: 'fas fa-pen', label: '画笔', tooltip: '画笔', category: '常规' },
+                    { id: 'shape', icon: 'fas fa-shapes', label: '图形', tooltip: '图形', category: '常规' },
+                    { id: 'copy', icon: 'fas fa-copy', label: '复制', tooltip: '复制', category: '常规' },
+                    { id: 'paste', icon: 'fas fa-paste', label: '粘贴', tooltip: '粘贴', category: '常规' },
+                    { id: 'structure', icon: 'fas fa-cube', label: '结构', tooltip: '结构', category: '常规' },
+                    { id: 'push-draw', icon: 'fas fa-wave-square', label: '推值勾画', tooltip: '推值勾画', category: '常规' },
+                    { id: 'threshold-remove', icon: 'fas fa-sliders-h', label: '阈值剔除', tooltip: '阈值剔除', category: '常规' },
+                    { id: 'generate-bolus', icon: 'fas fa-syringe', label: '生成Bolus', tooltip: '生成Bolus', category: '常规' },
+                    { id: 'qa', icon: 'fas fa-shield-alt', label: '勾画QA', tooltip: '勾画QA', category: 'QA' },
+                    { id: 'diff-analysis', icon: 'fas fa-chart-line', label: '勾画差异分析', tooltip: '勾画差异分析', category: 'QA' },
+                    { id: 'display-fusion', icon: 'fas fa-layer-group', label: '显示融合', tooltip: '显示融合', category: 'QA' },
+                    { id: 'review', icon: 'fas fa-user-check', label: '勾画审核', tooltip: '勾画审核', category: '审核' },
+                    { id: 'unlock', icon: 'fas fa-unlock-alt', label: '勾画解锁', tooltip: '勾画解锁', category: '审核' }
+                ];
+
+                moduleToolbar = new ModuleToolbarComponent('moduleToolbarContainer', {
+                    tools: targetDelineationTools,
+                    categories: ['常规', 'QA', '审核'], // 定义模块的分类
+                    moduleId: 'target-delineation', // 模块标识，用于数据持久化
+                    // accountId: 'user123', // 账号ID（可选，用于跟随账号存储）
+                    onToolClick: (toolId) => {
+                        console.log('工具点击:', toolId);
+                        // 这里可以添加具体的工具功能
+                    }
+                });
+            }
+
+            // 初始化ROI组件
+            if (typeof ROIComponent !== 'undefined') {
+                roiComponent = new ROIComponent('roiContainer', {
+                    prefix: 'target-delineation-',
+                    onROISelect: (roiName) => {
+                        console.log('选中ROI:', roiName);
+                    }
+                });
+            }
+
+            // 初始化POI组件
+            if (typeof POIComponent !== 'undefined') {
+                poiComponent = new POIComponent('poiContainer', {
+                    prefix: 'target-delineation-',
+                    onPOISelect: (poiName) => {
+                        console.log('选中POI:', poiName);
+                    },
+                    onToolClick: (buttonId) => {
+                        console.log('POI工具点击:', buttonId);
+                    }
+                });
+            }
+
+            // 初始化配准组件
+            if (typeof RegistrationComponent !== 'undefined') {
+                const registrationContainer = document.getElementById('targetRegistrationContainer');
+                if (registrationContainer) {
+                    // 移除加载指示器
+                    registrationContainer.innerHTML = '';
+                    
+                    registrationComponent = new RegistrationComponent('targetRegistrationContainer', {
+                        prefix: 'target-',
+                        onRegistrationSelect: function(registrationId, element) {
+                            console.log('靶区勾画配准选择:', registrationId);
+                            // 可以在这里添加配准选择后的处理逻辑
+                        },
+                        onSequenceSelect: function(sequenceName, element) {
+                            console.log('靶区勾画配准序列选择:', sequenceName);
+                            // 可以在这里添加序列选择后的处理逻辑
+                        },
+                        onFileSelect: function(fileName, element) {
+                            console.log('靶区勾画配准文件选择:', fileName);
+                            // 可以在这里添加文件选择后的处理逻辑
+                        },
+                        showFileInfo: true
+                    });
+                }
+            }
+
+            // 初始化横断面视图组件
+            if (typeof CrossSectionView2DComponent !== 'undefined') {
+                if (document.getElementById('axialViewContainer')) {
+                    axialViewComponent = new CrossSectionView2DComponent('axialViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: false,
+                        contoursVisible: true  // 靶区勾画模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        // 等待图像加载完成后再添加轮廓
+                        if (!axialViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = axialViewComponent.imageData.width;
+                        const imageHeight = axialViewComponent.imageData.height;
+                        
+                        // 添加一个靶区勾画轮廓（黄色，显示）- 坐标相对于图像左上角
+                        // 创建一个在图像中心附近的轮廓
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        axialViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        axialViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                    }, 300);
+                }
+            }
+
+            // 初始化冠状面视图组件
+            if (typeof CoronalView2DComponent !== 'undefined') {
+                if (document.getElementById('coronalViewContainer')) {
+                    coronalViewComponent = new CoronalView2DComponent('coronalViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: false,
+                        contoursVisible: true  // 靶区勾画模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        if (!coronalViewComponent || !coronalViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = coronalViewComponent.imageData.width;
+                        const imageHeight = coronalViewComponent.imageData.height;
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        coronalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        coronalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                    }, 300);
+                }
+            }
+
+            // 初始化矢状面视图组件
+            if (typeof SagittalView2DComponent !== 'undefined') {
+                if (document.getElementById('sagittalViewContainer')) {
+                    sagittalViewComponent = new SagittalView2DComponent('sagittalViewContainer', {
+                        enableToolbar: true,
+                        enableLayerControl: true,
+                        showDoseLegend: false,
+                        contoursVisible: true  // 靶区勾画模块：显示所有轮廓
+                    });
+                    
+                    // 添加示例轮廓数据用于测试显示
+                    setTimeout(() => {
+                        if (!sagittalViewComponent || !sagittalViewComponent.imageData) {
+                            setTimeout(arguments.callee, 100);
+                            return;
+                        }
+                        
+                        const imageWidth = sagittalViewComponent.imageData.width;
+                        const imageHeight = sagittalViewComponent.imageData.height;
+                        const centerX = imageWidth / 2;
+                        const centerY = imageHeight / 2;
+                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
+                        
+                        // 添加轮廓1（黄色）
+                        const contour1Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour1Points.push({
+                                x: centerX + radius * Math.cos(angle),
+                                y: centerY + radius * Math.sin(angle)
+                            });
+                        }
+                        sagittalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
+                        
+                        // 添加轮廓2（绿色）
+                        const contour2Points = [];
+                        for (let i = 0; i < 8; i++) {
+                            const angle = (i / 8) * Math.PI * 2;
+                            contour2Points.push({
+                                x: centerX + radius * 1.5 * Math.cos(angle),
+                                y: centerY + radius * 1.5 * Math.sin(angle)
+                            });
+                        }
+                        sagittalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
+                    }, 300);
+                }
+            }
+
+            // 初始化DOSE组件
+            if (typeof DOSEComponent !== 'undefined') {
+                if (document.getElementById('doseContainer')) {
+                    doseComponent = new DOSEComponent('doseContainer', {
+                        prefix: 'target-delineation-',
+                        onDoseTypeChange: (doseType) => {
+                            console.log('剂量类型变更:', doseType);
+                        },
+                        onDoseSourceChange: (doseSource) => {
+                            console.log('剂量源变更:', doseSource);
+                        },
+                        onGlobalVisibilityToggle: (visible) => {
+                            console.log('全局可见性切换:', visible);
+                        },
+                        onFillToggle: (fillEnabled) => {
+                            console.log('填充切换:', fillEnabled);
+                        },
+                        onBoldToggle: (boldEnabled) => {
+                            console.log('加粗切换:', boldEnabled);
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>

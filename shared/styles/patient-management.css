@@ -1,0 +1,514 @@
+/* 患者管理模块样式 */
+
+/* 主内容区域 */
+.patient-management-content {
+    display: flex;
+    height: calc(100vh - var(--header-height, 60px) - var(--footer-height, 60px));
+    background-color: var(--background-medium, #1F1F1F);
+}
+
+/* 左侧面板 */
+.patient-left-panel {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-light, #3A3A3A);
+}
+
+/* 搜索栏 */
+.patient-search-section {
+    height: 60px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-light, #3A3A3A);
+    background-color: var(--background-light, #2F2F2F);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.patient-search-input {
+    width: 44.44%;
+    height: 36px;
+    padding: 0 15px 0 35px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    font-size: 14px;
+    background-color: var(--background-medium, #1F1F1F);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    background-size: 16px;
+    color: var(--text-secondary, #E6E6E6);
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.patient-search-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #3AACDE);
+    background-color: #262626;
+    box-shadow: 0 0 0 3px rgba(33, 143, 191, 0.15);
+}
+
+.patient-search-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.patient-search-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    background-color: var(--background-light, #2F2F2F);
+    color: var(--text-secondary, #E6E6E6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast, 0.2s ease);
+}
+
+.patient-search-btn:hover {
+    background-color: #333333;
+    border-color: var(--primary-color, #3AACDE);
+}
+
+.patient-search-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* 患者列表 */
+.patient-list-section {
+    flex: 1;
+    border-bottom: 1px solid var(--border-light, #3A3A3A);
+    background-color: var(--background-medium, #1F1F1F);
+    overflow: auto;
+}
+
+.patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.patient-table th {
+    background-color: var(--border-color, #2A2A2A);
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-secondary, #E6E6E6);
+    border-bottom: 1px solid var(--border-light, #3A3A3A);
+    position: relative;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.patient-table th.sortable::after {
+    content: "▲\A▼";
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-muted, #AAAAAA);
+    line-height: 1;
+    white-space: pre;
+}
+
+.patient-table th.sortable {
+    cursor: pointer;
+    transition: background-color var(--transition-fast, 0.2s ease);
+}
+
+.patient-table th.sortable:hover {
+    background-color: #333333;
+}
+
+.patient-table th.sortable[data-sort="asc"]::after {
+    content: "▲";
+    color: var(--primary-color, #3AACDE);
+}
+
+.patient-table th.sortable[data-sort="desc"]::after {
+    content: "▼";
+    color: var(--primary-color, #3AACDE);
+}
+
+.patient-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border-color, #2A2A2A);
+    color: var(--text-secondary, #E6E6E6);
+}
+
+.patient-table tr {
+    cursor: pointer;
+    transition: background-color var(--transition-fast, 0.2s ease);
+}
+
+.patient-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.patient-table tr.selected {
+    background-color: rgba(33, 143, 191, 0.2);
+}
+
+.patient-table tr.selected:hover {
+    background-color: rgba(33, 143, 191, 0.2);
+}
+
+.patient-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted, #AAAAAA);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 翻页功能 */
+.patient-pagination-section {
+    height: 40px;
+    padding: 8px 20px;
+    background-color: var(--background-light, #2F2F2F);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.patient-pagination-total {
+    color: var(--text-secondary, #E6E6E6);
+    font-size: 14px;
+}
+
+.patient-pagination-select {
+    padding: 4px 8px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    background-color: var(--background-medium, #1F1F1F);
+    font-size: 14px;
+    color: var(--text-secondary, #E6E6E6);
+    cursor: pointer;
+    position: relative;
+    min-width: 80px;
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.patient-pagination-select:hover {
+    border-color: var(--primary-color, #3AACDE);
+}
+
+.patient-pagination-jump {
+    color: var(--text-secondary, #E6E6E6);
+    font-size: 14px;
+}
+
+.patient-pagination-page-input {
+    padding: 4px 8px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    background-color: var(--background-medium, #1F1F1F);
+    font-size: 14px;
+    color: var(--primary-color, #3AACDE);
+    text-align: center;
+    width: 40px;
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.patient-pagination-page-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #3AACDE);
+    box-shadow: 0 0 0 2px rgba(33, 143, 191, 0.15);
+}
+
+.patient-pagination-page-unit {
+    color: var(--text-secondary, #E6E6E6);
+    font-size: 14px;
+}
+
+/* 翻页导航 */
+.patient-pagination-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.patient-pagination-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    background-color: var(--background-medium, #1F1F1F);
+    color: var(--text-secondary, #E6E6E6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.patient-pagination-btn:hover:not(:disabled) {
+    background-color: #333333;
+    border-color: var(--primary-color, #3AACDE);
+    color: var(--primary-color, #3AACDE);
+}
+
+.patient-pagination-btn:disabled {
+    background-color: var(--border-color, #2A2A2A);
+    color: var(--text-muted, #AAAAAA);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.patient-pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.patient-pagination-page {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #444;
+    border-radius: var(--border-radius, 4px);
+    background-color: var(--background-medium, #1F1F1F);
+    color: var(--text-secondary, #E6E6E6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all var(--transition-fast, 0.2s ease);
+}
+
+.patient-pagination-page:hover {
+    background-color: #333333;
+    border-color: var(--primary-color, #3AACDE);
+}
+
+.patient-pagination-page-active {
+    background-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #3AACDE);
+    color: var(--text-primary, #ffffff);
+}
+
+.patient-pagination-page-active:hover {
+    background-color: var(--primary-hover, #218FBF);
+    border-color: var(--primary-hover, #218FBF);
+}
+
+/* 右侧面板 */
+.patient-right-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 患者树 */
+.patient-tree-section {
+    flex: 1;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-light, #3A3A3A);
+    background-color: var(--background-medium, #1F1F1F);
+    overflow: auto;
+}
+
+.patient-tree-header {
+    font-weight: bold;
+    color: var(--text-secondary, #E6E6E6);
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.patient-tree-info {
+    color: var(--primary-color, #3AACDE);
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.patient-tree-container {
+    font-size: 13px;
+    color: var(--text-secondary, #E6E6E6);
+}
+
+.patient-tree-node {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--border-radius, 4px);
+    transition: background-color var(--transition-fast, 0.2s ease);
+}
+
+.patient-tree-node:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.patient-tree-node.selected {
+    background-color: rgba(33, 143, 191, 0.2);
+}
+
+.patient-tree-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.patient-tree-text {
+    flex: 1;
+    user-select: none;
+}
+
+/* 文件信息 */
+.patient-file-info-section {
+    flex: 0.5;
+    padding: 15px;
+    background-color: var(--background-medium, #1F1F1F);
+}
+
+.patient-file-info-title {
+    font-weight: bold;
+    color: var(--text-secondary, #E6E6E6);
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.patient-file-info-content {
+    font-size: 13px;
+    color: var(--text-secondary, #E6E6E6);
+}
+
+.patient-file-info-item {
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    padding-left: 15px;
+    color: #D6D6D6;
+}
+
+/* 底部栏 */
+.patient-footer {
+    height: var(--footer-height, 60px);
+    background-color: var(--background-light, #2F2F2F);
+    border-top: 1px solid var(--border-light, #3A3A3A);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.patient-footer-left {
+    display: flex;
+    gap: 10px;
+}
+
+.patient-footer-right {
+    display: flex;
+    gap: 15px;
+}
+
+.patient-footer-btn {
+    padding: 8px 20px;
+    border-radius: var(--border-radius, 4px);
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all var(--transition-fast, 0.2s ease);
+    min-height: var(--button-min-height, 32px);
+    min-width: var(--button-min-width, 80px);
+}
+
+.patient-footer-btn-secondary {
+    background-color: var(--background-light, #2F2F2F);
+    border-color: #444;
+    color: var(--text-secondary, #E6E6E6);
+}
+
+.patient-footer-btn-secondary:hover {
+    background-color: #333333;
+    border-color: var(--primary-color, #3AACDE);
+}
+
+.patient-footer-btn-primary {
+    background-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #3AACDE);
+    color: var(--text-primary, #ffffff);
+}
+
+.patient-footer-btn-primary:hover {
+    background-color: var(--primary-hover, #218FBF);
+    border-color: var(--primary-hover, #218FBF);
+}
+
+/* 右键菜单 */
+.patient-context-menu {
+    position: fixed;
+    min-width: 120px;
+    max-width: 160px;
+    background: var(--background-light, #2F2F2F);
+    border: 1px solid var(--border-light, #3A3A3A);
+    border-radius: var(--border-radius-large, 8px);
+    box-shadow: var(--box-shadow-large, 0 8px 30px rgba(0, 0, 0, 0.2));
+    z-index: 2000;
+    padding: 6px 0;
+    display: none;
+}
+
+.patient-context-menu-item {
+    width: 100%;
+    padding: 8px 12px;
+    color: var(--text-secondary, #E6E6E6);
+    background: transparent;
+    border: none;
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--transition-fast, 0.2s ease);
+    white-space: nowrap;
+}
+
+.patient-context-menu-item:hover {
+    background-color: rgba(33, 143, 191, 0.15);
+    color: var(--primary-color, #3AACDE);
+}
+
+/* 响应式设计 */
+@media (max-width: 1920px) {
+    .patient-management-content {
+        width: 100%;
+        min-width: 1920px;
+    }
+}
+
+/* 滚动条样式 */
+.patient-list-section::-webkit-scrollbar,
+.patient-tree-section::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.patient-list-section::-webkit-scrollbar-track,
+.patient-tree-section::-webkit-scrollbar-track {
+    background: var(--background-medium, #1F1F1F);
+}
+
+.patient-list-section::-webkit-scrollbar-thumb,
+.patient-tree-section::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+.patient-list-section::-webkit-scrollbar-thumb:hover,
+.patient-tree-section::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
