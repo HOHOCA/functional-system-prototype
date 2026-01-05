@@ -16,6 +16,10 @@
         <!-- 左侧导航栏 -->
         <aside class="gallery-sidebar">
             <div class="gallery-header">
+                <button class="gallery-back-btn" onclick="goBack()" title="返回主页">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>返回</span>
+                </button>
                 <h1 class="gallery-title">组件库</h1>
                 <div class="gallery-subtitle">Component Gallery</div>
             </div>
@@ -90,5 +94,10 @@
     <script src="../proton-client/scripts/EnergyLayerViewComponent.js"></script>
     <!-- 加载展示逻辑 -->
     <script src="gallery.js"></script>
+    <script>
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+    </script>
 </body>
 </html>

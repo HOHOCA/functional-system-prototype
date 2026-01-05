@@ -669,20 +669,32 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// 窗口控制按钮
-document.querySelectorAll('.window-control-btn').forEach((btn) => {
-    btn.addEventListener('click', function() {
-        if (this.classList.contains('close-btn')) {
-            // 关闭窗口
-            if (confirm('确定要关闭应用程序吗？')) {
-                window.close();
+// 窗口控制按钮 - 使用事件委托确保能捕获到所有按钮
+function initWindowControls() {
+    // 使用事件委托，在document上监听点击事件
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.window-control-btn');
+        if (btn) {
+            if (btn.classList.contains('close-btn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                // 返回到主页
+                window.location.href = '../index.html';
+            } else {
+                // 最小化窗口
+                alert('最小化窗口');
             }
-        } else {
-            // 最小化窗口
-            alert('最小化窗口');
         }
     });
-});
+}
+
+// 在DOM加载完成后初始化
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWindowControls);
+} else {
+    // DOM已经加载完成，立即执行
+    initWindowControls();
+}
 
 // 初始化右侧标签页
 function initializeRightTabs() {

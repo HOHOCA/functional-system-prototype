@@ -298,6 +298,19 @@
             document.getElementById('navRedoBtn').addEventListener('click', function() {
                 console.log('恢复按钮点击');
             });
+            
+            // 窗口控制按钮事件
+            document.querySelectorAll('.window-control-btn').forEach((btn) => {
+                btn.addEventListener('click', function() {
+                    if (this.classList.contains('close-btn')) {
+                        // 返回到主页
+                        window.location.href = '../index.html';
+                    } else {
+                        // 最小化窗口
+                        alert('最小化窗口');
+                    }
+                });
+            });
         });
     </script>
 </body>
