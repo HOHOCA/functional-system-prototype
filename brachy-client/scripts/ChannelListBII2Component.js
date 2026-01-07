@@ -4576,17 +4576,21 @@ class ChannelListBII2Component {
         const holeRadius = 10; // 其他所有孔洞的统一半径（C1-C12、A1-A4、B1-B5）
         
         // 计算C1-C12位置（环形排列，从C1开始顺时针）
+        // C系列序号整体左移1位：原来C1的位置显示C12，原来C2的位置显示C1...
         const cHoles = [];
         for (let i = 0; i < 12; i++) {
             const angle = (i * 30 - 90) * Math.PI / 180; // -90度开始，每30度一个
             const x = centerX + cHolesRadius * Math.cos(angle);
             const y = centerY + cHolesRadius * Math.sin(angle);
-            cHoles.push({ num: i + 1, x, y });
+            // 序号左移1位：原来C1的位置显示C12，原来C2的位置显示C1...
+            const num = ((i + 11) % 12) + 1;
+            cHoles.push({ num: num, x, y });
         }
         
         // 计算左侧A1-A4位置（外侧弧形，1/4圆弧，从上到下）
         // SVG角度：0度在右边，90度在下，180度在左边，270度在上
         // 左侧应该在180度附近，从上到下，角度从大约150度到210度（60度范围，约1/4圆）
+        // A系列序号反转：A1在A4位置，A2在A3位置，A3在A2位置，A4在A1位置
         const leftA = [];
         const leftAStartAngle = 150; // 左侧起始角度（左上方向）
         const leftAAngleRange = 60; // 角度范围（度），约1/4圆
@@ -4595,21 +4599,25 @@ class ChannelListBII2Component {
             const radius = 140; // A系列半径
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
-            leftA.push({ num: i + 1, x, y });
+            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
+            leftA.push({ num: 4 - i, x, y });
         }
         
         // 计算左侧B1-B5位置（内侧弧形，1/4圆弧，从上到下）
+        // B系列序号反转：B1在B5位置，B2在B4位置，B3不变，B4在B2位置，B5在B1位置
         const leftB = [];
         for (let i = 0; i < 5; i++) {
             const angle = (leftAStartAngle + (i * leftAAngleRange / 4)) * Math.PI / 180;
             const radius = cHolesRadius + 30; // 内侧，比A孔更近
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
-            leftB.push({ num: i + 1, x, y });
+            // 序号反转：5-i (i=0->5, i=1->4, i=2->3, i=3->2, i=4->1)
+            leftB.push({ num: 5 - i, x, y });
         }
         
         // 计算右侧A1-A4位置（外侧弧形，1/4圆弧，从上到下）
         // 右侧应该在0度附近，从上到下，角度从大约30度到-30度（或330度到30度）
+        // A系列序号反转：A1在A4位置，A2在A3位置，A3在A2位置，A4在A1位置
         const rightA = [];
         const rightAStartAngle = 30; // 右侧起始角度（右上方向）
         for (let i = 0; i < 4; i++) {
@@ -4617,17 +4625,20 @@ class ChannelListBII2Component {
             const radius = 140; // A系列半径
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
-            rightA.push({ num: i + 1, x, y });
+            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
+            rightA.push({ num: 4 - i, x, y });
         }
         
         // 计算右侧B1-B5位置（内侧弧形，1/4圆弧，从上到下）
+        // B系列序号反转：B1在B5位置，B2在B4位置，B3不变，B4在B2位置，B5在B1位置
         const rightB = [];
         for (let i = 0; i < 5; i++) {
             const angle = (rightAStartAngle - (i * leftAAngleRange / 4)) * Math.PI / 180;
             const radius = cHolesRadius + 30;
             const x = centerX + radius * Math.cos(angle);
             const y = centerY + radius * Math.sin(angle);
-            rightB.push({ num: i + 1, x, y });
+            // 序号反转：5-i (i=0->5, i=1->4, i=2->3, i=3->2, i=4->1)
+            rightB.push({ num: 5 - i, x, y });
         }
         
         return `
@@ -4699,27 +4710,34 @@ class ChannelListBII2Component {
         const rectHeight = 16; // A/B矩形高度
         
         // 计算C1-C12位置
+        // C系列序号整体左移1位：原来C1的位置显示C12，原来C2的位置显示C1...
         const cHoles = [];
         for (let i = 0; i < 12; i++) {
             const angle = (i * 30 - 90) * Math.PI / 180;
             const x = centerX + cHolesRadius * Math.cos(angle);
             const y = centerY + cHolesRadius * Math.sin(angle);
-            cHoles.push({ num: i + 1, x, y });
+            // 序号左移1位：原来C1的位置显示C12，原来C2的位置显示C1...
+            const num = ((i + 11) % 12) + 1;
+            cHoles.push({ num: num, x, y });
         }
         
         // 左侧A/B1-A/B4矩形位置（垂直排列）
+        // A/B系列序号反转：A/B1在A/B4位置，A/B2在A/B3位置，A/B3在A/B2位置，A/B4在A/B1位置
         const leftAB = [];
         const leftX = centerX - 120;
         const leftStartY = centerY - 50;
         for (let i = 0; i < 4; i++) {
-            leftAB.push({ num: i + 1, x: leftX, y: leftStartY + i * 35 });
+            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
+            leftAB.push({ num: 4 - i, x: leftX, y: leftStartY + i * 35 });
         }
         
         // 右侧A/B1-A/B4矩形位置（垂直排列）
+        // A/B系列序号反转：A/B1在A/B4位置，A/B2在A/B3位置，A/B3在A/B2位置，A/B4在A/B1位置
         const rightAB = [];
         const rightX = centerX + 120;
         for (let i = 0; i < 4; i++) {
-            rightAB.push({ num: i + 1, x: rightX, y: leftStartY + i * 35 });
+            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
+            rightAB.push({ num: 4 - i, x: rightX, y: leftStartY + i * 35 });
         }
         
         return `
