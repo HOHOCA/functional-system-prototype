@@ -233,9 +233,6 @@ class RegistrationComponent {
                     const registrationId = card.dataset.id;
                     const thumbnailType = thumbnail.dataset.thumbnailType;
                     
-                    // 切换选中状态
-                    this.toggleThumbnailSelection(card, thumbnail);
-                    
                     // 调用原有的处理函数
                     const label = thumbnail.querySelector('.thumbnail-label')?.textContent;
                     if (label) {
