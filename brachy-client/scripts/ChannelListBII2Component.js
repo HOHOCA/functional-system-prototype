@@ -4721,23 +4721,21 @@ class ChannelListBII2Component {
             cHoles.push({ num: num, x, y });
         }
         
-        // 左侧A/B1-A/B4矩形位置（垂直排列）
-        // A/B系列序号反转：A/B1在A/B4位置，A/B2在A/B3位置，A/B3在A/B2位置，A/B4在A/B1位置
+        // 左侧A/B1-A/B4矩形位置（垂直排列，从上到下升序）
         const leftAB = [];
         const leftX = centerX - 120;
         const leftStartY = centerY - 50;
         for (let i = 0; i < 4; i++) {
-            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
-            leftAB.push({ num: 4 - i, x: leftX, y: leftStartY + i * 35 });
+            // 从上到下升序：A/B1在顶部，A/B4在底部
+            leftAB.push({ num: i + 1, x: leftX, y: leftStartY + i * 35 });
         }
         
-        // 右侧A/B1-A/B4矩形位置（垂直排列）
-        // A/B系列序号反转：A/B1在A/B4位置，A/B2在A/B3位置，A/B3在A/B2位置，A/B4在A/B1位置
+        // 右侧A/B1-A/B4矩形位置（垂直排列，从上到下升序）
         const rightAB = [];
         const rightX = centerX + 120;
         for (let i = 0; i < 4; i++) {
-            // 序号反转：4-i (i=0->4, i=1->3, i=2->2, i=3->1)
-            rightAB.push({ num: 4 - i, x: rightX, y: leftStartY + i * 35 });
+            // 从上到下升序：A/B1在顶部，A/B4在底部
+            rightAB.push({ num: i + 1, x: rightX, y: leftStartY + i * 35 });
         }
         
         return `
