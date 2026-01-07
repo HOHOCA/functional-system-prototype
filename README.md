@@ -28,7 +28,7 @@
 ### 🔴 光子治疗计划系统 (MOZI)
 **状态**: 规划中
 
-### 🟡 勾画系统 (RTFactory)
+### 🟡 放疗工坊 (RTFactory)
 **状态**: 规划中
 
 ### 🟣 组件画廊 (Component Gallery)
