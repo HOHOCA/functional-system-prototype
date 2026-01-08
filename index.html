@@ -293,7 +293,7 @@
         <!-- 产品网格 -->
         <div class="products-grid">
             <!-- 后装系统 -->
-            <div class="product-card brachy" onclick="navigateTo('brachy-client/index.html')">
+            <div class="product-card brachy" onclick="navigateTo('brachy-client/index.html', this)">
                 <div class="card-icon">
                     <i class="fas fa-syringe"></i>
                     </div>
@@ -304,7 +304,7 @@
                                 </div>
                                 
             <!-- 质子系统 -->
-            <div class="product-card proton" onclick="navigateTo('proton-client/index.html')">
+            <div class="product-card proton" onclick="navigateTo('proton-client/index.html', this)">
                 <div class="card-icon">
                                 <i class="fas fa-atom"></i>
                         </div>
@@ -337,7 +337,7 @@
                     </div>
 
             <!-- 组件画廊 -->
-            <div class="product-card gallery" onclick="navigateTo('component-gallery/index.html')">
+            <div class="product-card gallery" onclick="navigateTo('component-gallery/index.html', this)">
                 <div class="card-icon">
                     <i class="fas fa-cubes"></i>
                 </div>
@@ -351,9 +351,9 @@
             </div>
 
     <script>
-        function navigateTo(url) {
+        function navigateTo(url, element) {
             // 检查是否是disabled卡片
-            if (event.currentTarget.classList.contains('disabled')) {
+            if (element && element.classList.contains('disabled')) {
                 return;
             }
             window.location.href = url;
