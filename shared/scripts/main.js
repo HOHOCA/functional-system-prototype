@@ -6993,8 +6993,9 @@ function initializeOptimizationBEVView() {
     
     // 延迟初始化，确保DOM已渲染
     setTimeout(() => {
-        if (window.BeamEyeViewComponent) {
-            const bevView = new window.BeamEyeViewComponent('optbev-view-container', {
+        const BEVComponent = window.ProtonBeamEyeViewComponent || window.BeamEyeViewComponent;
+        if (BEVComponent) {
+            const bevView = new BEVComponent('optbev-view-container', {
                 onBeamSelect: (beamId) => {
                     console.log('BEV视图射束选择:', beamId);
                 },
@@ -7026,7 +7027,7 @@ function initializeOptimizationBEVView() {
             
             console.log('计划优化BEV视图组件初始化完成');
         } else {
-            console.error('BeamEyeViewComponent not available');
+            console.error('BEV component not available');
         }
     }, 100);
 }
@@ -7139,8 +7140,9 @@ function initializePlanDesignBEVView() {
     }
     
     setTimeout(() => {
-        if (window.BeamEyeViewComponent) {
-            const bevView = new window.BeamEyeViewComponent('planBevViewContainer', {
+        const BEVComponent = window.ProtonBeamEyeViewComponent || window.BeamEyeViewComponent;
+        if (BEVComponent) {
+            const bevView = new BEVComponent('planBevViewContainer', {
                 onBeamSelect: (beamId) => {
                     console.log('计划设计BEV视图射束选择:', beamId);
                 },
@@ -7172,7 +7174,7 @@ function initializePlanDesignBEVView() {
             
             console.log('计划设计BEV视图组件初始化完成');
         } else {
-            console.error('BeamEyeViewComponent not available');
+            console.error('BEV component not available');
         }
     }, 100);
 }
@@ -7194,8 +7196,9 @@ function initializePlanEvaluationBEVView() {
     }
     
     setTimeout(() => {
-        if (window.BeamEyeViewComponent) {
-            const bevView = new window.BeamEyeViewComponent('evalBevViewContainer', {
+        const BEVComponent = window.ProtonBeamEyeViewComponent || window.BeamEyeViewComponent;
+        if (BEVComponent) {
+            const bevView = new BEVComponent('evalBevViewContainer', {
                 onBeamSelect: (beamId) => {
                     console.log('计划评估BEV视图射束选择:', beamId);
                 },
@@ -7227,7 +7230,7 @@ function initializePlanEvaluationBEVView() {
             
             console.log('计划评估BEV视图组件初始化完成');
         } else {
-            console.error('BeamEyeViewComponent not available');
+            console.error('BEV component not available');
         }
     }, 100);
 }
@@ -7249,8 +7252,9 @@ function initializeQaPlanBEVView() {
     }
     
     setTimeout(() => {
-        if (window.BeamEyeViewComponent) {
-            const bevView = new window.BeamEyeViewComponent('qaBevViewContainer', {
+        const BEVComponent = window.ProtonBeamEyeViewComponent || window.BeamEyeViewComponent;
+        if (BEVComponent) {
+            const bevView = new BEVComponent('qaBevViewContainer', {
                 onBeamSelect: (beamId) => {
                     console.log('QA计划BEV视图射束选择:', beamId);
                 },
@@ -7282,7 +7286,7 @@ function initializeQaPlanBEVView() {
             
             console.log('QA计划BEV视图组件初始化完成');
         } else {
-            console.error('BeamEyeViewComponent not available');
+            console.error('BEV component not available');
         }
     }, 100);
 }

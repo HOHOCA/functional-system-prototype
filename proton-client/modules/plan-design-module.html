@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>计划评估 - MOZI Proton</title>
+    <title>计划设计 - MOZI Proton</title>
         <link rel="stylesheet" href="../../shared/styles/styles.css">
         <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
         <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
@@ -321,64 +321,44 @@
             overflow: hidden;
         }
 
-        /* 主显示区域 - 左右各占50%的布局 */
+        /* 主显示区域 - 改为三行布局，每行各占1/3 */
         .main-display-area {
             display: contents; /* 让子元素直接参与父级的flex布局 */
         }
 
-        /* 主容器：左右各占50% */
-        .main-view-container {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 50% 50%; /* 强制左右各占50% */
-            gap: 2px;
-            background: #1a1a1a;
-            padding: 2px;
-            min-height: 0;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* 左侧区域：横断面（上）+ 矢状面+冠状面（下） */
-        .left-view-area {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            min-height: 0;
-            width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        /* 右侧区域：3D视图（上）+ 数据表格（下） */
-        .right-view-area {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            min-height: 0;
-            width: 100%;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-
-        /* 左侧上半部分：横断面视图 */
-        .view-panel.axial {
-            flex: 1.3;
-        }
-
-        /* 左侧下半部分：矢状面+冠状面 */
-        .left-bottom-views {
+        /* 第一行：横断面+冠状面 */
+        .view-row-1 {
             flex: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2px;
+            background: #1a1a1a;
+            padding: 2px;
             min-height: 0;
-            width: 100%;
-            box-sizing: border-box;
         }
 
-        /* 矢状面视图 */
-        .view-panel.sagittal {
+        /* 第二行：左侧拆分区域 + DVH */
+        .view-row-2 {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            background: #1a1a1a;
+            padding: 2px;
+            min-height: 0;
+        }
+
+        /* 第二行左侧：拆分为左右两个等分面板 */
+        .view-row-2-split {
+            grid-column: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            min-height: 0;
+        }
+
+        /* 横断面视图 */
+        .view-panel.axial {
             grid-column: 1;
         }
 
@@ -387,49 +367,35 @@
             grid-column: 2;
         }
 
-        /* 右侧上半部分：3D视图 */
-        .view-panel.view3d {
-            flex: 1.3;
+        /* DVH视图 */
+        .view-panel.dvh {
+            grid-column: 2;
             display: flex;
             flex-direction: column;
             background: #2a2a2a;
-            min-height: 0;
-        }
-
-        /* 右侧下半部分：数据表格视图 */
-        .view-panel.data-table {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #2a2a2a;
-            min-height: 0;
+            min-height: 0; /* 允许收缩 */
         }
 
         .view-panel {
             background: #000000;
             border: 1px solid #404040;
-            border-radius: 2px;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            box-sizing: border-box;
-            min-width: 0; /* 允许收缩 */
         }
 
-        /* 视图标签页 - 通用样式 */
-        .view-tabs {
+        /* DVH视图标签页 - 使用与底部控制面板相同的样式 */
+        .dvh-view-tabs {
             display: flex;
-            align-items: center;
+            align-items: center; /* 垂直居中对齐 */
             background: #252525;
             border-bottom: 1px solid #404040;
             padding: 0;
-            flex-shrink: 0;
+            flex-shrink: 0; /* 标签页区域不收缩 */
         }
 
-        /* 工具栏宿主容器 - 放在标签页右侧 */
-        .view-toolbar-host {
+        /* 3D工具栏宿主容器 - 放在标签页右侧 */
+        .view3d-toolbar-host {
             flex: 1;
             display: flex;
             justify-content: flex-end;
@@ -439,7 +405,7 @@
         }
 
         /* 当工具栏在外层时，调整工具栏样式 */
-        .view-tabs .cross-section-view2d-toolbar {
+        .dvh-view-tabs .cross-section-view2d-toolbar {
             background: transparent;
             border: none;
             padding: 0;
@@ -447,17 +413,17 @@
             min-height: auto;
         }
 
-        .view-tabs .cross-section-view2d-toolbar .toolbar-group-right {
+        .dvh-view-tabs .cross-section-view2d-toolbar .toolbar-group-right {
             margin-left: 0;
         }
 
-        /* 画布宿主容器 - 占据全部内容区域 */
-        .view-canvas-host {
+        /* 3D画布宿主容器 - 占据全部内容区域 */
+        .view3d-canvas-host {
             width: 100%;
             height: 100%;
         }
 
-        .view-tab {
+        .dvh-view-tab {
             padding: 10px 20px;
             background: transparent;
             border: none;
@@ -468,48 +434,64 @@
             border-bottom: 2px solid transparent;
         }
 
-        .view-tab:hover {
+        .dvh-view-tab:hover {
             color: #ffffff;
             background: #2a2a2a;
         }
 
-        .view-tab.active {
+        .dvh-view-tab.active {
             color: #3AACDE;
             border-bottom-color: #3AACDE;
             background: #2a2a2a;
         }
 
-        .view-content {
+        .dvh-view-content {
             flex: 1;
             overflow: hidden;
             display: none;
-            min-height: 0;
-            position: relative;
+            min-height: 0; /* 允许内容区域收缩 */
+            position: relative; /* 确保内容可以正确定位 */
         }
 
-        .view-content.active {
-            display: flex;
+        .dvh-view-content.active {
+            display: flex; /* 使用flex，便于容纳工具栏+画布 */
             flex-direction: column;
         }
         
         /* 确保非激活的内容完全隐藏 */
-        .view-content:not(.active) {
+        .dvh-view-content:not(.active) {
             display: none !important;
         }
 
-        /* 确保组件填满面板 */
-        .view-panel.axial > *,
-        .view-panel.sagittal > *,
-        .view-panel.coronal > * {
-            width: 100%;
-            height: 100%;
-        }
-        
-        /* 3D和数据表格面板已有自己的flex布局 */
-        .view-panel.view3d,
-        .view-panel.data-table {
+        /* 3D视图页签内部的工具栏宿主与画布宿主 */
+        #view3dContent.active {
             display: flex;
             flex-direction: column;
+        }
+        
+        #view3dContent:not(.active) {
+            display: none !important;
+        }
+        
+        #dvhContent.active {
+            display: block;
+        }
+        
+        #dvhContent:not(.active) {
+            display: none !important;
+        }
+        .view3d-toolbar-host {
+            flex-shrink: 0;
+        }
+        .view3d-canvas-host {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* 确保组件填满面板（排除DVH视图，因为它有自己的布局） */
+        .view-panel:not(.dvh) > * {
+            width: 100%;
+            height: 100%;
         }
 
         /* 滚动条样式 */
@@ -550,16 +532,24 @@
             line-height: 1em;
         }
 
-        /* 数据表格面板的标签页区域 */
-        .view-panel.data-table .bottom-control-tabs {
+        /* 底部控制面板 */
+        .bottom-control-panel {
+            flex: 1;
+            min-height: 0;
+            background: #2a2a2a;
+            border-top: 1px solid #404040;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .bottom-control-tabs {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: #252525;
             border-bottom: 1px solid #404040;
             padding: 0;
-            flex-shrink: 0;
-            height: 40px;
         }
 
         .bottom-control-tabs-left {
@@ -601,25 +591,16 @@
             opacity: 1;
         }
 
-        /* 全屏模式样式 - 针对数据表格区域 */
+        /* 全屏模式样式 */
         .plan-design-content.fullscreen-mode .top-area,
         .plan-design-content.fullscreen-mode .content-wrapper > .left-sidebar-tabs,
         .plan-design-content.fullscreen-mode .content-wrapper > .left-sidebar-content,
-        .plan-design-content.fullscreen-mode .main-view-container {
+        .plan-design-content.fullscreen-mode .main-content-area > .view-row-1,
+        .plan-design-content.fullscreen-mode .main-content-area > .view-row-2 {
             display: none;
         }
 
-        .plan-design-content.fullscreen-mode .main-content-area {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 9999;
-            background: #2a2a2a;
-        }
-
-        .plan-design-content.fullscreen-mode .view-panel.data-table {
+        .plan-design-content.fullscreen-mode .bottom-control-panel {
             position: fixed;
             top: 0;
             left: 0;
@@ -630,15 +611,14 @@
         }
 
         .bottom-control-tab {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: transparent;
             border: none;
             color: #888;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             transition: all 0.3s;
             border-bottom: 2px solid transparent;
-            white-space: nowrap;
         }
 
         .bottom-control-tab:hover {
@@ -656,7 +636,6 @@
             flex: 1;
             overflow: hidden;
             display: none;
-            min-height: 0;
         }
 
         .bottom-control-content.active {
@@ -667,7 +646,7 @@
         .bottom-control-panel-body {
             flex: 1;
             overflow-y: auto;
-            padding: 8px;
+            padding: 12px;
         }
 
         /* 底部工具栏 */
@@ -697,12 +676,6 @@
         .bottom-control-toolbar-btn:hover {
             background: #555;
             color: #fff;
-        }
-
-        /* 计划评估模块：隐藏临床目标和通道列表的底部工具栏 */
-        #clinicalTargetContainer .clinical-target-toolbar,
-        #channelListContainer .channel-list-toolbar {
-            display: none !important;
         }
     </style>
 </head>
@@ -781,102 +754,105 @@
             </div>
         </div>
 
-        <!-- 右侧主内容区域（左右各占50%布局）-->
+        <!-- 右侧主内容区域（包含主显示区和底部控制面板） -->
         <div class="main-content-area">
-            <div class="main-view-container">
-                <!-- 左侧区域：横断面（上）+ 矢状面+冠状面（下） -->
-                <div class="left-view-area">
-                    <!-- 横断面视图 - 左侧上半部分 -->
-                    <div class="view-panel axial" id="axialViewContainer">
-                        <!-- 2D横截面视图组件将在这里渲染 -->
+            <!-- 第一行：横断面+冠状面 -->
+            <div class="view-row-1">
+                <!-- 横断面视图 - 左上 -->
+                <div class="view-panel axial" id="axialViewContainer">
+                    <!-- 2D横截面视图组件将在这里渲染 -->
+                </div>
+
+                <!-- 冠状面视图 - 右上 -->
+                <div class="view-panel coronal" id="coronalViewContainer">
+                    <!-- 2D冠状面视图组件将在这里渲染 -->
+                </div>
+            </div>
+
+            <!-- 第二行：左侧拆分区域 + DVH -->
+            <div class="view-row-2">
+                <div class="view-row-2-split">
+                    <div class="view-panel" id="leftPanelContainer"></div>
+                    <div class="view-panel" id="rightPanelContainer"></div>
+                </div>
+
+                <!-- DVH视图 - 右下（BEV/DVH/LETdVH 三标签，与新质子一致） -->
+                <div class="view-panel dvh" id="dvhViewContainer">
+                    <div class="dvh-view-tabs">
+                        <button class="dvh-view-tab active" data-tab="view3d">BEV</button>
+                        <button class="dvh-view-tab" data-tab="dvh">DVH</button>
+                        <div id="view3dToolbarHost" class="view3d-toolbar-host"></div>
+                        <div id="dvhToolbarHost" class="view3d-toolbar-host" style="display: none;"></div>
                     </div>
+                    <div class="dvh-view-content active" id="view3dContent">
+                        <div id="view3dCanvasHost" class="view3d-canvas-host"></div>
+                    </div>
+                    <div class="dvh-view-content" id="dvhContent">
+                        <div id="dvhCanvasHost" class="view3d-canvas-host"></div>
+                    </div>
+                </div>
+            </div>
 
-                    <!-- 左侧下半部分：矢状面+冠状面 -->
-                    <div class="left-bottom-views">
-                        <!-- 矢状面视图 - 左下 -->
-                        <div class="view-panel sagittal" id="sagittalViewContainer">
-                            <!-- 2D矢状面视图组件将在这里渲染 -->
-                        </div>
-
-                        <!-- 冠状面视图 - 右下 -->
-                        <div class="view-panel coronal" id="coronalViewContainer">
-                            <!-- 2D冠状面视图组件将在这里渲染 -->
-                        </div>
+            <!-- 底部控制面板 -->
+            <div class="bottom-control-panel">
+                <div class="bottom-control-tabs">
+                    <div class="bottom-control-tabs-left">
+                        <button class="bottom-control-tab active" data-tab="beamList">射束列表</button>
+                        <button class="bottom-control-tab" data-tab="beamOptimization">射束优化设置</button>
+                        <button class="bottom-control-tab" data-tab="clinicalTarget">临床目标</button>
+                        <button class="bottom-control-tab" data-tab="doseStats">剂量统计</button>
+                        <button class="bottom-control-tab" data-tab="energyLayer">能量层</button>
+                    </div>
+                    <div class="bottom-control-tabs-right">
+                        <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏下边栏">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="gradient-bottom-maximize" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 射束列表内容 -->
+                <div class="bottom-control-content active" id="beamListContent">
+                    <div class="bottom-control-panel-body" id="beamListContainer">
+                        <!-- 射束列表组件将在这里渲染 -->
                     </div>
                 </div>
 
-                <!-- 右侧区域：3D视图（上）+ 数据表格（下） -->
-                <div class="right-view-area">
-                    <!-- 3D视图 - 右侧上半部分 -->
-                    <div class="view-panel view3d" id="view3dViewContainer">
-                        <div class="view-tabs">
-                            <button class="view-tab active" data-tab="view3d">3D</button>
-                            <button class="view-tab" data-tab="dvh">DVH</button>
-                            <div id="view3dToolbarHost" class="view-toolbar-host"></div>
-                            <div id="dvhToolbarHost" class="view-toolbar-host" style="display: none;"></div>
-                        </div>
-                        <div class="view-content active" id="view3dContent">
-                            <div id="view3dCanvasHost" class="view-canvas-host"></div>
-                        </div>
-                        <div class="view-content" id="dvhContent">
-                            <div id="dvhCanvasHost" class="view-canvas-host"></div>
-                        </div>
+                <!-- 射束优化设置内容 -->
+                <div class="bottom-control-content" id="beamOptimizationContent">
+                    <div class="bottom-control-panel-body" id="beamOptimizationContainer">
+                        <!-- 射束优化设置组件将在这里渲染 -->
                     </div>
+                </div>
 
-                    <!-- 数据表格视图 - 右侧下半部分 -->
-                    <div class="view-panel data-table" id="dataTableContainer">
-                        <div class="bottom-control-tabs">
-                            <div class="bottom-control-tabs-left">
-                                <button class="bottom-control-tab active" data-tab="doseStats">剂量统计</button>
-                                <button class="bottom-control-tab" data-tab="clinicalTarget">临床目标</button>
-                                <button class="bottom-control-tab" data-tab="channelList">通道列表</button>
-                                <button class="bottom-control-tab" data-tab="dwellControl">驻留控制</button>
-                            </div>
-                            <div class="bottom-control-tabs-right">
-                                <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏数据表格">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <defs>
-                                            <linearGradient id="gradient-bottom-maximize" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                                <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- 剂量统计内容 -->
-                        <div class="bottom-control-content active" id="doseStatsContent">
-                            <div class="bottom-control-panel-body" id="doseStatsContainer">
-                                <!-- 剂量统计组件将在这里渲染 -->
-                            </div>
-                        </div>
+                <!-- 临床目标内容 -->
+                <div class="bottom-control-content" id="clinicalTargetContent">
+                    <div class="bottom-control-panel-body" id="clinicalTargetContainer">
+                        <!-- 临床目标组件将在这里渲染 -->
+                    </div>
+                </div>
 
-                        <!-- 临床目标内容 -->
-                        <div class="bottom-control-content" id="clinicalTargetContent">
-                            <div class="bottom-control-panel-body" id="clinicalTargetContainer">
-                                <!-- 临床目标组件将在这里渲染 -->
-                            </div>
-                        </div>
+                <!-- 剂量统计内容 -->
+                <div class="bottom-control-content" id="doseStatsContent">
+                    <div class="bottom-control-panel-body" id="doseStatsContainer">
+                        <!-- 剂量统计组件将在这里渲染 -->
+                    </div>
+                </div>
 
-                        <!-- 通道列表内容 -->
-                        <div class="bottom-control-content" id="channelListContent">
-                            <div class="bottom-control-panel-body" id="channelListContainer">
-                                <!-- 通道列表组件将在这里渲染 -->
-                            </div>
-                        </div>
-
-                        <!-- 驻留控制内容 -->
-                        <div class="bottom-control-content" id="dwellControlContent">
-                            <div class="bottom-control-panel-body" id="dwellControlContainer">
-                                <!-- 驻留控制列表组件将在这里渲染 -->
-                            </div>
-                        </div>
+                <!-- 能量层内容 -->
+                <div class="bottom-control-content" id="energyLayerContent">
+                    <div class="bottom-control-panel-body" id="energyLayerContainer">
+                        <!-- 能量层组件将在这里渲染 -->
                     </div>
                 </div>
             </div>
@@ -893,14 +869,13 @@
     <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
     <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
     <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
-        <script src="../scripts/BrachyView3DComponent.js"></script>
+    <script src="../scripts/ProtonView3DComponent.js"></script>
+    <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
-    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
-    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
-    <script src="../scripts/ChannelListComponent.js"></script>
-    <script src="../scripts/DwellControlComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
 
     <script>
         // 组件实例
@@ -908,15 +883,9 @@
         let roiComponent = null;
         let poiComponent = null;
         let registrationComponent = null;
-        let axialViewComponent = null;
-        let coronalViewComponent = null;
-        let sagittalViewComponent = null;
-        let brachyView3DComponent = null;
         let moduleToolbar = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
-        let channelListComponent = null;
-        let dwellControlListComponent = null;
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
         const defaultPatient = {
@@ -981,9 +950,9 @@
                         targetContent.classList.add('active');
                     }
 
-                    // 如果切换到剂量统计，初始化组件（默认已初始化）
+                    // 切换到剂量统计时初始化组件
                     if (tabName === 'doseStats') {
-                        // 剂量统计组件在页面加载时已初始化
+                        initDoseStatisticsComponent();
                     }
                 });
             });
@@ -1011,9 +980,6 @@
 
             // 初始化组件
             initComponents();
-            
-            // 默认初始化剂量统计组件（因为默认显示剂量统计标签页）
-            initDoseStatisticsComponent();
         });
 
         // 初始化所有组件
@@ -1039,54 +1005,33 @@
                     });
                 }
             }
-            // 初始化模块工具栏（计划评估专用）
+            // 初始化模块工具栏
             if (typeof ModuleToolbarComponent !== 'undefined') {
-                // 计划评估工具栏：与截图一致的 5 个功能
-                const evaluationTools = [
-                    {
-                        id: 'export-report',
-                        icon: 'fas fa-file-export',
-                        label: '导出报告',
-                        tooltip: '导出报告',
-                        category: '常规'
-                    },
-                    {
-                        id: 'export-locator',
-                        icon: 'fas fa-crosshairs',
-                        label: '导出定位器',
-                        tooltip: '导出定位器',
-                        category: '常规'
-                    },
-                    {
-                        id: 'export-plane-dose',
-                        icon: 'fas fa-bullseye',
-                        label: '导出平面剂量',
-                        tooltip: '导出平面剂量',
-                        category: '常规'
-                    },
-                    {
-                        id: 'approve-plan',
-                        icon: 'fas fa-clipboard-check',
-                        label: '审核计划',
-                        tooltip: '审核计划',
-                        category: '审核'
-                    },
-                    {
-                        id: 'unlock-plan',
-                        icon: 'fas fa-unlock-alt',
-                        label: '解除计划',
-                        tooltip: '解除计划',
-                        category: '审核'
-                    }
+                // 新建计划：文档+加号
+                const newPlanIcon = `<span class="fa-stack"><i class="fas fa-file fa-stack-2x"></i><i class="fas fa-plus fa-stack-1x" style="left: 0.3em; top: -0.15em;"></i></span>`;
+                // 编辑计划：文档+铅笔
+                const editPlanIcon = `<span class="fa-stack"><i class="fas fa-file fa-stack-2x"></i><i class="fas fa-pencil-alt fa-stack-1x" style="left: 0.2em; top: -0.1em;"></i></span>`;
+                // 删除计划：文档+减号
+                const deletePlanIcon = `<span class="fa-stack"><i class="fas fa-file fa-stack-2x"></i><i class="fas fa-minus fa-stack-1x" style="left: 0.3em; top: 0.15em;"></i></span>`;
+
+                const planDesignTools = [
+                    { id: 'new-plan', icon: newPlanIcon, label: '新建计划', tooltip: '新建计划', category: '常规' },
+                    { id: 'copy-plan', icon: 'fas fa-clone', label: '复制计划', tooltip: '复制计划', category: '常规' },
+                    { id: 'edit-plan', icon: editPlanIcon, label: '编辑计划', tooltip: '编辑计划', category: '常规' },
+                    { id: 'delete-plan', icon: deletePlanIcon, label: '删除计划', tooltip: '删除计划', category: '常规' },
+                    { id: 'dose-grid', icon: 'fas fa-th', label: '剂量网格', tooltip: '剂量网格', category: '常规' },
+                    { id: 'mark-positioning-point', icon: 'fas fa-bullseye', label: '标记定位点', tooltip: '标记定位点', category: '常规' },
+                    { id: 'bed-shift-value', icon: 'fas fa-bed', label: '移床值', tooltip: '移床值', category: '常规' }
                 ];
 
                 moduleToolbar = new ModuleToolbarComponent('moduleToolbarContainer', {
-                    tools: evaluationTools,
-                    categories: ['常规', '审核'], // 计划评估模块的工具分组
-                    moduleId: 'plan-evaluation', // 区分于计划设计模块
+                    tools: planDesignTools,
+                    categories: ['常规'], // 定义模块的分类
+                    moduleId: 'plan-design', // 模块标识，用于数据持久化
+                    // accountId: 'user123', // 账号ID（可选，用于跟随账号存储）
                     onToolClick: (toolId) => {
-                        console.log('计划评估工具点击:', toolId);
-                        // TODO: 在这里实现各个工具的实际业务逻辑
+                        console.log('工具点击:', toolId);
+                        // 这里可以添加具体的工具功能
                     }
                 });
             }
@@ -1140,181 +1085,42 @@
                 }
             }
 
-            // 初始化横断面视图组件
-            if (typeof CrossSectionView2DComponent !== 'undefined') {
-                if (document.getElementById('axialViewContainer')) {
-                    axialViewComponent = new CrossSectionView2DComponent('axialViewContainer', {
-                        enableToolbar: true,
-                        enableLayerControl: true,
-                        showDoseLegend: true,  // 显示等剂量线图例
-                        contoursVisible: true  // 计划设计模块：显示所有轮廓
-                    });
-                    
-                    // 添加示例轮廓数据用于测试显示
-                    setTimeout(() => {
-                        // 等待图像加载完成后再添加轮廓
-                        if (!axialViewComponent.imageData) {
-                            setTimeout(arguments.callee, 100);
-                            return;
-                        }
-                        
-                        const imageWidth = axialViewComponent.imageData.width;
-                        const imageHeight = axialViewComponent.imageData.height;
-                        
-                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
-                        // 创建一个在图像中心附近的轮廓
-                        const centerX = imageWidth / 2;
-                        const centerY = imageHeight / 2;
-                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
-                        
-                        // 添加轮廓1（黄色）
-                        const contour1Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour1Points.push({
-                                x: centerX + radius * Math.cos(angle),
-                                y: centerY + radius * Math.sin(angle)
-                            });
-                        }
-                        axialViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
-                        
-                        // 添加轮廓2（绿色）
-                        const contour2Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour2Points.push({
-                                x: centerX + radius * 1.5 * Math.cos(angle),
-                                y: centerY + radius * 1.5 * Math.sin(angle)
-                            });
-                        }
-                        axialViewComponent.addContour('roi-2', contour2Points, '#00FF00');
-                        
-                        console.log('轮廓已添加:', {
-                            target: axialViewComponent.contours.filter(c => c.type === 'target'),
-                            processing: axialViewComponent.contours.filter(c => c.type === 'processing')
-                        });
-                    }, 300);
-                }
+            // 初始化2D阅片框组件：横断面、冠状面、矢状面
+            // 初始化3D阅片框组件（第一行右侧）
+            if (typeof ProtonView3DComponent !== 'undefined' && document.getElementById('coronalViewContainer')) {
+                new ProtonView3DComponent('coronalViewContainer', {
+                    enableToolbar: true,
+                    enableRightClick: true,
+                    showBeams: true,
+                    showROIs: true,
+                    showIsocenter: true
+                });
             }
 
-            // 初始化冠状面视图组件
-            if (typeof CoronalView2DComponent !== 'undefined') {
-                if (document.getElementById('coronalViewContainer')) {
-                    coronalViewComponent = new CoronalView2DComponent('coronalViewContainer', {
-                        enableToolbar: true,
-                        enableLayerControl: true,
-                        showDoseLegend: true,  // 显示等剂量线图例
-                        contoursVisible: true  // 计划设计模块：显示所有轮廓
-                    });
-                    
-                    // 添加示例轮廓数据用于测试显示
-                    setTimeout(() => {
-                        // 等待图像加载完成后再添加轮廓
-                        if (!coronalViewComponent.imageData) {
-                            setTimeout(arguments.callee, 100);
-                            return;
-                        }
-                        
-                        const imageWidth = coronalViewComponent.imageData.width;
-                        const imageHeight = coronalViewComponent.imageData.height;
-                        
-                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
-                        // 创建一个在图像中心附近的轮廓
-                        const centerX = imageWidth / 2;
-                        const centerY = imageHeight / 2;
-                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
-                        
-                        // 添加轮廓1（黄色）
-                        const contour1Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour1Points.push({
-                                x: centerX + radius * Math.cos(angle),
-                                y: centerY + radius * Math.sin(angle)
-                            });
-                        }
-                        coronalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
-                        
-                        // 添加轮廓2（绿色）
-                        const contour2Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour2Points.push({
-                                x: centerX + radius * 1.5 * Math.cos(angle),
-                                y: centerY + radius * 1.5 * Math.sin(angle)
-                            });
-                        }
-                        coronalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
-                    }, 300);
-                }
+            // 初始化2D阅片框组件：横断面、冠状面、矢状面
+            if (typeof CrossSectionView2DComponent !== 'undefined' && document.getElementById('axialViewContainer')) {
+                new CrossSectionView2DComponent('axialViewContainer', {
+                    enableToolbar: true,
+                    enableLayerControl: true,
+                    showDoseLegend: true,
+                    contoursVisible: true
+                });
             }
-
-            // 初始化矢状面视图组件
-            if (typeof SagittalView2DComponent !== 'undefined') {
-                if (document.getElementById('sagittalViewContainer')) {
-                    sagittalViewComponent = new SagittalView2DComponent('sagittalViewContainer', {
-                        enableToolbar: true,
-                        enableLayerControl: true,
-                        showDoseLegend: true,  // 显示等剂量线图例
-                        contoursVisible: true  // 计划设计模块：显示所有轮廓
-                    });
-                    
-                    // 添加示例轮廓数据用于测试显示
-                    setTimeout(() => {
-                        // 等待图像加载完成后再添加轮廓
-                        if (!sagittalViewComponent.imageData) {
-                            setTimeout(arguments.callee, 100);
-                            return;
-                        }
-                        
-                        const imageWidth = sagittalViewComponent.imageData.width;
-                        const imageHeight = sagittalViewComponent.imageData.height;
-                        
-                        // 添加一个计划设计轮廓（黄色，显示）- 坐标相对于图像左上角
-                        // 创建一个在图像中心附近的轮廓
-                        const centerX = imageWidth / 2;
-                        const centerY = imageHeight / 2;
-                        const radius = Math.min(imageWidth, imageHeight) * 0.15;
-                        
-                        // 添加轮廓1（黄色）
-                        const contour1Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour1Points.push({
-                                x: centerX + radius * Math.cos(angle),
-                                y: centerY + radius * Math.sin(angle)
-                            });
-                        }
-                        sagittalViewComponent.addContour('roi-1', contour1Points, '#FFFF00');
-                        
-                        // 添加轮廓2（绿色）
-                        const contour2Points = [];
-                        for (let i = 0; i < 8; i++) {
-                            const angle = (i / 8) * Math.PI * 2;
-                            contour2Points.push({
-                                x: centerX + radius * 1.5 * Math.cos(angle),
-                                y: centerY + radius * 1.5 * Math.sin(angle)
-                            });
-                        }
-                        sagittalViewComponent.addContour('roi-2', contour2Points, '#00FF00');
-                    }, 300);
-                }
+            if (typeof SagittalView2DComponent !== 'undefined' && document.getElementById('leftPanelContainer')) {
+                new SagittalView2DComponent('leftPanelContainer', {
+                    enableToolbar: true,
+                    enableLayerControl: true,
+                    showDoseLegend: true,
+                    contoursVisible: true
+                });
             }
-
-            // 初始化3D视图组件（3D页签）
-            if (typeof BrachyView3DComponent !== 'undefined') {
-                if (document.getElementById('view3dCanvasHost')) {
-                    brachyView3DComponent = new BrachyView3DComponent('view3dCanvasHost', {
-                        prefix: 'plan-design-3d-',
-                        toolbarContainerId: 'view3dToolbarHost', // 工具栏挂载到外部容器，避免双标题
-                        showHeader: false
-                    });
-                    // 确保工具栏容器显示（默认3D页签激活）
-                    const toolbarHost = document.getElementById('view3dToolbarHost');
-                    if (toolbarHost) {
-                        toolbarHost.style.display = 'flex';
-                    }
-                }
+            if (typeof CoronalView2DComponent !== 'undefined' && document.getElementById('rightPanelContainer')) {
+                new CoronalView2DComponent('rightPanelContainer', {
+                    enableToolbar: true,
+                    enableLayerControl: true,
+                    showDoseLegend: true,
+                    contoursVisible: true
+                });
             }
 
             // 初始化DOSE组件
@@ -1341,178 +1147,87 @@
                 }
             }
 
-            // 3D/DVH视图标签切换逻辑
-            const viewTabs = document.querySelectorAll('.view-tab');
-            const viewContents = document.querySelectorAll('.view-content');
+            // 初始化临床目标组件
+            if (typeof ClinicalTargetComponent !== 'undefined' && document.getElementById('clinicalTargetContainer')) {
+                clinicalTargetComponent = new ClinicalTargetComponent('clinicalTargetContainer', {
+                    prefix: 'plan-design-',
+                    onTargetSelect: (target) => console.log('选中临床目标:', target),
+                    onTargetAdd: () => console.log('添加临床目标'),
+                    onTargetEdit: (target) => console.log('编辑临床目标:', target),
+                    onTargetDelete: (target) => console.log('删除临床目标:', target),
+                    onTargetExport: (targets) => console.log('导出临床目标:', targets),
+                    onTargetImport: () => console.log('导入临床目标')
+                });
+            }
+
+            // BEV/DVH 页签：BEV 用 view3dCanvasHost，DVH 用 dvhCanvasHost
+            let bevComponent = null;
+            let dvhComponent = null;
+
+            if (typeof ProtonBeamEyeViewComponent !== 'undefined' && document.getElementById('view3dCanvasHost')) {
+                bevComponent = new ProtonBeamEyeViewComponent('view3dCanvasHost', {
+                    toolbarContainerId: 'view3dToolbarHost',
+                    showHeader: false,
+                    showToolbar: true,
+                    onBeamSelect: (beamId) => console.log('BEV射束选择:', beamId),
+                    onControlPointSelect: (controlPointIndex) => console.log('BEV控制点选择:', controlPointIndex)
+                });
+            }
+
+            if (typeof DVHComponent !== 'undefined' && document.getElementById('dvhCanvasHost')) {
+                dvhComponent = new DVHComponent('dvhCanvasHost', {
+                    toolbarContainerId: 'dvhToolbarHost',
+                    showHeader: false,
+                    enableToolbar: true,
+                    enableContextMenu: true,
+                    onCurveClick: (curve) => console.log('DVH曲线点击:', curve?.roiName)
+                });
+            }
+
+            // DVH视图标签切换逻辑
+            const dvhViewTabs = document.querySelectorAll('.dvh-view-tab');
+            const dvhViewContents = document.querySelectorAll('.dvh-view-content');
             const view3dToolbarHost = document.getElementById('view3dToolbarHost');
             const dvhToolbarHost = document.getElementById('dvhToolbarHost');
 
-            viewTabs.forEach(tab => {
+            dvhViewTabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     const tabName = this.getAttribute('data-tab');
                     const contentId = tabName + 'Content';
 
                     // 更新标签激活状态
-                    viewTabs.forEach(t => t.classList.remove('active'));
+                    dvhViewTabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
 
                     // 切换内容面板
-                    viewContents.forEach(c => c.classList.remove('active'));
+                    dvhViewContents.forEach(c => c.classList.remove('active'));
                     const targetContent = document.getElementById(contentId);
                     if (targetContent) {
                         targetContent.classList.add('active');
                     }
 
                     // 根据页签切换工具栏显示
-                    if (tabName === 'view3d') {
-                        // 3D页签：显示3D工具栏，隐藏DVH工具栏
-                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'flex';
-                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'none';
-                    } else if (tabName === 'dvh') {
-                        // DVH页签：隐藏3D工具栏，显示DVH工具栏
-                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'none';
-                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'flex';
-                        // 由于DVH组件初始化时容器是隐藏的，这里切换到DVH时重新计算尺寸并重绘
-                        if (typeof dvhComponent !== 'undefined' && dvhComponent) {
-                            if (dvhComponent.setupCanvas && dvhComponent.draw) {
-                                dvhComponent.setupCanvas();
-                                dvhComponent.draw();
-                            }
-                        }
+                    if (view3dToolbarHost) view3dToolbarHost.style.display = (tabName === 'view3d') ? 'flex' : 'none';
+                    if (dvhToolbarHost) dvhToolbarHost.style.display = (tabName === 'dvh') ? 'flex' : 'none';
+                    if (tabName === 'dvh' && dvhComponent && dvhComponent.setupCanvas && dvhComponent.draw) {
+                        dvhComponent.setupCanvas();
+                        dvhComponent.draw();
                     }
                 });
             });
 
-            // 初始化DVH组件（应用方案B：工具栏外置）
-            let dvhComponent = null;
-            const dvhCanvasHost = document.getElementById('dvhCanvasHost');
-            if (typeof DVHComponent !== 'undefined' && dvhCanvasHost) {
-                dvhComponent = new DVHComponent('dvhCanvasHost', {
-                    toolbarContainerId: 'dvhToolbarHost', // 工具栏挂载到外部容器
-                    showHeader: false,
-                    enableToolbar: true,
-                    enableContextMenu: true,
-                    onCurveClick: (curve) => {
-                        console.log('DVH曲线点击:', curve.roiName);
-                    }
-                });
-            }
-
-            // 初始化通道列表组件
-            if (typeof ChannelListComponent !== 'undefined') {
-                const channelListContainer = document.getElementById('channelListContainer');
-                if (channelListContainer) {
-                    channelListComponent = new ChannelListComponent('channelListContainer', {
-                        prefix: 'plan-design-',
-                        onChannelSelect: (channel) => {
-                            console.log('选中通道:', channel);
-                        },
-                        onChannelChange: (channel, field, value) => {
-                            console.log('通道字段变更:', channel, field, value);
-                        },
-                        onChannelDelete: (channel) => {
-                            console.log('删除通道:', channel);
-                        },
-                        onChannelAdd: (channel) => {
-                            console.log('添加通道:', channel);
-                        },
-                        onManualRebuild: (channel) => {
-                            console.log('手动重建:', channel);
-                            // TODO: 打开手动重建弹窗
-                        },
-                        onAutoRebuild: (channel) => {
-                            console.log('自动重建:', channel);
-                            // TODO: 打开自动重建弹窗
-                        },
-                        onModelRebuild: (channel) => {
-                            console.log('模型重建:', channel);
-                            // TODO: 打开模型重建弹窗
-                        },
-                        onLoadTemplate: () => {
-                            console.log('加载模板');
-                            // TODO: 打开加载模板弹窗
-                        },
-                        onCreateTemplate: (channels) => {
-                            console.log('创建模板:', channels);
-                            // TODO: 打开创建模板弹窗
-                        }
-                    });
-                }
-            }
-
-            // 初始化驻留控制组件
-            if (typeof DwellControlComponent !== 'undefined') {
-                const dwellControlContainer = document.getElementById('dwellControlContainer');
-                if (dwellControlContainer) {
-                    dwellControlListComponent = new DwellControlComponent('dwellControlContainer', {
-                        prefix: 'plan-design-',
-                        onDwellPointSelect: (point) => {
-                            console.log('选中驻留点:', point);
-                        },
-                        onDwellPointChange: (point, field, value) => {
-                            console.log('驻留点字段变更:', point, field, value);
-                        },
-                        onDwellPointLockToggle: (point, locked) => {
-                            console.log('驻留点锁定切换:', point, locked);
-                        }
-                    });
-                }
-            }
-
-            // 初始化临床目标组件
-            if (typeof ClinicalTargetComponent !== 'undefined') {
-                const clinicalTargetContainer = document.getElementById('clinicalTargetContainer');
-                if (clinicalTargetContainer) {
-                    clinicalTargetComponent = new ClinicalTargetComponent('clinicalTargetContainer', {
-                        prefix: 'plan-design-',
-                        onTargetSelect: (target) => {
-                            console.log('选中临床目标:', target);
-                        },
-                        onTargetAdd: () => {
-                            console.log('添加临床目标');
-                            // TODO: 打开添加弹窗
-                        },
-                        onTargetEdit: (target) => {
-                            console.log('编辑临床目标:', target);
-                            // TODO: 打开编辑弹窗
-                        },
-                        onTargetDelete: (target) => {
-                            console.log('删除临床目标:', target);
-                        },
-                        onTargetExport: (targets) => {
-                            console.log('导出临床目标:', targets);
-                            // TODO: 打开导出弹窗
-                        },
-                        onTargetImport: () => {
-                            console.log('导入临床目标');
-                            // TODO: 打开导入弹窗
-                        }
-                    });
-                }
-            }
         }
 
-        // 初始化剂量统计组件
+        // 初始化剂量统计组件（切换到剂量统计页签时调用）
         function initDoseStatisticsComponent() {
             if (typeof DoseStatisticsComponent !== 'undefined') {
                 const doseStatsContainer = document.getElementById('doseStatsContainer');
                 if (doseStatsContainer && !doseStatsContainer.dataset.inited) {
                     doseStatisticsComponent = new DoseStatisticsComponent('doseStatsContainer', {
-                        showDoseType: false, // 后装计划设计模块不显示剂量类型列
-                        getRoiStats: () => {
-                            // TODO: 从实际数据源获取ROI统计
-                            // 返回 null 或空数组会使用组件的默认数据
-                            // 实际使用时应该从剂量计算结果中获取真实数据
-                            return null; // 使用默认数据
-                        },
-                        getPoiStats: () => {
-                            // TODO: 从实际数据源获取POI统计
-                            // 返回 null 或空数组会使用组件的默认数据
-                            // 实际使用时应该从剂量计算结果中获取真实数据
-                            return null; // 使用默认数据
-                        },
+                        showDoseType: false,
+                        getRoiStats: () => null,
+                        getPoiStats: () => null,
                         onExport: (data) => {
-                            // TODO: 实现Excel导出功能
                             console.log('导出剂量统计:', data);
                             if (doseStatisticsComponent) {
                                 doseStatisticsComponent.defaultExportToExcel({

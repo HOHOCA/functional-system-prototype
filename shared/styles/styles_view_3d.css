@@ -1,0 +1,178 @@
+/* 3D View Component Styles */
+
+.view3d-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.view3d-wrapper.maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+}
+
+/* Toolbar */
+.view3d-toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 100;
+}
+
+.view3d-tool-btn {
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #00ffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.view3d-tool-btn:hover {
+    background: #3AACDE;
+    border-color: #00aaff;
+    color: #fff;
+}
+
+.view3d-tool-btn.active {
+    background: #3AACDE;
+    border-color: #00aaff;
+    color: #fff;
+}
+
+.view3d-tool-btn i {
+    font-size: 14px;
+}
+
+/* Canvas Container */
+.view3d-canvas-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.view3d-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Context Menu */
+.view3d-context-menu {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 0;
+    min-width: 180px;
+    z-index: 10001;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.context-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+    gap: 12px;
+}
+
+.context-menu-item:hover {
+    background: #3AACDE;
+    color: #fff;
+}
+
+.context-menu-item i {
+    width: 16px;
+    font-size: 14px;
+    color: #00ffff;
+}
+
+.context-menu-item:hover i {
+    color: #fff;
+}
+
+.context-menu-item span {
+    flex: 1;
+    font-size: 13px;
+}
+
+.context-menu-item .fa-check {
+    margin-left: auto;
+    color: #00ffff;
+    display: none;
+}
+
+.context-menu-divider {
+    height: 1px;
+    background: #555;
+    margin: 4px 0;
+}
+
+/* Fallback */
+.view3d-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+}
+
+.fallback-message {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.fallback-message i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.fallback-message p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+.fallback-hint {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .view3d-toolbar {
+        top: 5px;
+        right: 5px;
+        gap: 4px;
+    }
+    
+    .view3d-tool-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .view3d-tool-btn i {
+        font-size: 12px;
+    }
+}
+

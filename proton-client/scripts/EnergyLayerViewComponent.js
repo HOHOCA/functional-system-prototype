@@ -46,7 +46,8 @@ class EnergyLayerViewComponent {
                     spotCount: 20,
                     minSpotMeterset: 43.9094,
                     maxSpotMeterset: 26.0998,
-                    paintings: 1
+                    paintings: 1,
+                    rangeShifter: '000000000000000000'
                 },
                 {
                     id: 2,
@@ -57,7 +58,8 @@ class EnergyLayerViewComponent {
                     spotCount: 76,
                     minSpotMeterset: 38.1687,
                     maxSpotMeterset: 25.5432,
-                    paintings: 1
+                    paintings: 1,
+                    rangeShifter: '000000000000000001'
                 },
                 {
                     id: 3,
@@ -68,7 +70,8 @@ class EnergyLayerViewComponent {
                     spotCount: 45,
                     minSpotMeterset: 35.2345,
                     maxSpotMeterset: 22.9876,
-                    paintings: 1
+                    paintings: 1,
+                    rangeShifter: '000000000000000010'
                 }
             ]
         };
@@ -86,7 +89,8 @@ class EnergyLayerViewComponent {
                     spotCount: 30,
                     minSpotMeterset: 40.1234,
                     maxSpotMeterset: 28.5678,
-                    paintings: 1
+                    paintings: 1,
+                    rangeShifter: '000000000000000000'
                 },
                 {
                     id: 5,
@@ -97,7 +101,8 @@ class EnergyLayerViewComponent {
                     spotCount: 55,
                     minSpotMeterset: 36.7890,
                     maxSpotMeterset: 24.3456,
-                    paintings: 1
+                    paintings: 1,
+                    rangeShifter: '000000000000000011'
                 }
             ]
         };
@@ -145,6 +150,7 @@ class EnergyLayerViewComponent {
                             <th style="width: 150px;">最小束斑跳数 [MU/fx]</th>
                             <th style="width: 150px;">最大束斑跳数 [MU/fx]</th>
                             <th style="width: 100px;">扫描次数</th>
+                            <th style="width: 200px;">射程选择器</th>
                         </tr>
                     </thead>
                     <tbody id="energyLayerTableBody"></tbody>
@@ -287,14 +293,14 @@ class EnergyLayerViewComponent {
         if (!tableBody) return;
 
         if (!this.selectedBeamId) {
-            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">请先选择射束</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">请先选择射束</td></tr>';
             return;
         }
 
         const layers = this.energyLayers.get(this.selectedBeamId) || [];
         
         if (layers.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">该射束暂无能量层数据</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px;">该射束暂无能量层数据</td></tr>';
             return;
         }
 
@@ -310,6 +316,7 @@ class EnergyLayerViewComponent {
                 <td>${layer.minSpotMeterset !== undefined && layer.minSpotMeterset !== null ? this.formatNumber(layer.minSpotMeterset, 4) : ''}</td>
                 <td>${layer.maxSpotMeterset !== undefined && layer.maxSpotMeterset !== null ? this.formatNumber(layer.maxSpotMeterset, 4) : ''}</td>
                 <td>${layer.paintings || 1}</td>
+                <td>${this.formatRangeShifter(layer.rangeShifter)}</td>
             </tr>
         `;
         }).join('');
@@ -378,6 +385,23 @@ class EnergyLayerViewComponent {
         return Number(value).toFixed(decimals);
     }
 
+    formatRangeShifter(value) {
+        if (!value) {
+            return '000000000000000000';
+        }
+        // 如果已经是18位二进制字符串，直接返回
+        if (typeof value === 'string' && /^[01]{18}$/.test(value)) {
+            return value;
+        }
+        // 如果是数字，转换为18位二进制
+        if (typeof value === 'number') {
+            return value.toString(2).padStart(18, '0');
+        }
+        // 如果是其他格式的字符串，尝试解析
+        // 默认返回全0
+        return '000000000000000000';
+    }
+
     handleAddLayer() {
         if (!this.selectedBeamId) {
             alert('请先选择射束');
@@ -408,7 +432,8 @@ class EnergyLayerViewComponent {
             spotCount: 25,
             minSpotMeterset: 20.0,
             maxSpotMeterset: 30.0,
-            paintings: 1
+            paintings: 1,
+            rangeShifter: '000000000000000000'
         };
 
         layers.push(newLayer);

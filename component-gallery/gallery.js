@@ -338,6 +338,21 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'ProtonView3DComponent':
+                    if (typeof ProtonView3DComponent !== 'undefined') {
+                        instance = new ProtonView3DComponent(componentContainer.id, {
+                            enableToolbar: true,
+                            enableRightClick: true,
+                            showBeams: true,
+                            showROIs: true,
+                            showIsocenter: true,
+                            showToolbar: true,
+                            showHeader: true,
+                            toolbarTitle: '3D'
+                        });
+                    }
+                    break;
                     
                 case 'CoronalView2DComponent':
                     if (typeof CoronalView2DComponent !== 'undefined') {
@@ -489,10 +504,13 @@ class ComponentGallery {
                     }
                     break;
                     
-                case 'BeamEyeViewComponent':
-                    if (typeof BeamEyeViewComponent !== 'undefined') {
-                        instance = new BeamEyeViewComponent(componentContainer, {
-                            onBeamSelect: (beamId) => console.log('Selected beam:', beamId)
+                case 'ProtonBeamEyeViewComponent':
+                    if (typeof ProtonBeamEyeViewComponent !== 'undefined') {
+                        instance = new ProtonBeamEyeViewComponent(componentContainer.id, {
+                            onBeamSelect: (beamId) => console.log('Selected beam:', beamId),
+                            showToolbar: true,
+                            showHeader: true,
+                            toolbarTitle: 'BEV'
                         });
                     }
                     break;
@@ -562,15 +580,6 @@ class ComponentGallery {
                                 birthDate: '19730307',
                                 gender: 'M'
                             }
-                        });
-                    }
-                    break;
-                    
-                case 'ViewingFrameComponent':
-                    if (typeof ViewingFrameComponent !== 'undefined') {
-                        instance = new ViewingFrameComponent(componentContainer.id, {
-                            enableToolbar: true,
-                            showTools: true
                         });
                     }
                     break;

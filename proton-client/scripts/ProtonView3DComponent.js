@@ -1,10 +1,10 @@
 /**
- * 3D View Component
- * 三维重建视图组件，用于显示ROI和射束的3D模型
+ * Proton 3D View Component
+ * 三维重建视图组件（质子专用），用于显示ROI和射束的3D模型
  * 使用Three.js实现3D渲染
  */
 
-class View3DComponent {
+class ProtonView3DComponent {
     constructor(containerId, options = {}) {
         this.containerId = containerId;
         this.container = typeof containerId === 'string' 
@@ -23,6 +23,11 @@ class View3DComponent {
             showROIs: true,
             showIsocenter: true,
             backgroundColor: 0x000000,
+            // 布局/标题栏控制（对齐 BrachyView3DComponent）
+            showToolbar: true,
+            showHeader: true,
+            toolbarTitle: '3D',
+            toolbarContainerId: null, // 若提供，则工具栏渲染到外部容器，避免双标题
             ...options
         };
 
@@ -38,8 +43,8 @@ class View3DComponent {
         this.isocenters = [];
         this.beamSpots = [];
         
-        // UI state
-        this.toolMode = 'rotate'; // rotate, zoom, pan
+        // UI state（对齐 BrachyView3DComponent：默认不激活任何工具，避免误操作）
+        this.toolMode = null; // rotate, zoom, pan
         this.displayMode = 'solid'; // solid, wireframe, vertex
         this.showBeamSpots = true;
         this.isMaximized = false;
@@ -54,7 +59,7 @@ class View3DComponent {
     init() {
         // Check if Three.js is available
         if (typeof THREE === 'undefined') {
-            console.error('Three.js library not loaded. Please include Three.js before using View3DComponent.');
+            console.error('Three.js library not loaded. Please include Three.js before using ProtonView3DComponent.');
             this.renderFallback();
             return;
         }
@@ -68,9 +73,13 @@ class View3DComponent {
     }
 
     render() {
+        const internalToolbar = (this.options.enableToolbar && this.options.showToolbar && !this.options.toolbarContainerId)
+            ? this.renderToolbar()
+            : '';
+
         const html = `
-            <div class="view3d-wrapper">
-                ${this.options.enableToolbar ? this.renderToolbar() : ''}
+            <div class="view3d-wrapper bv3d-wrapper">
+                ${internalToolbar}
                 <div class="view3d-canvas-container">
                     <canvas class="view3d-canvas"></canvas>
                 </div>
@@ -79,25 +88,154 @@ class View3DComponent {
         `;
         this.container.innerHTML = html;
         
+        // 如果指定外部工具栏容器，渲染到该容器
+        if (this.options.enableToolbar && this.options.showToolbar && this.options.toolbarContainerId) {
+            this.mountToolbarExternally();
+        }
+
         // Get canvas element
         this.canvas = this.container.querySelector('.view3d-canvas');
     }
 
     renderToolbar() {
+        if (!this.options.enableToolbar || !this.options.showToolbar) return '';
+
+        const titleHtml = this.options.showHeader
+            ? `<div class="toolbar-title">${this.options.toolbarTitle || '3D'}</div>`
+            : '';
+
         return `
-            <div class="view3d-toolbar">
-                <button class="view3d-tool-btn" data-tool="rotate" title="旋转">
-                    <i class="fas fa-redo"></i>
-                </button>
-                <button class="view3d-tool-btn" data-tool="zoom" title="缩放">
-                    <i class="fas fa-search-plus"></i>
-                </button>
-                <button class="view3d-tool-btn" data-tool="pan" title="拖动">
-                    <i class="fas fa-hand-paper"></i>
-                </button>
-                <button class="view3d-tool-btn" data-tool="maximize" title="最大化">
-                    <i class="fas fa-expand"></i>
-                </button>
+            <div class="cross-section-view2d-toolbar" data-bv3d-toolbar="${this.containerId}">
+                ${titleHtml}
+                <div class="toolbar-group toolbar-group-right">
+                    <button class="toolbar-btn-svg" id="${this.containerId}-rotate" title="旋转" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-rotate-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="6" y="8" width="12" height="8" rx="1" stroke="url(#gradient-rotate-${this.containerId})" stroke-width="2" fill="none"/>
+                            <path d="M18 8 L18 5 L21 8 L18 11 L18 8" fill="url(#gradient-rotate-${this.containerId})"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-zoom-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="10" cy="10" r="7" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" fill="none"/>
+                            <line x1="15" y1="15" x2="21" y2="21" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="7" y1="10" x2="13" y2="10" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="10" y1="7" x2="10" y2="13" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-pan" title="拖动" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-pan-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="url(#gradient-pan-${this.containerId})" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-maximize" title="全屏" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-maximize-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    mountToolbarExternally() {
+        const external = document.getElementById(this.options.toolbarContainerId);
+        if (!external) {
+            console.warn('ProtonView3DComponent: toolbarContainerId not found:', this.options.toolbarContainerId);
+            // 如果外部容器不存在，回退到内部渲染（避免无工具栏）
+            const wrapper = this.container.querySelector('.bv3d-wrapper');
+            if (wrapper && !wrapper.querySelector('[data-bv3d-toolbar]')) {
+                wrapper.insertAdjacentHTML('afterbegin', this.renderToolbar());
+            }
+            return;
+        }
+        // 渲染到外部容器时，只渲染工具按钮组（不含标题栏）
+        external.innerHTML = this.renderToolbarButtonsOnly();
+    }
+
+    renderToolbarButtonsOnly() {
+        if (!this.options.enableToolbar || !this.options.showToolbar) return '';
+        return `
+            <div class="cross-section-view2d-toolbar" data-bv3d-toolbar="${this.containerId}" style="background: transparent; border: none; padding: 0; height: auto;">
+                <div class="toolbar-group toolbar-group-right">
+                    <button class="toolbar-btn-svg" id="${this.containerId}-rotate" title="旋转" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-rotate-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="6" y="8" width="12" height="8" rx="1" stroke="url(#gradient-rotate-${this.containerId})" stroke-width="2" fill="none"/>
+                            <path d="M18 8 L18 5 L21 8 L18 11 L18 8" fill="url(#gradient-rotate-${this.containerId})"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-zoom-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="10" cy="10" r="7" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" fill="none"/>
+                            <line x1="15" y1="15" x2="21" y2="21" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="7" y1="10" x2="13" y2="10" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="10" y1="7" x2="10" y2="13" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-pan" title="拖动" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-pan-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="url(#gradient-pan-${this.containerId})" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn-svg" id="${this.containerId}-maximize" title="全屏" data-active="false">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <defs>
+                                <linearGradient id="gradient-maximize-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -426,14 +564,16 @@ class View3DComponent {
     }
 
     bindEvents() {
-        // Toolbar buttons
-        const toolButtons = this.container.querySelectorAll('.view3d-tool-btn');
-        toolButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const tool = e.currentTarget.dataset.tool;
-                this.handleToolClick(tool);
-            });
-        });
+        // Toolbar buttons（支持内部/外部工具栏：使用固定 id 查找）
+        const rotateBtn = document.getElementById(`${this.containerId}-rotate`);
+        const zoomBtn = document.getElementById(`${this.containerId}-zoom`);
+        const panBtn = document.getElementById(`${this.containerId}-pan`);
+        const maximizeBtn = document.getElementById(`${this.containerId}-maximize`);
+
+        if (rotateBtn) rotateBtn.addEventListener('click', () => this.activateTool('rotate'));
+        if (zoomBtn) zoomBtn.addEventListener('click', () => this.activateTool('zoom'));
+        if (panBtn) panBtn.addEventListener('click', () => this.activateTool('pan'));
+        if (maximizeBtn) maximizeBtn.addEventListener('click', () => this.toggleMaximize());
 
         // Canvas mouse events
         this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
@@ -469,30 +609,23 @@ class View3DComponent {
         });
     }
 
-    handleToolClick(tool) {
-        const btn = this.container.querySelector(`[data-tool="${tool}"]`);
-        
-        if (tool === 'maximize') {
-            this.toggleMaximize();
-            return;
-        }
-
-        if (tool === 'rotate') {
-            // Single click: rotate 90 degrees clockwise
-            this.rotateView(90);
-            return;
-        }
-
-        // Toggle tool mode
-        if (this.toolMode === tool) {
-            this.toolMode = 'rotate';
-            btn.classList.remove('active');
+    activateTool(toolName) {
+        // If clicking the current tool, deactivate it
+        if (this.toolMode === toolName) {
+            this.toolMode = null;
         } else {
-            // Deactivate all other tools
-            this.container.querySelectorAll('.view3d-tool-btn').forEach(b => b.classList.remove('active'));
-            this.toolMode = tool;
-            btn.classList.add('active');
+            this.toolMode = toolName;
         }
+
+        // Update toolbar button states
+        const tools = ['rotate', 'zoom', 'pan'];
+        tools.forEach(tool => {
+            const btn = document.getElementById(`${this.containerId}-${tool}`);
+            if (btn) {
+                const isActive = (tool === this.toolMode);
+                btn.setAttribute('data-active', isActive);
+            }
+        });
 
         // Update cursor
         this.updateCursor();
@@ -515,6 +648,7 @@ class View3DComponent {
     }
 
     handleMouseDown(e) {
+        if (!this.toolMode) return;
         this.isDragging = true;
         this.previousMousePosition = { x: e.clientX, y: e.clientY };
         
@@ -524,7 +658,7 @@ class View3DComponent {
     }
 
     handleMouseMove(e) {
-        if (!this.isDragging) return;
+        if (!this.isDragging || !this.toolMode) return;
 
         const deltaX = e.clientX - this.previousMousePosition.x;
         const deltaY = e.clientY - this.previousMousePosition.y;
@@ -553,9 +687,8 @@ class View3DComponent {
     }
 
     handleWheel(e) {
+        // 禁用滚轮缩放（对齐后装 3D 交互）
         e.preventDefault();
-        const delta = e.deltaY;
-        this.zoomViewByDelta(delta * 0.5);
     }
 
     rotateView(degrees) {
@@ -656,8 +789,7 @@ class View3DComponent {
             case 'pan':
             case 'zoom':
             case 'rotate':
-                this.toolMode = action;
-                this.updateCursor();
+                this.activateTool(action);
                 break;
             case 'maximize':
                 this.toggleMaximize();
@@ -762,8 +894,14 @@ class View3DComponent {
         this.camera.lookAt(0, 0, 0);
         
         // Reset tool mode
-        this.toolMode = 'rotate';
-        this.container.querySelectorAll('.view3d-tool-btn').forEach(btn => btn.classList.remove('active'));
+        this.toolMode = null;
+        const tools = ['rotate', 'zoom', 'pan'];
+        tools.forEach(tool => {
+            const btn = document.getElementById(`${this.containerId}-${tool}`);
+            if (btn) {
+                btn.setAttribute('data-active', 'false');
+            }
+        });
         this.updateCursor();
     }
 
@@ -823,6 +961,6 @@ class View3DComponent {
 
 // Export to window
 if (typeof window !== 'undefined') {
-    window.View3DComponent = View3DComponent;
+    window.ProtonView3DComponent = ProtonView3DComponent;
 }
 

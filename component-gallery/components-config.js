@@ -140,9 +140,9 @@ const COMPONENTS_CONFIG = {
     // 后装特有组件
     brachy: [
         {
-            id: 'view-3d',
-            name: 'View3D',
-            displayName: '3D重建视图',
+            id: 'brachy-view-3d',
+            name: 'BrachyView3D',
+            displayName: '后装-3D重建视图',
             description: '使用Three.js的三维重建视图（后装）',
             className: 'BrachyView3DComponent',
             filePath: '../brachy-client/scripts/BrachyView3DComponent.js',
@@ -177,29 +177,21 @@ const COMPONENTS_CONFIG = {
     // 质子特有组件
     proton: [
         {
-            id: 'view-3d',
-            name: 'View3D',
-            displayName: '3D重建视图',
-            description: '使用Three.js的三维重建视图',
-            className: 'View3DComponent',
-            filePath: '../proton-client/scripts/View3DComponent.js',
+            id: 'proton-view-3d',
+            name: 'ProtonView3D',
+            displayName: '质子-3D重建视图',
+            description: '使用Three.js的三维重建视图（质子）',
+            className: 'ProtonView3DComponent',
+            filePath: '../proton-client/scripts/ProtonView3DComponent.js',
             dependencies: ['Three.js']
         },
         {
-            id: 'beam-eye-view',
-            name: 'BeamEyeView',
-            displayName: '射束眼视图(BEV)',
-            description: '射野方向观视图',
-            className: 'BeamEyeViewComponent',
-            filePath: '../proton-client/scripts/BeamEyeViewComponent.js'
-        },
-        {
-            id: 'viewing-frame',
-            name: 'ViewingFrame',
-            displayName: '观察框架',
-            description: '多视图观察框架',
-            className: 'ViewingFrameComponent',
-            filePath: '../proton-client/scripts/ViewingFrameComponent.js'
+            id: 'proton-beam-eye-view',
+            name: 'ProtonBeamEyeView',
+            displayName: '质子-射束眼视图(BEV)',
+            description: '射野方向观视图（质子）',
+            className: 'ProtonBeamEyeViewComponent',
+            filePath: '../proton-client/scripts/ProtonBeamEyeViewComponent.js'
         },
         {
             id: 'energy-layer-view',
