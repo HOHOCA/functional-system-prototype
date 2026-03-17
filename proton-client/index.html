@@ -208,6 +208,7 @@
                     <a href="#" class="nav-item" data-module="image">图像处理</a>
                     <a href="#" class="nav-item" data-module="target">靶区勾画</a>
                     <a href="#" class="nav-item" data-module="plan">计划设计</a>
+                    <a href="#" class="nav-item" data-module="plan-optimization">计划优化</a>
                     <a href="#" class="nav-item" data-module="evaluation">计划评估</a>
                 </nav>
             </div>
@@ -239,6 +240,7 @@
             <iframe id="imageFrame" class="module-frame" src="modules/image-processing-module.html" loading="lazy"></iframe>
             <iframe id="targetFrame" class="module-frame" src="modules/target-delineation-module.html" loading="lazy"></iframe>
             <iframe id="planFrame" class="module-frame" src="modules/plan-design-module.html" loading="lazy"></iframe>
+            <iframe id="planOptimizationFrame" class="module-frame" src="modules/plan-optimization-module.html" loading="lazy"></iframe>
             <iframe id="evaluationFrame" class="module-frame" src="modules/plan-evaluation-module.html" loading="lazy"></iframe>
         </main>
     </div>
@@ -248,6 +250,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const navItems = document.querySelectorAll('.nav-item');
             const moduleFrames = document.querySelectorAll('.module-frame');
+            const settingsIcon = document.querySelector('.nav-right .fa-cog');
             
             // 模块与iframe的映射
             const moduleFrameMap = {
@@ -255,6 +258,7 @@
                 'image': 'imageFrame',
                 'target': 'targetFrame',
                 'plan': 'planFrame',
+                'plan-optimization': 'planOptimizationFrame',
                 'evaluation': 'evaluationFrame'
             };
             
@@ -277,6 +281,13 @@
                     document.getElementById(frameId).classList.add('active');
                 });
             });
+            
+            // 顶部右侧系统设置图标点击，跳转到系统设置页面
+            if (settingsIcon) {
+                settingsIcon.addEventListener('click', function() {
+                    window.location.href = '../shared/modules/system-settings.html';
+                });
+            }
             
             // 工具栏按钮事件（可根据需要添加功能）
             document.getElementById('navWorkflowBtn').addEventListener('click', function() {

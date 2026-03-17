@@ -120,6 +120,30 @@ const COMPONENTS_CONFIG = {
             filePath: '../shared/scripts/components/ExportPlanComponent.js'
         },
         {
+            id: 'settings-data-transfer',
+            name: 'SettingsDataTransfer',
+            displayName: '系统设置 - 数据传输',
+            description: '系统设置中的数据传输设置面板（Feature Panel）',
+            className: 'DataTransferSettingsComponent',
+            filePath: '../shared/scripts/components/settings/DataTransferSettingsComponent.js'
+        },
+        {
+            id: 'settings-drawing-template',
+            name: 'SettingsDrawingTemplate',
+            displayName: '系统设置 - 勾画模板',
+            description: '系统设置中的勾画模板设置面板（Feature Panel）',
+            className: 'DrawingTemplateSettingsComponent',
+            filePath: '../shared/scripts/components/settings/DrawingTemplateSettingsComponent.js'
+        },
+        {
+            id: 'settings-organ-limit-template',
+            name: 'SettingsOrganLimitTemplate',
+            displayName: '系统设置 - 器官限量模板',
+            description: '系统设置中的器官限量模板设置面板（Feature Panel）',
+            className: 'OrganLimitTemplateSettingsComponent',
+            filePath: '../shared/scripts/components/settings/OrganLimitTemplateSettingsComponent.js'
+        },
+        {
             id: 'module-toolbar',
             name: 'ModuleToolbar',
             displayName: '模块工具栏',
@@ -184,6 +208,14 @@ const COMPONENTS_CONFIG = {
             className: 'ProtonView3DComponent',
             filePath: '../proton-client/scripts/ProtonView3DComponent.js',
             dependencies: ['Three.js']
+        },
+        {
+            id: 'optimization-constraints',
+            name: 'OptimizationConstraints',
+            displayName: '质子-优化约束列表',
+            description: '质子计划优化模块中的优化约束列表视图组件',
+            className: 'ProtonOptimizationConstraintsComponent',
+            filePath: '../proton-client/scripts/OptimizationConstraintsComponent.js'
         },
         {
             id: 'proton-beam-eye-view',

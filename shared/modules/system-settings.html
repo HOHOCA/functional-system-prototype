@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - MOZI Photon</title>
+    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link rel="stylesheet" href="../../shared/styles/system-settings.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="system-settings-page">
+    <button type="button" id="settings-close-btn" class="settings-close-btn" title="&#36820;&#22238;&#20809;&#23376;&#27835;&#30103;&#31995;&#32479;">&times;</button>
+    <aside class="settings-left">
+        <div class="settings-left-title">设置</div>
+        <nav class="settings-nav">
+            <div class="settings-nav-item active" data-tab="data-transfer" title="数据传输设置">
+                <i class="fa-solid fa-right-left"></i><span>数据传输设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="drawing-template" title="勾画模版设置">
+                <i class="fa-solid fa-ruler-combined"></i><span>勾画模版设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="model-roi" title="模型和ROI设置">
+                <i class="fa-solid fa-cube"></i><span>模型和ROI设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="drawing-priority" title="勾画优先级设置">
+                <i class="fa-solid fa-magnifying-glass"></i><span>勾画优先级设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="postprocess-rules" title="后处理规则设置">
+                <i class="fa-solid fa-table-cells"></i><span>后处理规则设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="image-grouping" title="图像归组设置">
+                <i class="fa-solid fa-object-group"></i><span>图像归组设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="organ-limit-template" title="器官限量模版设置">
+                <i class="fa-solid fa-file-contract"></i><span>器官限量模版设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="model" title="模型设置">
+                <i class="fa-solid fa-tag"></i><span>模型设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="machine" title="机器设置">
+                <i class="fa-solid fa-arrows-up-down"></i><span>机器设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="report-template" title="报告模版设置">
+                <i class="fa-solid fa-file-lines"></i><span>报告模版设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="dose-calc" title="剂量计算设置">
+                <i class="fa-solid fa-square-xmark"></i><span>剂量计算设置</span>
+            </div>
+            <div class="settings-nav-item" data-tab="plan-optimization" title="计划优化设置">
+                <i class="fa-solid fa-arrows-rotate"></i><span>计划优化设置</span>
+            </div>
+        </nav>
+    </aside>
+    <main class="settings-right"></main>
+
+    <script src="../../shared/scripts/components/settings/PlaceholderSettingsComponent.js"></script>
+    <script src="../../shared/scripts/components/settings/DataTransferSettingsComponent.js"></script>
+    <script src="../../shared/scripts/components/settings/DrawingTemplateSettingsComponent.js"></script>
+    <script src="../../shared/scripts/components/settings/OrganLimitTemplateSettingsComponent.js"></script>
+    <script src="../../shared/scripts/pages/system-settings.config.js"></script>
+    <script src="../../shared/scripts/pages/system-settings-page.js"></script>
+</body>
+</html>

@@ -694,6 +694,42 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'DataTransferSettingsComponent':
+                    if (typeof DataTransferSettingsComponent !== 'undefined') {
+                        instance = new DataTransferSettingsComponent();
+                        if (typeof instance.mount === 'function') {
+                            instance.mount(componentContainer);
+                        }
+                    }
+                    break;
+
+                case 'DrawingTemplateSettingsComponent':
+                    if (typeof DrawingTemplateSettingsComponent !== 'undefined') {
+                        instance = new DrawingTemplateSettingsComponent();
+                        if (typeof instance.mount === 'function') {
+                            instance.mount(componentContainer);
+                        }
+                    }
+                    break;
+
+                case 'OrganLimitTemplateSettingsComponent':
+                    if (typeof OrganLimitTemplateSettingsComponent !== 'undefined') {
+                        instance = new OrganLimitTemplateSettingsComponent();
+                        if (typeof instance.mount === 'function') {
+                            instance.mount(componentContainer);
+                        }
+                    }
+                    break;
+
+                case 'ProtonOptimizationConstraintsComponent':
+                    if (typeof ProtonOptimizationConstraintsComponent !== 'undefined') {
+                        instance = new ProtonOptimizationConstraintsComponent();
+                        if (typeof instance.mount === 'function') {
+                            instance.mount(componentContainer);
+                        }
+                    }
+                    break;
                     
                 default:
                     componentContainer.innerHTML = `

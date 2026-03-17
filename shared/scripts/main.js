@@ -1490,8 +1490,8 @@ function initializeRobustnessSettings() {
 function initializeOptimizationConstraints() {
     const mount = document.getElementById('optimizationConstraintsContainer');
     if (!mount || mount.dataset.inited === 'true') return;
-    if (window.OptimizationConstraintsComponent) {
-        const comp = new window.OptimizationConstraintsComponent(mount);
+    if (window.ProtonOptimizationConstraintsComponent) {
+        const comp = new window.ProtonOptimizationConstraintsComponent(mount);
         comp.render();
         mount.dataset.inited = 'true';
     }

@@ -248,6 +248,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const navItems = document.querySelectorAll('.nav-item');
             const moduleFrames = document.querySelectorAll('.module-frame');
+            const settingsIcon = document.querySelector('.nav-right .fa-cog');
             
             // 模块与iframe的映射
             const moduleFrameMap = {
@@ -277,6 +278,13 @@
                     document.getElementById(frameId).classList.add('active');
                 });
             });
+            
+            // 顶部右侧系统设置图标点击，跳转到系统设置页面
+            if (settingsIcon) {
+                settingsIcon.addEventListener('click', function() {
+                    window.location.href = '../shared/modules/system-settings.html';
+                });
+            }
             
             // 工具栏按钮事件（可根据需要添加功能）
             document.getElementById('navWorkflowBtn').addEventListener('click', function() {
