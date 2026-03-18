@@ -1,7 +1,18 @@
-class ProtonOptimizationConstraintsComponent {
-    constructor(options = {}) {
+class OptimizationConstraintsComponent {
+    constructor(containerOrOptions = {}, maybeOptions = {}) {
         this.container = null;
-        this.options = options;
+        // 兼容两种调用方式：
+        // 1) new OptimizationConstraintsComponent(options)
+        // 2) new OptimizationConstraintsComponent(mountElOrId, options)
+        if (
+            containerOrOptions instanceof HTMLElement
+            || (typeof containerOrOptions === 'string' && containerOrOptions.trim() !== '')
+        ) {
+            this.container = containerOrOptions;
+            this.options = maybeOptions || {};
+        } else {
+            this.options = containerOrOptions || {};
+        }
 
         // 简单的 mock 数据：ROI、射束、处方剂量
         this.beams = ['Beam 1', 'Beam 2', 'Beam 3'];
@@ -770,6 +781,8 @@ class ProtonOptimizationConstraintsComponent {
 
     render() {
         if (!this.container) return;
+        // 允许外部直接调用 render()（不走 mount）时也能注入样式
+        this.ensureStyles();
         this.container.innerHTML = '';
 
         const root = document.createElement('div');

@@ -252,10 +252,25 @@ class ComponentGallery {
         componentContainer.style.minHeight = '400px';
         previewContainer.appendChild(componentContainer);
 
-        // 如果有独立文件路径，先按需加载（若全局已存在则跳过）
+        // 如果有独立文件路径，先按需加载
+        // 说明：组件库预览常需要快速迭代脚本。若 filePath 带 ?v= 版本号，则强制重新加载脚本，
+        // 避免 window 上已有旧的 class 导致无法更新。
         try {
-            if (component.filePath && typeof window[component.className] === 'undefined') {
-                await this.loadScriptIfNeeded(component.filePath);
+            if (component.filePath) {
+                const hasVersion = component.filePath.includes('?v=');
+                if (hasVersion) {
+                    try {
+                        // 清理旧全局定义，确保新脚本生效
+                        if (typeof window[component.className] !== 'undefined') {
+                            delete window[component.className];
+                        }
+                    } catch (_) {
+                        // ignore
+                    }
+                    await this.loadScriptIfNeeded(component.filePath);
+                } else if (typeof window[component.className] === 'undefined') {
+                    await this.loadScriptIfNeeded(component.filePath);
+                }
             }
         } catch (error) {
             console.error('加载组件脚本失败:', error);
@@ -592,6 +607,14 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'ProtonExportReportComponent':
+                    if (typeof ProtonExportReportComponent !== 'undefined') {
+                        instance = new ProtonExportReportComponent(componentContainer.id, {
+                            mode: 'gallery-preview'
+                        });
+                    }
+                    break;
                     
                 case 'PlanComparisonDoseStatisticsComponent':
                     if (typeof PlanComparisonDoseStatisticsComponent !== 'undefined') {
@@ -722,9 +745,9 @@ class ComponentGallery {
                     }
                     break;
 
-                case 'ProtonOptimizationConstraintsComponent':
-                    if (typeof ProtonOptimizationConstraintsComponent !== 'undefined') {
-                        instance = new ProtonOptimizationConstraintsComponent();
+                case 'OptimizationConstraintsComponent':
+                    if (typeof OptimizationConstraintsComponent !== 'undefined') {
+                        instance = new OptimizationConstraintsComponent();
                         if (typeof instance.mount === 'function') {
                             instance.mount(componentContainer);
                         }
@@ -773,13 +796,17 @@ class ComponentGallery {
         }
 
         // 规范化目标路径用于去重
-        const targetPath = new URL(url, window.location.href).pathname;
+        // 说明：之前只按 pathname 去重，导致脚本修改后无法通过 refreshPreview 获取新版本。
+        // 这里把 search(query) 也纳入去重判断，允许使用 ?v=xxx 进行缓存刷新。
+        const targetUrl = new URL(url, window.location.href);
+        const targetKey = `${targetUrl.pathname}${targetUrl.search || ''}`;
 
         // 如果页面上已有该脚本，直接返回
         const existed = Array.from(document.scripts).some(s => {
             if (!s.src) return false;
-            const existingPath = new URL(s.src, window.location.href).pathname;
-            return existingPath === targetPath;
+            const existingUrl = new URL(s.src, window.location.href);
+            const existingKey = `${existingUrl.pathname}${existingUrl.search || ''}`;
+            return existingKey === targetKey;
         });
         if (existed) {
             const resolved = Promise.resolve();

@@ -901,6 +901,7 @@
     <script src="../scripts/DwellControlComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
+    <script src="../scripts/ProtonExportReportComponent.js"></script>
 
     <script>
         // 组件实例
@@ -919,6 +920,7 @@
         let dwellControlListComponent = null;
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
+        let exportReportModal = null;
         const defaultPatient = {
             name: 'Li Shan',
             id: 'WP4TR3',
@@ -1086,7 +1088,10 @@
                     moduleId: 'plan-evaluation', // 区分于计划设计模块
                     onToolClick: (toolId) => {
                         console.log('计划评估工具点击:', toolId);
-                        // TODO: 在这里实现各个工具的实际业务逻辑
+                        if (toolId === 'export-report') {
+                            openExportReportModal();
+                            return;
+                        }
                     }
                 });
             }
@@ -1527,6 +1532,193 @@
                     doseStatsContainer.dataset.inited = 'true';
                 }
             }
+        }
+
+        function openExportReportModal() {
+            if (typeof ProtonExportReportComponent === 'undefined') {
+                console.warn('ProtonExportReportComponent 未加载');
+                return;
+            }
+
+            // 已打开则不重复创建
+            if (exportReportModal && exportReportModal.backdrop && document.body.contains(exportReportModal.backdrop)) {
+                return;
+            }
+
+            // 注入一次性样式（避免污染全局太多，且不依赖 shared 样式）
+            if (!document.getElementById('proton-export-report-modal-styles')) {
+                const style = document.createElement('style');
+                style.id = 'proton-export-report-modal-styles';
+                style.textContent = `
+                    .proton-export-report-modal-backdrop{
+                        position: fixed;
+                        inset: 0;
+                        background: rgba(0,0,0,0.72);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 10050;
+                    }
+                    .proton-export-report-modal{
+                        width: min(1200px, calc(100vw - 40px));
+                        height: min(88vh, 980px);
+                        background: #1a1a1a;
+                        border: 1px solid #333;
+                        border-radius: 8px;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+                        display: flex;
+                        flex-direction: column;
+                        overflow: hidden;
+                    }
+                    .proton-export-report-modal-header{
+                        flex: 0 0 auto;
+                        height: 44px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 0 12px 0 14px;
+                        background: #242424;
+                        border-bottom: 1px solid #333;
+                        color: #fff;
+                        font-size: 13px;
+                        font-weight: 500;
+                    }
+                    .proton-export-report-modal-title{
+                        display:flex;
+                        align-items:center;
+                        gap: 8px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    .proton-export-report-modal-actions{
+                        display:flex;
+                        align-items:center;
+                        gap: 6px;
+                        flex: 0 0 auto;
+                    }
+                    .proton-export-report-modal-btn{
+                        height: 28px;
+                        padding: 0 10px;
+                        background: #303030;
+                        border: 1px solid #444;
+                        border-radius: 4px;
+                        color: #ddd;
+                        cursor: pointer;
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 12px;
+                    }
+                    .proton-export-report-modal-btn:hover{
+                        background: #3a3a3a;
+                        border-color: #555;
+                        color: #fff;
+                    }
+                    .proton-export-report-modal-btn.icon{
+                        width: 32px;
+                        padding: 0;
+                        justify-content: center;
+                        background: transparent;
+                        border: none;
+                        color: #bbb;
+                    }
+                    .proton-export-report-modal-btn.icon:hover{
+                        background: rgba(255,255,255,0.08);
+                        color: #fff;
+                    }
+                    .proton-export-report-modal-body{
+                        flex: 1 1 auto;
+                        min-height: 0;
+                        overflow: auto;
+                        background: #0f0f0f;
+                    }
+                    .proton-export-report-modal-content{
+                        min-height: 100%;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            const backdrop = document.createElement('div');
+            backdrop.className = 'proton-export-report-modal-backdrop';
+
+            const modal = document.createElement('div');
+            modal.className = 'proton-export-report-modal';
+            modal.innerHTML = `
+                <div class="proton-export-report-modal-header">
+                    <div class="proton-export-report-modal-title">
+                        <i class="fas fa-file-export" style="color:#3AACDE;"></i>
+                        <span>导出报告预览</span>
+                    </div>
+                    <div class="proton-export-report-modal-actions">
+                        <button class="proton-export-report-modal-btn" type="button" data-role="print" title="打印">
+                            <i class="fas fa-print"></i>
+                            打印
+                        </button>
+                        <button class="proton-export-report-modal-btn icon" type="button" data-role="close" aria-label="关闭" title="关闭">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="proton-export-report-modal-body">
+                    <div class="proton-export-report-modal-content" id="protonExportReportModalContent"></div>
+                </div>
+            `;
+
+            backdrop.appendChild(modal);
+            document.body.appendChild(backdrop);
+
+            const contentEl = modal.querySelector('#protonExportReportModalContent');
+            const closeBtn = modal.querySelector('[data-role="close"]');
+            const printBtn = modal.querySelector('[data-role="print"]');
+
+            let reportInstance = null;
+            try {
+                reportInstance = new ProtonExportReportComponent(contentEl, {
+                    mode: 'plan-evaluation-modal',
+                    patient: defaultPatient,
+                    imageBasePath: '../../image'
+                });
+            } catch (e) {
+                console.error('渲染导出报告失败:', e);
+                contentEl.innerHTML = `<div style="padding:16px;color:#ef4444;">导出报告渲染失败：${String(e && e.message ? e.message : e)}</div>`;
+            }
+
+            const close = () => {
+                try {
+                    if (reportInstance && typeof reportInstance.destroy === 'function') {
+                        reportInstance.destroy();
+                    }
+                } catch (_) {
+                    // ignore
+                }
+                exportReportModal = null;
+                backdrop.remove();
+            };
+
+            if (closeBtn) closeBtn.addEventListener('click', close);
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) close();
+            });
+            window.addEventListener('keydown', function onKeyDown(e) {
+                if (!document.body.contains(backdrop)) {
+                    window.removeEventListener('keydown', onKeyDown);
+                    return;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    close();
+                }
+            });
+            if (printBtn) {
+                printBtn.addEventListener('click', () => {
+                    // 直接走浏览器打印；组件自身包含 @media print 样式
+                    window.print();
+                });
+            }
+
+            exportReportModal = { backdrop, modal, reportInstance };
         }
     </script>
 </body>

@@ -1490,9 +1490,15 @@ function initializeRobustnessSettings() {
 function initializeOptimizationConstraints() {
     const mount = document.getElementById('optimizationConstraintsContainer');
     if (!mount || mount.dataset.inited === 'true') return;
-    if (window.ProtonOptimizationConstraintsComponent) {
-        const comp = new window.ProtonOptimizationConstraintsComponent(mount);
-        comp.render();
+    if (window.OptimizationConstraintsComponent) {
+        const comp = new window.OptimizationConstraintsComponent();
+        if (typeof comp.mount === 'function') {
+            comp.mount(mount);
+        } else if (typeof comp.render === 'function') {
+            // 兜底：兼容旧实现
+            comp.container = mount;
+            comp.render();
+        }
         mount.dataset.inited = 'true';
     }
 }

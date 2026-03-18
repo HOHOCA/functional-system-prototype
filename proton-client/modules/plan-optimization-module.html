@@ -437,7 +437,7 @@
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
     <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
     <script src="../../shared/scripts/components/DOSEComponent.js"></script>
-    <script src="../scripts/OptimizationConstraintsComponent.js"></script>
+    <script src="../../shared/scripts/components/OptimizationConstraintsComponent.js"></script>
 
     <script>
         let planSequenceTreeComponent = null;
@@ -532,10 +532,10 @@
 
             initComponents();
 
-            // 初始化质子优化约束列表组件
+            // 初始化优化约束列表组件
             const optContainer = document.getElementById('optConstraintsContent');
-            if (optContainer && typeof ProtonOptimizationConstraintsComponent !== 'undefined') {
-                const optComponent = new ProtonOptimizationConstraintsComponent();
+            if (optContainer && typeof OptimizationConstraintsComponent !== 'undefined') {
+                const optComponent = new OptimizationConstraintsComponent();
                 optComponent.mount(optContainer);
 
                 // 如果底部有页签（应用壳子场景），把「列表字段设置」按钮挪到页签条右侧，避免看起来像“跑到页签上”

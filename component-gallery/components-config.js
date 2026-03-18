@@ -158,6 +158,14 @@ const COMPONENTS_CONFIG = {
             description: '患者基本信息展示组件，可在多个模块复用',
             className: 'PatientOverviewComponent',
             filePath: '../shared/scripts/components/PatientOverviewComponent.js'
+        },
+        {
+            id: 'optimization-constraints',
+            name: 'OptimizationConstraints',
+            displayName: '优化约束列表',
+            description: '计划优化模块中的优化约束列表视图组件（公共组件）',
+            className: 'OptimizationConstraintsComponent',
+            filePath: '../shared/scripts/components/OptimizationConstraintsComponent.js'
         }
     ],
     
@@ -210,14 +218,6 @@ const COMPONENTS_CONFIG = {
             dependencies: ['Three.js']
         },
         {
-            id: 'optimization-constraints',
-            name: 'OptimizationConstraints',
-            displayName: '质子-优化约束列表',
-            description: '质子计划优化模块中的优化约束列表视图组件',
-            className: 'ProtonOptimizationConstraintsComponent',
-            filePath: '../proton-client/scripts/OptimizationConstraintsComponent.js'
-        },
-        {
             id: 'proton-beam-eye-view',
             name: 'ProtonBeamEyeView',
             displayName: '质子-射束眼视图(BEV)',
@@ -232,6 +232,14 @@ const COMPONENTS_CONFIG = {
             description: '能量层可视化',
             className: 'EnergyLayerViewComponent',
             filePath: '../proton-client/scripts/EnergyLayerViewComponent.js'
+        },
+        {
+            id: 'proton-export-report',
+            name: 'ProtonExportReport',
+            displayName: '质子-导出报告',
+            description: '计划报告导出预览（排版参考光子原型，信息字段覆盖计划报告）',
+            className: 'ProtonExportReportComponent',
+            filePath: '../proton-client/scripts/ProtonExportReportComponent.js?v=3'
         }
     ]
 };
