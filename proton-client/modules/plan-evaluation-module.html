@@ -339,7 +339,7 @@
             box-sizing: border-box;
         }
 
-        /* 左侧区域：横断面（上）+ 矢状面+冠状面（下） */
+        /* 左侧区域：横断面（上）+ 数据表格占位（下） */
         .left-view-area {
             display: flex;
             flex-direction: column;
@@ -350,7 +350,7 @@
             overflow: hidden;
         }
 
-        /* 右侧区域：3D视图（上）+ 数据表格（下） */
+        /* 右侧区域：3D视图（上）+ 矢状面+冠状面（下） */
         .right-view-area {
             display: flex;
             flex-direction: column;
@@ -361,48 +361,60 @@
             overflow: hidden;
         }
 
-        /* 左侧上半部分：横断面视图 */
-        .view-panel.axial {
-            flex: 1.3;
+        /* 左列：上 DVH、下 Axial，高度比例（1:1） */
+        .left-view-area > .view-panel:first-child {
+            flex: 1;
         }
 
-        /* 左侧下半部分：矢状面+冠状面 */
-        .left-bottom-views {
+        .left-view-area > .view-panel:last-child {
             flex: 1;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        }
+
+        /* 右侧列底部：左为矢状+冠状（上下），右为等宽占位（1:1） */
+        .right-bottom-row {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
             gap: 2px;
             min-height: 0;
+            min-width: 0;
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* 矢状面视图 */
-        .view-panel.sagittal {
-            grid-column: 1;
+        .right-bottom-row .bottom-two-views,
+        .right-bottom-row .view-panel.right-bottom-placeholder {
+            flex: 1;
+            min-width: 0;
         }
 
-        /* 冠状面视图 */
-        .view-panel.coronal {
-            grid-column: 2;
-        }
-
-        /* 右侧上半部分：3D视图 */
-        .view-panel.view3d {
-            flex: 1.3;
+        .bottom-two-views {
             display: flex;
             flex-direction: column;
-            background: #2a2a2a;
+            gap: 2px;
+            min-height: 0;
+            box-sizing: border-box;
+        }
+
+        .bottom-two-views .view-panel.sagittal,
+        .bottom-two-views .view-panel.coronal {
+            flex: 1;
             min-height: 0;
         }
 
-        /* 右侧下半部分：数据表格视图 */
-        .view-panel.data-table {
+        /* 右侧上半部分：页签容器（临床目标 / 射束列表等，1:1） */
+        .view-panel.view3d {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #2a2a2a;
             min-height: 0;
+        }
+
+        /* 左下横断面等 2D 面板（原 data-table 占位已改为 Axial） */
+        .left-view-area > .view-panel.axial {
+            background: #000000;
         }
 
         .view-panel {
@@ -418,8 +430,14 @@
             min-width: 0; /* 允许收缩 */
         }
 
-        /* 视图标签页 - 通用样式 */
-        .view-tabs {
+        /* 画布宿主容器 - 占据全部内容区域 */
+        .view-canvas-host {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 右上页签行：与 plan-design #dvhViewContainer 一致（dvh-view-tabs + 右侧 view3d-toolbar-host） */
+        #view3dViewContainer .dvh-view-tabs {
             display: flex;
             align-items: center;
             background: #252525;
@@ -428,36 +446,17 @@
             flex-shrink: 0;
         }
 
-        /* 工具栏宿主容器 - 放在标签页右侧 */
-        .view-toolbar-host {
+        #view3dViewContainer .view3d-toolbar-host {
             flex: 1;
             display: flex;
             justify-content: flex-end;
             align-items: center;
             padding-right: 8px;
             height: 100%;
+            min-height: 37px;
         }
 
-        /* 当工具栏在外层时，调整工具栏样式 */
-        .view-tabs .cross-section-view2d-toolbar {
-            background: transparent;
-            border: none;
-            padding: 0;
-            height: auto;
-            min-height: auto;
-        }
-
-        .view-tabs .cross-section-view2d-toolbar .toolbar-group-right {
-            margin-left: 0;
-        }
-
-        /* 画布宿主容器 - 占据全部内容区域 */
-        .view-canvas-host {
-            width: 100%;
-            height: 100%;
-        }
-
-        .view-tab {
+        #view3dViewContainer .dvh-view-tab {
             padding: 10px 20px;
             background: transparent;
             border: none;
@@ -468,18 +467,18 @@
             border-bottom: 2px solid transparent;
         }
 
-        .view-tab:hover {
+        #view3dViewContainer .dvh-view-tab:hover {
             color: #ffffff;
             background: #2a2a2a;
         }
 
-        .view-tab.active {
+        #view3dViewContainer .dvh-view-tab.active {
             color: #3AACDE;
             border-bottom-color: #3AACDE;
             background: #2a2a2a;
         }
 
-        .view-content {
+        #view3dViewContainer .dvh-view-content {
             flex: 1;
             overflow: hidden;
             display: none;
@@ -487,13 +486,12 @@
             position: relative;
         }
 
-        .view-content.active {
+        #view3dViewContainer .dvh-view-content.active {
             display: flex;
             flex-direction: column;
         }
-        
-        /* 确保非激活的内容完全隐藏 */
-        .view-content:not(.active) {
+
+        #view3dViewContainer .dvh-view-content:not(.active) {
             display: none !important;
         }
 
@@ -505,11 +503,15 @@
             height: 100%;
         }
         
-        /* 3D和数据表格面板已有自己的flex布局 */
-        .view-panel.view3d,
-        .view-panel.data-table {
+        .view-panel.view3d {
             display: flex;
             flex-direction: column;
+        }
+
+        #view3dViewContainer .plan-eval-tab-body-host {
+            flex: 1;
+            min-height: 0;
+            background: #1a1a1a;
         }
 
         /* 滚动条样式 */
@@ -619,7 +621,7 @@
             background: #2a2a2a;
         }
 
-        .plan-design-content.fullscreen-mode .view-panel.data-table {
+        .plan-design-content.fullscreen-mode #dataTableContainer {
             position: fixed;
             top: 0;
             left: 0;
@@ -704,6 +706,14 @@
         #channelListContainer .channel-list-toolbar {
             display: none !important;
         }
+
+        /* 模块工具栏：自定义 SVG 图标（创建鲁棒性评估），与原有 Font Awesome 渐变风格协调 */
+        #moduleToolbarContainer .module-tool-btn svg.module-tool-custom-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -726,9 +736,9 @@
             <!-- 左侧栏页签区域 -->
             <div class="left-sidebar-tabs">
             <button class="sidebar-tab active" data-panel="series" title="序列树">序列树</button>
+            <button class="sidebar-tab" data-panel="robust" title="ROBUST">ROBUST</button>
             <button class="sidebar-tab" data-panel="roi" title="ROI">ROI</button>
             <button class="sidebar-tab" data-panel="poi" title="POI">POI</button>
-            <button class="sidebar-tab" data-panel="reg" title="REG">REG</button>
             <button class="sidebar-tab" data-panel="dose" title="DOSE">DOSE</button>
         </div>
 
@@ -747,6 +757,12 @@
                 </div>
             </div>
 
+            <!-- ROBUST 面板 -->
+            <div class="sidebar-content-panel" id="robustPanel">
+                <div class="sidebar-panel-body" id="robustPanelBody">
+                </div>
+            </div>
+
             <!-- ROI面板 -->
             <div class="sidebar-content-panel" id="roiPanel">
                 <div class="sidebar-panel-body" id="roiContainer">
@@ -761,18 +777,6 @@
                 </div>
             </div>
 
-            <!-- REG面板 -->
-            <div class="sidebar-content-panel" id="regPanel">
-                <div class="sidebar-panel-body">
-                    <div class="registration-container" id="planRegistrationContainer">
-                        <div class="loading-indicator" style="display: flex; align-items: center; justify-content: center; padding: 20px; color: #888;">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <span style="margin-left: 10px;">加载配准组件...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Dose面板 -->
             <div class="sidebar-content-panel" id="dosePanel">
                 <div class="sidebar-panel-body" id="doseContainer">
@@ -784,99 +788,38 @@
         <!-- 右侧主内容区域（左右各占50%布局）-->
         <div class="main-content-area">
             <div class="main-view-container">
-                <!-- 左侧区域：横断面（上）+ 矢状面+冠状面（下） -->
+                <!-- 左侧：上 DVH（#axialViewContainer）、下 Axial 横断面（#dataTableContainer） -->
                 <div class="left-view-area">
-                    <!-- 横断面视图 - 左侧上半部分 -->
-                    <div class="view-panel axial" id="axialViewContainer">
-                        <!-- 2D横截面视图组件将在这里渲染 -->
-                    </div>
-
-                    <!-- 左侧下半部分：矢状面+冠状面 -->
-                    <div class="left-bottom-views">
-                        <!-- 矢状面视图 - 左下 -->
-                        <div class="view-panel sagittal" id="sagittalViewContainer">
-                            <!-- 2D矢状面视图组件将在这里渲染 -->
-                        </div>
-
-                        <!-- 冠状面视图 - 右下 -->
-                        <div class="view-panel coronal" id="coronalViewContainer">
-                            <!-- 2D冠状面视图组件将在这里渲染 -->
-                        </div>
-                    </div>
+                    <div class="view-panel dvh-panel" id="axialViewContainer"></div>
+                    <div class="view-panel axial" id="dataTableContainer"></div>
                 </div>
 
-                <!-- 右侧区域：3D视图（上）+ 数据表格（下） -->
+                <!-- 右侧区域：上为临床目标/射束列表页签（暂不挂载组件）；下为矢状+冠状 + 占位 -->
                 <div class="right-view-area">
-                    <!-- 3D视图 - 右侧上半部分 -->
                     <div class="view-panel view3d" id="view3dViewContainer">
-                        <div class="view-tabs">
-                            <button class="view-tab active" data-tab="view3d">3D</button>
-                            <button class="view-tab" data-tab="dvh">DVH</button>
-                            <div id="view3dToolbarHost" class="view-toolbar-host"></div>
-                            <div id="dvhToolbarHost" class="view-toolbar-host" style="display: none;"></div>
+                        <div class="dvh-view-tabs">
+                            <button type="button" class="dvh-view-tab active" data-tab="clinicalTarget">临床目标</button>
+                            <button type="button" class="dvh-view-tab" data-tab="beamList">射束列表</button>
+                            <div id="view3dToolbarHost" class="view3d-toolbar-host"></div>
                         </div>
-                        <div class="view-content active" id="view3dContent">
-                            <div id="view3dCanvasHost" class="view-canvas-host"></div>
+                        <div class="dvh-view-content active" id="clinicalTargetTopContent">
+                            <div id="planEvalClinicalTargetHost" class="view-canvas-host plan-eval-tab-body-host"></div>
                         </div>
-                        <div class="view-content" id="dvhContent">
-                            <div id="dvhCanvasHost" class="view-canvas-host"></div>
+                        <div class="dvh-view-content" id="beamListTopContent">
+                            <div id="planEvalBeamListHost" class="view-canvas-host plan-eval-tab-body-host"></div>
                         </div>
                     </div>
 
-                    <!-- 数据表格视图 - 右侧下半部分 -->
-                    <div class="view-panel data-table" id="dataTableContainer">
-                        <div class="bottom-control-tabs">
-                            <div class="bottom-control-tabs-left">
-                                <button class="bottom-control-tab active" data-tab="doseStats">剂量统计</button>
-                                <button class="bottom-control-tab" data-tab="clinicalTarget">临床目标</button>
-                                <button class="bottom-control-tab" data-tab="channelList">通道列表</button>
-                                <button class="bottom-control-tab" data-tab="dwellControl">驻留控制</button>
+                    <div class="right-bottom-row">
+                        <div class="bottom-two-views">
+                            <div class="view-panel sagittal" id="sagittalViewContainer">
+                                <!-- 2D矢状面视图组件将在这里渲染 -->
                             </div>
-                            <div class="bottom-control-tabs-right">
-                                <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏数据表格">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                        <defs>
-                                            <linearGradient id="gradient-bottom-maximize" x1="0%" y1="0%" x2="100%" y2="100%">
-                                                <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                                <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </button>
+                            <div class="view-panel coronal" id="coronalViewContainer">
+                                <!-- 2D冠状面视图组件将在这里渲染 -->
                             </div>
                         </div>
-                        
-                        <!-- 剂量统计内容 -->
-                        <div class="bottom-control-content active" id="doseStatsContent">
-                            <div class="bottom-control-panel-body" id="doseStatsContainer">
-                                <!-- 剂量统计组件将在这里渲染 -->
-                            </div>
-                        </div>
-
-                        <!-- 临床目标内容 -->
-                        <div class="bottom-control-content" id="clinicalTargetContent">
-                            <div class="bottom-control-panel-body" id="clinicalTargetContainer">
-                                <!-- 临床目标组件将在这里渲染 -->
-                            </div>
-                        </div>
-
-                        <!-- 通道列表内容 -->
-                        <div class="bottom-control-content" id="channelListContent">
-                            <div class="bottom-control-panel-body" id="channelListContainer">
-                                <!-- 通道列表组件将在这里渲染 -->
-                            </div>
-                        </div>
-
-                        <!-- 驻留控制内容 -->
-                        <div class="bottom-control-content" id="dwellControlContent">
-                            <div class="bottom-control-panel-body" id="dwellControlContainer">
-                                <!-- 驻留控制列表组件将在这里渲染 -->
-                            </div>
-                        </div>
+                        <div class="view-panel right-bottom-placeholder" id="rightBottomPlaceholderContainer"></div>
                     </div>
                 </div>
             </div>
@@ -889,38 +832,42 @@
     <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
     <script src="../../shared/scripts/components/ROIComponent.js"></script>
     <script src="../../shared/scripts/components/POIComponent.js"></script>
-    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
+    <script src="../../shared/scripts/components/RobustListComponent.js"></script>
     <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
     <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
     <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
-        <script src="../scripts/BrachyView3DComponent.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../../shared/scripts/components/FourDCTRobustnessEvaluationDVHComponent.js"></script>
     <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
     <script src="../../shared/scripts/components/DOSEComponent.js"></script>
     <script src="../scripts/ChannelListComponent.js"></script>
     <script src="../scripts/DwellControlComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
+    <script src="../../shared/scripts/components/FourDCTScenarioListComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
     <script src="../scripts/ProtonExportReportComponent.js"></script>
+    <script src="../scripts/CreateRobustnessEvaluationComponent.js"></script>
 
     <script>
         // 组件实例
         let planSequenceTreeComponent = null;
         let roiComponent = null;
         let poiComponent = null;
-        let registrationComponent = null;
         let axialViewComponent = null;
         let coronalViewComponent = null;
         let sagittalViewComponent = null;
-        let brachyView3DComponent = null;
         let moduleToolbar = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
         let channelListComponent = null;
         let dwellControlListComponent = null;
         let clinicalTargetComponent = null;
+        let robustListComponent = null;
+        let fourDctScenarioListComponent = null;
         let doseStatisticsComponent = null;
+        let leftDvhComponent = null;
         let exportReportModal = null;
+        let createRobustnessEvaluationModal = null;
         const defaultPatient = {
             name: 'Li Shan',
             id: 'WP4TR3',
@@ -940,9 +887,9 @@
 
             const panelMap = {
                 'series': 'seriesPanel',
+                'robust': 'robustPanel',
                 'roi': 'roiPanel',
                 'poi': 'poiPanel',
-                'reg': 'regPanel',
                 'dose': 'dosePanel'
             };
 
@@ -1013,9 +960,7 @@
 
             // 初始化组件
             initComponents();
-            
-            // 默认初始化剂量统计组件（因为默认显示剂量统计标签页）
-            initDoseStatisticsComponent();
+            bindCreateRobustnessEvaluationTrigger();
         });
 
         // 初始化所有组件
@@ -1041,57 +986,58 @@
                     });
                 }
             }
-            // 初始化模块工具栏（计划评估专用）
+            // 初始化模块工具栏（计划评估：创建鲁棒性评估）
             if (typeof ModuleToolbarComponent !== 'undefined') {
-                // 计划评估工具栏：与截图一致的 5 个功能
+                const robustnessEvalIconSvg = '<svg class="module-tool-custom-icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="planEvalRobustIconGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3AACDE"/><stop offset="100%" stop-color="#00bcd4"/></linearGradient></defs><path fill="none" stroke="url(#planEvalRobustIconGrad)" stroke-width="1.3" stroke-linecap="round" d="M6 4.5h3M4.5 6v3M18 4.5h-3M19.5 6v3M6 19.5h3M4.5 18v-3M18 19.5h-3M19.5 18v-3"/><path fill="none" stroke="url(#planEvalRobustIconGrad)" stroke-width="1" stroke-linecap="round" opacity="0.85" d="M5 7.5a2.5 2.5 0 0 1 2.5-2.5M16.5 5a2.5 2.5 0 0 1 2.5 2.5M5 16.5a2.5 2.5 0 0 0 2.5 2.5M16.5 19a2.5 2.5 0 0 0 2.5-2.5"/><g fill="url(#planEvalRobustIconGrad)"><circle cx="9" cy="9" r="1.15"/><circle cx="12" cy="9" r="1.15"/><circle cx="15" cy="9" r="1.15"/><circle cx="9" cy="12" r="1.15"/><circle cx="12" cy="12" r="1.15"/><circle cx="15" cy="12" r="1.15"/><circle cx="9" cy="15" r="1.15"/><circle cx="12" cy="15" r="1.15"/><circle cx="15" cy="15" r="1.15"/></g><circle cx="18.2" cy="18.2" r="3.2" fill="none" stroke="url(#planEvalRobustIconGrad)" stroke-width="1.2"/><path stroke="url(#planEvalRobustIconGrad)" stroke-width="1.3" stroke-linecap="round" d="M18.2 16.4v3.6M16.4 18.2h3.6"/></svg>';
+
                 const evaluationTools = [
                     {
-                        id: 'export-report',
-                        icon: 'fas fa-file-export',
-                        label: '导出报告',
-                        tooltip: '导出报告',
+                        id: 'create-robustness-evaluation',
+                        icon: robustnessEvalIconSvg,
+                        label: '创建鲁棒性评估',
+                        tooltip: '创建鲁棒性评估',
                         category: '常规'
-                    },
-                    {
-                        id: 'export-locator',
-                        icon: 'fas fa-crosshairs',
-                        label: '导出定位器',
-                        tooltip: '导出定位器',
-                        category: '常规'
-                    },
-                    {
-                        id: 'export-plane-dose',
-                        icon: 'fas fa-bullseye',
-                        label: '导出平面剂量',
-                        tooltip: '导出平面剂量',
-                        category: '常规'
-                    },
-                    {
-                        id: 'approve-plan',
-                        icon: 'fas fa-clipboard-check',
-                        label: '审核计划',
-                        tooltip: '审核计划',
-                        category: '审核'
-                    },
-                    {
-                        id: 'unlock-plan',
-                        icon: 'fas fa-unlock-alt',
-                        label: '解除计划',
-                        tooltip: '解除计划',
-                        category: '审核'
                     }
                 ];
 
                 moduleToolbar = new ModuleToolbarComponent('moduleToolbarContainer', {
                     tools: evaluationTools,
-                    categories: ['常规', '审核'], // 计划评估模块的工具分组
-                    moduleId: 'plan-evaluation', // 区分于计划设计模块
+                    categories: ['常规'],
+                    moduleId: 'plan-evaluation',
                     onToolClick: (toolId) => {
                         console.log('计划评估工具点击:', toolId);
-                        if (toolId === 'export-report') {
-                            openExportReportModal();
+                        if (toolId === 'create-robustness-evaluation') {
+                            openCreateRobustnessEvaluationModal();
                             return;
                         }
+                    }
+                });
+            }
+
+            // 左侧 ROBUST 面板：鲁棒性组列表
+            if (typeof RobustListComponent !== 'undefined' && document.getElementById('robustPanelBody')) {
+                robustListComponent = new RobustListComponent('robustPanelBody', {
+                    prefix: 'plan-eval-',
+                    onGroupSelect: (groupId) => {
+                        console.log('选中鲁棒性组:', groupId);
+                    },
+                    onSearch: (query) => {
+                        console.log('鲁棒性组搜索:', query);
+                    },
+                    onLoadTemplate: () => {
+                        console.log('加载鲁棒性模板');
+                    },
+                    onSave: (groupId) => {
+                        console.log('保存鲁棒性组:', groupId);
+                    },
+                    onExecute: (groupId) => {
+                        console.log('执行鲁棒性组:', groupId);
+                    },
+                    onEdit: (groupId) => {
+                        console.log('编辑鲁棒性组:', groupId);
+                    },
+                    onDelete: (groupId) => {
+                        console.log('删除鲁棒性组:', groupId);
                     }
                 });
             }
@@ -1119,36 +1065,23 @@
                 });
             }
 
-            // 初始化配准组件
-            if (typeof RegistrationComponent !== 'undefined') {
-                const registrationContainer = document.getElementById('planRegistrationContainer');
-                if (registrationContainer) {
-                    // 移除加载指示器
-                    registrationContainer.innerHTML = '';
-                    
-                    registrationComponent = new RegistrationComponent('planRegistrationContainer', {
-                        prefix: 'plan-',
-                        onRegistrationSelect: function(registrationId, element) {
-                            console.log('计划设计配准选择:', registrationId);
-                            // 可以在这里添加配准选择后的处理逻辑
-                        },
-                        onSequenceSelect: function(sequenceName, element) {
-                            console.log('计划设计配准序列选择:', sequenceName);
-                            // 可以在这里添加序列选择后的处理逻辑
-                        },
-                        onFileSelect: function(fileName, element) {
-                            console.log('计划设计配准文件选择:', fileName);
-                            // 可以在这里添加文件选择后的处理逻辑
-                        },
-                        showFileInfo: true
-                    });
-                }
+            // 左上：4DCT 鲁棒性评估 DVH（容器 id 仍为 axialViewContainer）
+            if (typeof FourDCTRobustnessEvaluationDVHComponent !== 'undefined' && document.getElementById('axialViewContainer')) {
+                leftDvhComponent = new FourDCTRobustnessEvaluationDVHComponent('axialViewContainer', {
+                    showHeader: true,
+                    toolbarTitle: 'DVH',
+                    enableToolbar: true,
+                    enableContextMenu: true,
+                    onCurveClick: (curve) => {
+                        console.log('左侧 DVH 曲线点击:', curve.roiName);
+                    }
+                });
             }
 
-            // 初始化横断面视图组件
+            // 左下：横断面 2D（Axial）
             if (typeof CrossSectionView2DComponent !== 'undefined') {
-                if (document.getElementById('axialViewContainer')) {
-                    axialViewComponent = new CrossSectionView2DComponent('axialViewContainer', {
+                if (document.getElementById('dataTableContainer')) {
+                    axialViewComponent = new CrossSectionView2DComponent('dataTableContainer', {
                         enableToolbar: true,
                         enableLayerControl: true,
                         showDoseLegend: true,  // 显示等剂量线图例
@@ -1306,21 +1239,24 @@
                 }
             }
 
-            // 初始化3D视图组件（3D页签）
-            if (typeof BrachyView3DComponent !== 'undefined') {
-                if (document.getElementById('view3dCanvasHost')) {
-                    brachyView3DComponent = new BrachyView3DComponent('view3dCanvasHost', {
-                        prefix: 'plan-design-3d-',
-                        toolbarContainerId: 'view3dToolbarHost', // 工具栏挂载到外部容器，避免双标题
-                        showHeader: false
+            // 右上：临床目标 / 射束列表 页签切换（组件后续挂载到 planEvalClinicalTargetHost / planEvalBeamListHost）
+            (function setupPlanEvalRightTopTabs() {
+                const root = document.getElementById('view3dViewContainer');
+                if (!root) return;
+                const tabs = root.querySelectorAll('.dvh-view-tab[data-tab]');
+                tabs.forEach((tab) => {
+                    tab.addEventListener('click', function() {
+                        const name = this.getAttribute('data-tab');
+                        if (!name) return;
+                        const contentId = name + 'TopContent';
+                        const target = document.getElementById(contentId);
+                        tabs.forEach((t) => t.classList.remove('active'));
+                        this.classList.add('active');
+                        root.querySelectorAll('.dvh-view-content').forEach((c) => c.classList.remove('active'));
+                        if (target) target.classList.add('active');
                     });
-                    // 确保工具栏容器显示（默认3D页签激活）
-                    const toolbarHost = document.getElementById('view3dToolbarHost');
-                    if (toolbarHost) {
-                        toolbarHost.style.display = 'flex';
-                    }
-                }
-            }
+                });
+            })();
 
             // 初始化DOSE组件
             if (typeof DOSEComponent !== 'undefined') {
@@ -1344,63 +1280,6 @@
                         }
                     });
                 }
-            }
-
-            // 3D/DVH视图标签切换逻辑
-            const viewTabs = document.querySelectorAll('.view-tab');
-            const viewContents = document.querySelectorAll('.view-content');
-            const view3dToolbarHost = document.getElementById('view3dToolbarHost');
-            const dvhToolbarHost = document.getElementById('dvhToolbarHost');
-
-            viewTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    const contentId = tabName + 'Content';
-
-                    // 更新标签激活状态
-                    viewTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-
-                    // 切换内容面板
-                    viewContents.forEach(c => c.classList.remove('active'));
-                    const targetContent = document.getElementById(contentId);
-                    if (targetContent) {
-                        targetContent.classList.add('active');
-                    }
-
-                    // 根据页签切换工具栏显示
-                    if (tabName === 'view3d') {
-                        // 3D页签：显示3D工具栏，隐藏DVH工具栏
-                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'flex';
-                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'none';
-                    } else if (tabName === 'dvh') {
-                        // DVH页签：隐藏3D工具栏，显示DVH工具栏
-                        if (view3dToolbarHost) view3dToolbarHost.style.display = 'none';
-                        if (dvhToolbarHost) dvhToolbarHost.style.display = 'flex';
-                        // 由于DVH组件初始化时容器是隐藏的，这里切换到DVH时重新计算尺寸并重绘
-                        if (typeof dvhComponent !== 'undefined' && dvhComponent) {
-                            if (dvhComponent.setupCanvas && dvhComponent.draw) {
-                                dvhComponent.setupCanvas();
-                                dvhComponent.draw();
-                            }
-                        }
-                    }
-                });
-            });
-
-            // 初始化DVH组件（应用方案B：工具栏外置）
-            let dvhComponent = null;
-            const dvhCanvasHost = document.getElementById('dvhCanvasHost');
-            if (typeof DVHComponent !== 'undefined' && dvhCanvasHost) {
-                dvhComponent = new DVHComponent('dvhCanvasHost', {
-                    toolbarContainerId: 'dvhToolbarHost', // 工具栏挂载到外部容器
-                    showHeader: false,
-                    enableToolbar: true,
-                    enableContextMenu: true,
-                    onCurveClick: (curve) => {
-                        console.log('DVH曲线点击:', curve.roiName);
-                    }
-                });
             }
 
             // 初始化通道列表组件
@@ -1464,33 +1343,45 @@
                 }
             }
 
-            // 初始化临床目标组件
+            // 初始化临床目标组件（右上「临床目标」页签内）
             if (typeof ClinicalTargetComponent !== 'undefined') {
-                const clinicalTargetContainer = document.getElementById('clinicalTargetContainer');
-                if (clinicalTargetContainer) {
-                    clinicalTargetComponent = new ClinicalTargetComponent('clinicalTargetContainer', {
-                        prefix: 'plan-design-',
+                const clinicalTargetHost = document.getElementById('planEvalClinicalTargetHost');
+                if (clinicalTargetHost) {
+                    clinicalTargetComponent = new ClinicalTargetComponent('planEvalClinicalTargetHost', {
+                        prefix: 'plan-eval-',
+                        showFilter: false,
                         onTargetSelect: (target) => {
                             console.log('选中临床目标:', target);
                         },
                         onTargetAdd: () => {
                             console.log('添加临床目标');
-                            // TODO: 打开添加弹窗
                         },
                         onTargetEdit: (target) => {
                             console.log('编辑临床目标:', target);
-                            // TODO: 打开编辑弹窗
                         },
                         onTargetDelete: (target) => {
                             console.log('删除临床目标:', target);
                         },
                         onTargetExport: (targets) => {
                             console.log('导出临床目标:', targets);
-                            // TODO: 打开导出弹窗
                         },
                         onTargetImport: () => {
                             console.log('导入临床目标');
-                            // TODO: 打开导入弹窗
+                        }
+                    });
+                }
+            }
+
+            // 右下占位区域：4DCT 场景列表
+            if (typeof FourDCTScenarioListComponent !== 'undefined') {
+                const fourDctScenarioHost = document.getElementById('rightBottomPlaceholderContainer');
+                if (fourDctScenarioHost) {
+                    fourDctScenarioListComponent = new FourDCTScenarioListComponent('rightBottomPlaceholderContainer', {
+                        prefix: 'plan-eval-',
+                        groupName: '1',
+                        positioningUncertainty: '0.50',
+                        onScenarioChange: (index, row) => {
+                            console.log('4DCT场景切换:', index, row);
                         }
                     });
                 }
@@ -1719,6 +1610,34 @@
             }
 
             exportReportModal = { backdrop, modal, reportInstance };
+        }
+
+        function openCreateRobustnessEvaluationModal() {
+            if (typeof CreateRobustnessEvaluationComponent === 'undefined') {
+                console.warn('CreateRobustnessEvaluationComponent 未加载');
+                return;
+            }
+            if (!createRobustnessEvaluationModal) {
+                createRobustnessEvaluationModal = new CreateRobustnessEvaluationComponent({
+                    onConfirm: (data) => {
+                        console.log('开始鲁棒性评估:', data);
+                    },
+                    onCancel: () => {
+                        console.log('取消创建鲁棒性评估');
+                    }
+                });
+            }
+            createRobustnessEvaluationModal.show();
+        }
+
+        function bindCreateRobustnessEvaluationTrigger() {
+            const toolbarContainer = document.getElementById('moduleToolbarContainer');
+            if (!toolbarContainer) return;
+            toolbarContainer.addEventListener('click', (event) => {
+                const targetBtn = event.target.closest('.module-tool-btn[data-tool="create-robustness-evaluation"]');
+                if (!targetBtn || !toolbarContainer.contains(targetBtn)) return;
+                openCreateRobustnessEvaluationModal();
+            });
         }
     </script>
 </body>

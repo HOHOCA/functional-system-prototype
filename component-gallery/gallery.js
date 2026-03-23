@@ -272,6 +272,9 @@ class ComponentGallery {
                     await this.loadScriptIfNeeded(component.filePath);
                 }
             }
+            if (component.className === 'FourDCTRobustnessEvaluationDVHComponent' && typeof DVHComponent === 'undefined') {
+                await this.loadScriptIfNeeded('../shared/scripts/components/DVHComponent.js');
+            }
         } catch (error) {
             console.error('加载组件脚本失败:', error);
             componentContainer.innerHTML = `
@@ -471,6 +474,15 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'FourDCTRobustnessEvaluationDVHComponent':
+                    if (typeof FourDCTRobustnessEvaluationDVHComponent !== 'undefined') {
+                        instance = new FourDCTRobustnessEvaluationDVHComponent(componentContainer, {
+                            enableToolbar: true,
+                            enableContextMenu: true
+                        });
+                    }
+                    break;
                     
                 case 'View3DComponent':
                     if (typeof View3DComponent !== 'undefined') {
@@ -500,6 +512,34 @@ class ComponentGallery {
                     if (typeof POIComponent !== 'undefined') {
                         instance = new POIComponent(componentContainer.id, {
                             prefix: 'preview-'
+                        });
+                    }
+                    break;
+                    
+                case 'RobustListComponent':
+                    if (typeof RobustListComponent !== 'undefined') {
+                        instance = new RobustListComponent(componentContainer.id, {
+                            prefix: 'preview-'
+                        });
+                    }
+                    break;
+
+                case 'ScenarioListComponent':
+                    if (typeof ScenarioListComponent !== 'undefined') {
+                        instance = new ScenarioListComponent(componentContainer.id, {
+                            prefix: 'preview-',
+                            groupName: '1',
+                            initialIndex: 3
+                        });
+                    }
+                    break;
+
+                case 'FourDCTScenarioListComponent':
+                    if (typeof FourDCTScenarioListComponent !== 'undefined') {
+                        instance = new FourDCTScenarioListComponent(componentContainer.id, {
+                            prefix: 'preview-',
+                            groupName: '1',
+                            initialIndex: 3
                         });
                     }
                     break;
@@ -613,6 +653,21 @@ class ComponentGallery {
                         instance = new ProtonExportReportComponent(componentContainer.id, {
                             mode: 'gallery-preview'
                         });
+                    }
+                    break;
+
+                case 'CreateRobustnessEvaluationComponent':
+                    if (typeof CreateRobustnessEvaluationComponent !== 'undefined') {
+                        componentContainer.style.height = '800px';
+                        componentContainer.style.minHeight = '800px';
+                        instance = new CreateRobustnessEvaluationComponent({
+                            mountContainer: componentContainer,
+                            onConfirm: (data) => console.log('Create robustness evaluation:', data),
+                            onCancel: () => console.log('Cancel create robustness evaluation')
+                        });
+                        if (instance && typeof instance.show === 'function') {
+                            setTimeout(() => instance.show(), 60);
+                        }
                     }
                     break;
                     

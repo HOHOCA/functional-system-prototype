@@ -15,6 +15,8 @@
     color: #ffffff;
     font-size: 14px;
     font-weight: bold;
+    line-height: 1.2;
+    font-family: inherit;
 }
 
 .cross-section-view2d-toolbar .toolbar-group-right {

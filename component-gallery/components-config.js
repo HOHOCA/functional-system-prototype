@@ -29,7 +29,7 @@ const COMPONENTS_CONFIG = {
         {
             id: 'dvh',
             name: 'DVH',
-            displayName: '剂量体积直方图',
+            displayName: 'DVH',
             description: 'DVH曲线显示，支持积分/微分模式',
             className: 'DVHComponent',
             filePath: '../shared/scripts/components/DVHComponent.js'
@@ -51,6 +51,39 @@ const COMPONENTS_CONFIG = {
             className: 'POIComponent',
             layout: 'sidebar', // 标记为侧边栏布局
             filePath: '../shared/scripts/components/POIComponent.js'
+        },
+        {
+            id: 'robust-list',
+            name: 'RobustList',
+            displayName: 'ROBUST列表',
+            description: '鲁棒性组列表，支持搜索与组操作',
+            className: 'RobustListComponent',
+            layout: 'sidebar',
+            filePath: '../shared/scripts/components/RobustListComponent.js'
+        },
+        {
+            id: 'scenario-list',
+            name: 'ScenarioList',
+            displayName: '场景列表',
+            description: '鲁棒性场景明细：组名、场景切换、汇总指标与 R-L/I-S/P-A 表格',
+            className: 'ScenarioListComponent',
+            filePath: '../shared/scripts/components/ScenarioListComponent.js'
+        },
+        {
+            id: 'four-dct-scenario-list',
+            name: 'FourDCTScenarioList',
+            displayName: '4DCT-场景列表',
+            description: '4DCT 场景列表',
+            className: 'FourDCTScenarioListComponent',
+            filePath: '../shared/scripts/components/FourDCTScenarioListComponent.js'
+        },
+        {
+            id: 'four-dct-robustness-evaluation-dvh',
+            name: 'FourDCTRobustnessEvaluationDVH',
+            displayName: '4DCT-鲁棒性评估DVH',
+            description: '4DCT 鲁棒性评估 DVH 组件（初版复用 DVH）',
+            className: 'FourDCTRobustnessEvaluationDVHComponent',
+            filePath: '../shared/scripts/components/FourDCTRobustnessEvaluationDVHComponent.js'
         },
         {
             id: 'dose-statistics',
@@ -240,6 +273,14 @@ const COMPONENTS_CONFIG = {
             description: '计划报告导出预览（排版参考光子原型，信息字段覆盖计划报告）',
             className: 'ProtonExportReportComponent',
             filePath: '../proton-client/scripts/ProtonExportReportComponent.js?v=3'
+        },
+        {
+            id: 'create-robustness-evaluation',
+            name: 'CreateRobustnessEvaluation',
+            displayName: '创建鲁棒性评估',
+            description: '创建鲁棒性评估弹窗：组名、场景生成、场景列表编辑与开始评估',
+            className: 'CreateRobustnessEvaluationComponent',
+            filePath: '../proton-client/scripts/CreateRobustnessEvaluationComponent.js'
         }
     ]
 };

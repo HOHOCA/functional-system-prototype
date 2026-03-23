@@ -36,12 +36,128 @@
     color: #ffffff;
     font-size: 14px;
     font-weight: bold;
+    line-height: 1.2;
+    font-family: inherit;
 }
 
 .dvh-toolbar .toolbar-group-right {
     display: flex;
     gap: 8px;
     align-items: center;
+}
+
+.dvh-4d-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.dvh-4d-label {
+    color: #cfcfcf;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dvh-4d-opacity-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dvh-4d-opacity-slider {
+    width: 120px;
+    accent-color: #00aaff;
+}
+
+.dvh-4d-opacity-value {
+    color: #e6e6e6;
+    font-size: 12px;
+    min-width: 40px;
+}
+
+.dvh-4d-phase-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dvh-4d-phase-dropdown {
+    position: relative;
+}
+
+.dvh-4d-phase-trigger {
+    height: 24px;
+    min-width: 110px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #ddd;
+    background: #1f1f1f;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.dvh-4d-phase-trigger:hover {
+    border-color: #00aaff;
+}
+
+.dvh-4d-phase-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 130px;
+    background: #2a2a2a;
+    border: 1px solid #4a4a4a;
+    border-radius: 4px;
+    padding: 6px 8px;
+    z-index: 1200;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dvh-4d-phase-actions {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #3f3f3f;
+}
+
+.dvh-4d-phase-action-btn {
+    flex: 1;
+    height: 22px;
+    font-size: 11px;
+    color: #ddd;
+    background: #1f1f1f;
+    border: 1px solid #4a4a4a;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.dvh-4d-phase-action-btn:hover {
+    border-color: #00aaff;
+    color: #fff;
+}
+
+.dvh-4d-phase-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #d7d7d7;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    padding: 3px 0;
+}
+
+.dvh-4d-phase-item input[type="checkbox"] {
+    accent-color: #00aaff;
 }
 
 .dvh-toolbar .toolbar-btn-svg {
@@ -326,6 +442,19 @@
 
 /* 响应式 */
 @media (max-width: 768px) {
+    .dvh-4d-controls {
+        gap: 8px;
+        margin-right: 6px;
+    }
+
+    .dvh-4d-opacity-slider {
+        width: 90px;
+    }
+
+    .dvh-4d-phase-item span {
+        display: inline;
+    }
+
     .dvh-legend {
         max-height: 150px;
         font-size: 11px;

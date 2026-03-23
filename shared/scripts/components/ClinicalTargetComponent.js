@@ -13,6 +13,8 @@ class ClinicalTargetComponent {
         
         this.options = {
             prefix: options.prefix || '',
+            /** 是否显示顶部过滤区（ROI 下拉 + V/D 数值过滤）；计划评估等场景可设为 false */
+            showFilter: true,
             onTargetSelect: options.onTargetSelect || (() => {}),
             onTargetAdd: options.onTargetAdd || (() => {}),
             onTargetEdit: options.onTargetEdit || (() => {}),
@@ -130,9 +132,8 @@ class ClinicalTargetComponent {
     }
 
     render() {
-        this.container.innerHTML = `
-            <div class="clinical-target-component">
-                <!-- 过滤区域 -->
+        const filterBlock = this.options.showFilter
+            ? `
                 <div class="clinical-target-filter">
                     <div class="clinical-target-dropdown" id="${this.options.prefix}roiDropdown">
                         <div class="clinical-target-dropdown-trigger" id="${this.options.prefix}roiDropdownTrigger">
@@ -146,7 +147,6 @@ class ClinicalTargetComponent {
                                    placeholder="查找选项"
                                    style="width: 100%; padding: 6px 8px; border: none; border-bottom: 1px solid #333; background: #2a2a2a; color: #ddd; font-size: 12px; box-sizing: border-box;">
                             <div class="clinical-target-dropdown-options" id="${this.options.prefix}roiDropdownOptions">
-                                <!-- 选项将通过JavaScript动态加载 -->
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,12 @@ class ClinicalTargetComponent {
                                step="0.01"
                                style="background: #111; border: 1px solid #333; border-radius: 4px; color: #ddd; padding: 4px 8px; height: 28px; font-size: 12px; width: 150px;">
                     </div>
-                </div>
+                </div>`
+            : '';
+
+        this.container.innerHTML = `
+            <div class="clinical-target-component">
+                ${filterBlock}
 
                 <!-- 临床目标表格 -->
                 <div class="clinical-target-table-container">
