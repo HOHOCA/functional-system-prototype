@@ -1,13 +1,15 @@
 /**
  * 4DCT-鲁棒性评估DVH组件
  * 在 DVH 基础上扩展：
- * - 12 场景 × 4 时相（MIP/20%/50%/80%）曲线生成
- * - 其他场景透明度控制（场景1/时相1固定不透明）
+ * - 共 48 个场景：4 个时相（MIP/20%/50%/80%），每个时相下 12 个场景；悬浮提示场景序号 1～48（按时相→该时相内场景展开）
+ * - 其他曲线透明度控制（MIP 时相下场景 1 为基准线，固定不透明）
  * - 时相多选过滤
  */
 class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
     init() {
         this.phaseLabels = ['MIP', '20%', '50%', '80%'];
+        /** 单个时相下的场景个数（4×12=48 总场景） */
+        this.scenariosPerPhase = 12;
         this.selectedPhases = new Set(this.phaseLabels);
         this.otherScenariosOpacity = 60;
 
@@ -234,12 +236,14 @@ class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
         ];
 
         const expanded = [];
-        for (let scenarioIndex = 1; scenarioIndex <= 12; scenarioIndex++) {
-            for (let phaseIndex = 1; phaseIndex <= this.phaseLabels.length; phaseIndex++) {
-                const phaseLabel = this.phaseLabels[phaseIndex - 1];
+        for (let phaseIndex = 1; phaseIndex <= this.phaseLabels.length; phaseIndex++) {
+            const phaseLabel = this.phaseLabels[phaseIndex - 1];
+            for (let scenarioIndex = 1; scenarioIndex <= this.scenariosPerPhase; scenarioIndex++) {
                 baseRois.forEach((base) => {
+                    const sceneDisplayIndex =
+                        (phaseIndex - 1) * this.scenariosPerPhase + scenarioIndex;
                     expanded.push({
-                        roiId: `${base.roiId}-s${scenarioIndex}-p${phaseIndex}`,
+                        roiId: `${base.roiId}-p${phaseIndex}-s${scenarioIndex}`,
                         roiBaseId: base.roiId,
                         roiName: base.roiName,
                         color: base.color,
@@ -247,6 +251,7 @@ class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
                         scenarioIndex,
                         phaseIndex,
                         phaseLabel,
+                        sceneDisplayIndex,
                         points: this.generateScenarioPhaseDVH(base, scenarioIndex, phaseIndex)
                     });
                 });
@@ -257,7 +262,7 @@ class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
     }
 
     generateScenarioPhaseDVH(base, scenarioIndex, phaseIndex) {
-        // 通过场景/时相调整斜率、下降位置和小幅噪声，使同ROI在不同维度下有细微差别
+        // scenarioIndex：该时相下 12 场景之一；phaseIndex：时相。用于微调曲线形状作演示区分
         const scenarioDelta = scenarioIndex - 1;
         const phaseDelta = phaseIndex - 1;
 
@@ -296,7 +301,45 @@ class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
         return Math.max(0, Math.min(1, this.otherScenariosOpacity / 100));
     }
 
-    findCurveAtPosition(x, y, threshold = 8) {
+    /**
+     * 全局场景序号 1～48。优先从 roiId（…-p{时相}-s{该时相内场景}）解析，避免仅依赖 phaseLabel 匹配失败时误用错误的 phaseIndex。
+     */
+    getGlobalSceneNumber(curve) {
+        if (!curve) return '';
+        const perPhase = this.scenariosPerPhase ?? 12;
+        const numPhases = this.phaseLabels ? this.phaseLabels.length : 4;
+
+        const id = String(curve.roiId || '');
+        const parsed = id.match(/-p(\d+)-s(\d+)$/);
+        if (parsed) {
+            const p = parseInt(parsed[1], 10);
+            const s = parseInt(parsed[2], 10);
+            if (p >= 1 && s >= 1 && p <= numPhases && s <= perPhase) {
+                return (p - 1) * perPhase + s;
+            }
+        }
+
+        if (curve.sceneDisplayIndex != null && curve.phaseIndex != null && curve.phaseLabel != null) {
+            const labelSlot = this.phaseLabels.indexOf(String(curve.phaseLabel).trim());
+            if (labelSlot === curve.phaseIndex - 1) {
+                return curve.sceneDisplayIndex;
+            }
+        }
+
+        if (curve.scenarioIndex == null) {
+            return curve.sceneDisplayIndex != null ? curve.sceneDisplayIndex : '';
+        }
+        let phaseSlot = this.phaseLabels.indexOf(String(curve.phaseLabel || '').trim());
+        if (phaseSlot < 0 && curve.phaseIndex != null && curve.phaseIndex >= 1) {
+            phaseSlot = curve.phaseIndex - 1;
+        }
+        if (phaseSlot < 0) {
+            return curve.sceneDisplayIndex != null ? curve.sceneDisplayIndex : '';
+        }
+        return phaseSlot * perPhase + curve.scenarioIndex;
+    }
+
+    findCurveAtPosition(x, y, threshold = 10) {
         for (let i = this.dvhData.length - 1; i >= 0; i--) {
             const curve = this.dvhData[i];
             if (!this.isCurveDrawable(curve)) continue;
@@ -357,7 +400,8 @@ class FourDCTRobustnessEvaluationDVHComponent extends DVHComponent {
         const dose = point.dose.toFixed(2);
         const volume = point.volume.toFixed(2);
         const volumeAbs = point.volumeAbsolute ? point.volumeAbsolute.toFixed(2) : '0.00';
-        const scenarioText = `场景: ${curve.scenarioIndex}  时相: ${curve.phaseLabel}`;
+        const globalSceneNo = this.getGlobalSceneNumber(curve);
+        const scenarioText = `场景: ${globalSceneNo}  时相: ${curve.phaseLabel}`;
 
         this.tooltip.innerHTML = `
             <div class="dvh-tooltip-header">

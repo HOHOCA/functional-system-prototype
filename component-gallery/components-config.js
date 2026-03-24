@@ -199,6 +199,62 @@ const COMPONENTS_CONFIG = {
             description: '计划优化模块中的优化约束列表视图组件（公共组件）',
             className: 'OptimizationConstraintsComponent',
             filePath: '../shared/scripts/components/OptimizationConstraintsComponent.js'
+        },
+        {
+            id: 'prompt-rich-text-modal',
+            name: 'PromptRichTextModal',
+            displayName: '提示-富文本类',
+            description: '提示弹窗：富文本内容展示（多行/表格）',
+            className: 'PromptRichTextModalComponent',
+            filePath: '../shared/scripts/components/PromptRichTextModalComponent.js'
+        },
+        {
+            id: 'prompt-simple-confirm-cancel-modal',
+            name: 'PromptSimpleConfirmCancelModal',
+            displayName: '提示-简单文本（取消/确定）',
+            description: '提示弹窗：简单文本，操作按钮为取消与确定',
+            className: 'PromptSimpleConfirmCancelModalComponent',
+            filePath: '../shared/scripts/components/PromptSimpleConfirmCancelModalComponent.js'
+        },
+        {
+            id: 'prompt-progress-modal',
+            name: 'PromptProgressModal',
+            displayName: '提示-进度条类',
+            description: '提示弹窗：展示进行中状态与进度条',
+            className: 'PromptProgressModalComponent',
+            filePath: '../shared/scripts/components/PromptProgressModalComponent.js'
+        },
+        {
+            id: 'prompt-simple-confirm-modal',
+            name: 'PromptSimpleConfirmModal',
+            displayName: '提示-简单文本（仅确定）',
+            description: '提示弹窗：简单文本，仅单个确定按钮',
+            className: 'PromptSimpleConfirmModalComponent',
+            filePath: '../shared/scripts/components/PromptSimpleConfirmModalComponent.js'
+        },
+        {
+            id: 'error-modal',
+            name: 'ErrorModal',
+            displayName: '错误类弹窗',
+            description: '错误提示弹窗，包含错误图标与说明文本',
+            className: 'ErrorModalComponent',
+            filePath: '../shared/scripts/components/ErrorModalComponent.js'
+        },
+        {
+            id: 'warning-delete-modal',
+            name: 'WarningDeleteModal',
+            displayName: '警告-删除类',
+            description: '警告弹窗：删除确认（取消/删除）',
+            className: 'WarningDeleteModalComponent',
+            filePath: '../shared/scripts/components/WarningDeleteModalComponent.js'
+        },
+        {
+            id: 'warning-rich-text-modal',
+            name: 'WarningRichTextModal',
+            displayName: '警告-富文本类',
+            description: '警告弹窗：富文本/表格内容，支持忽略操作',
+            className: 'WarningRichTextModalComponent',
+            filePath: '../shared/scripts/components/WarningRichTextModalComponent.js'
         }
     ],
     

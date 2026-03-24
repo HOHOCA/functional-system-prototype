@@ -808,6 +808,69 @@ class ComponentGallery {
                         }
                     }
                     break;
+
+                case 'PromptRichTextModalComponent':
+                    if (typeof PromptRichTextModalComponent !== 'undefined') {
+                        instance = new PromptRichTextModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'PromptSimpleConfirmCancelModalComponent':
+                    if (typeof PromptSimpleConfirmCancelModalComponent !== 'undefined') {
+                        instance = new PromptSimpleConfirmCancelModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'PromptProgressModalComponent':
+                    if (typeof PromptProgressModalComponent !== 'undefined') {
+                        instance = new PromptProgressModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'PromptSimpleConfirmModalComponent':
+                    if (typeof PromptSimpleConfirmModalComponent !== 'undefined') {
+                        instance = new PromptSimpleConfirmModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'ErrorModalComponent':
+                    if (typeof ErrorModalComponent !== 'undefined') {
+                        instance = new ErrorModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'WarningDeleteModalComponent':
+                    if (typeof WarningDeleteModalComponent !== 'undefined') {
+                        instance = new WarningDeleteModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'WarningRichTextModalComponent':
+                    if (typeof WarningRichTextModalComponent !== 'undefined') {
+                        instance = new WarningRichTextModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
                     
                 default:
                     componentContainer.innerHTML = `

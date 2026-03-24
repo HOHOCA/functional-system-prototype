@@ -833,6 +833,8 @@
     <script src="../../shared/scripts/components/ROIComponent.js"></script>
     <script src="../../shared/scripts/components/POIComponent.js"></script>
     <script src="../../shared/scripts/components/RobustListComponent.js"></script>
+    <script src="../../shared/scripts/components/CreateRobustnessEvaluationTemplateNameModalComponent.js"></script>
+    <script src="../../shared/scripts/components/LoadRobustnessEvaluationTemplateModalComponent.js"></script>
     <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
     <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
     <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
@@ -868,6 +870,7 @@
         let leftDvhComponent = null;
         let exportReportModal = null;
         let createRobustnessEvaluationModal = null;
+        let loadRobustnessTemplateModal = null;
         const defaultPatient = {
             name: 'Li Shan',
             id: 'WP4TR3',
@@ -1025,20 +1028,26 @@
                         console.log('鲁棒性组搜索:', query);
                     },
                     onLoadTemplate: () => {
-                        console.log('加载鲁棒性模板');
-                    },
-                    onSave: (groupId) => {
-                        console.log('保存鲁棒性组:', groupId);
+                        if (typeof LoadRobustnessEvaluationTemplateModalComponent === 'undefined') {
+                            console.warn('LoadRobustnessEvaluationTemplateModalComponent 未加载');
+                            return;
+                        }
+                        if (!loadRobustnessTemplateModal) {
+                            loadRobustnessTemplateModal = new LoadRobustnessEvaluationTemplateModalComponent({
+                                onConfirm: (tpl) => {
+                                    console.log('加入评估', tpl);
+                                }
+                            });
+                        }
+                        loadRobustnessTemplateModal.show();
                     },
                     onExecute: (groupId) => {
                         console.log('执行鲁棒性组:', groupId);
                     },
-                    onEdit: (groupId) => {
-                        console.log('编辑鲁棒性组:', groupId);
-                    },
-                    onDelete: (groupId) => {
-                        console.log('删除鲁棒性组:', groupId);
-                    }
+                    // 这里不传 onSave/onEdit/onDelete，让组件走内置交互：
+                    // - 保存：模板命名弹窗
+                    // - 编辑：编辑弹窗（若页面已加载对应组件）
+                    // - 删除：删除确认并更新列表
                 });
             }
 

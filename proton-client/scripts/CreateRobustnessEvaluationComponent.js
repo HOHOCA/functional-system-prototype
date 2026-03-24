@@ -346,6 +346,23 @@ class CreateRobustnessEvaluationComponent {
             .cre-phase-item:last-child{
                 border-bottom: none;
             }
+            /* 右侧表格行内：时相单选下拉（样式参考左侧 crePhaseDropdown） */
+            .cre-row-phase-dropdown .cre-phase-item{
+                padding: 0 10px;
+                cursor: pointer;
+                border-bottom: 1px solid #2e2e2e;
+                color: #d5d5d5;
+            }
+            .cre-row-phase-dropdown .cre-phase-item:hover{
+                background: rgba(255,255,255,0.04);
+            }
+            .cre-row-phase-dropdown .cre-phase-item.active{
+                color: #3aacde;
+                font-weight: 600;
+            }
+            .cre-row-phase-dropdown .cre-phase-panel{
+                max-height: 320px;
+            }
             .cre-phase-label{
                 white-space: nowrap;
                 overflow: hidden;
@@ -773,7 +790,13 @@ class CreateRobustnessEvaluationComponent {
                 is: 0,
                 pa: 0,
                 density: this.normalizeNumber(densityInput.value, 3.5),
-                phase: this.getSelectedPhases()[0]
+                phase: (() => {
+                    const selectedPhases = this.getSelectedPhases();
+                    const crownedPhase = this.getCrownedPhase();
+                    return selectedPhases.includes(crownedPhase)
+                        ? crownedPhase
+                        : (selectedPhases[0] || crownedPhase);
+                })()
             });
             this.renderTable();
         });
@@ -946,6 +969,21 @@ class CreateRobustnessEvaluationComponent {
             .filter(Boolean);
     }
 
+    getCrownedPhase() {
+        if (!this.modalEl) return 'MIP 14 20251230';
+
+        const crownLabel = this.modalEl.querySelector('.cre-phase-label.with-crown');
+        const phaseInputId = crownLabel ? crownLabel.getAttribute('for') : null;
+        if (!phaseInputId) return 'MIP 14 20251230';
+
+        const escapedId = (window.CSS && typeof CSS.escape === 'function')
+            ? CSS.escape(phaseInputId)
+            : phaseInputId;
+        const inputEl = this.modalEl.querySelector(`#${escapedId}`);
+        const phase = inputEl && inputEl.dataset ? inputEl.dataset.phase : null;
+        return phase || 'MIP 14 20251230';
+    }
+
     shouldShowPhaseColumn() {
         return this.scenarioRows.some((row) => !!row.phase);
     }
@@ -1050,26 +1088,71 @@ class CreateRobustnessEvaluationComponent {
         const scenarioCount = this.modalEl.querySelector('#creScenarioCount');
         const phaseHeader = this.modalEl.querySelector('#crePhaseColumnHeader');
         const showPhaseColumn = this.shouldShowPhaseColumn();
+        const phaseOptions = showPhaseColumn ? this.getSelectedPhases() : [];
+        const crownedPhase = showPhaseColumn ? this.getCrownedPhase() : null;
 
         if (phaseHeader) {
             phaseHeader.style.display = showPhaseColumn ? '' : 'none';
         }
 
-        tbody.innerHTML = this.scenarioRows.map((row, index) => `
+        const crownIconSvg = `
+            <svg class="cre-phase-crown" viewBox="0 0 24 24" aria-hidden="true">
+                <defs>
+                    <linearGradient id="crePhaseCrownGradRow" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffd978"></stop>
+                        <stop offset="100%" stop-color="#f5b942"></stop>
+                    </linearGradient>
+                </defs>
+                <path fill="url(#crePhaseCrownGradRow)" d="M3.2 17.8l1.6-9.4 5.1 4.1L12 6l2.1 6.5 5.1-4.1 1.6 9.4H3.2zm1.5 2.2h14.6v1.4H4.7V20z"></path>
+            </svg>
+        `;
+
+        tbody.innerHTML = this.scenarioRows.map((row, index) => {
+            const rowPhase = showPhaseColumn
+                ? (phaseOptions.includes(row.phase)
+                    ? row.phase
+                    : (phaseOptions.includes(crownedPhase)
+                        ? crownedPhase
+                        : phaseOptions[0]))
+                : null;
+
+            // 确保行的相位值与下拉选项一致，避免 value 不在 options 中导致显示错乱
+            if (showPhaseColumn && row.phase !== rowPhase) {
+                row.phase = rowPhase;
+            }
+
+            return `
             <tr data-row-index="${index}">
                 <td>${index + 1}</td>
                 <td><input class="cre-cell-input" data-field="rl" value="${row.rl.toFixed(2)}" /></td>
                 <td><input class="cre-cell-input" data-field="is" value="${row.is.toFixed(2)}" /></td>
                 <td><input class="cre-cell-input" data-field="pa" value="${row.pa.toFixed(2)}" /></td>
                 <td><input class="cre-cell-input" data-field="density" value="${row.density.toFixed(2)}" /></td>
-                ${showPhaseColumn ? `<td>${this.getShortPhaseLabel(row.phase)}</td>` : ''}
+                ${showPhaseColumn ? `<td>
+                    <div class="cre-phase-dropdown cre-row-phase-dropdown" data-row-phase-index="${index}">
+                        <button class="cre-phase-trigger" type="button" aria-expanded="false">
+                            ${rowPhase === crownedPhase ? crownIconSvg : ''}
+                            <span class="cre-row-phase-trigger-text">${this.getShortPhaseLabel(rowPhase)}</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="cre-phase-panel" role="listbox">
+                            ${phaseOptions.map((phase) => `
+                                <div class="cre-phase-item ${phase === rowPhase ? 'active' : ''}" data-phase-value="${phase}">
+                                    ${phase === crownedPhase ? crownIconSvg : ''}
+                                    <span class="cre-phase-label">${this.getShortPhaseLabel(phase)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </td>` : ''}
                 <td>
                     <button class="cre-del-btn" data-role="delete-row" title="删除">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
         scenarioCount.textContent = String(this.scenarioRows.length);
 
         tbody.querySelectorAll('.cre-cell-input').forEach((input) => {
@@ -1082,6 +1165,70 @@ class CreateRobustnessEvaluationComponent {
                 input.value = value.toFixed(2);
             });
         });
+
+        const closeRowPhaseDropdowns = () => {
+            const openDws = tbody.querySelectorAll('.cre-row-phase-dropdown.open');
+            openDws.forEach((dw) => {
+                dw.classList.remove('open');
+                const trigger = dw.querySelector('.cre-phase-trigger');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
+        };
+
+        tbody.querySelectorAll('.cre-row-phase-dropdown').forEach((dw) => {
+            const rowIndex = parseInt(dw.dataset.rowPhaseIndex, 10);
+            const trigger = dw.querySelector('.cre-phase-trigger');
+            const panel = dw.querySelector('.cre-phase-panel');
+            const triggerText = dw.querySelector('.cre-row-phase-trigger-text');
+
+            if (trigger) {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = dw.classList.contains('open');
+                    closeRowPhaseDropdowns();
+                    if (!isOpen) {
+                        dw.classList.add('open');
+                        trigger.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            }
+
+            if (panel) {
+                panel.querySelectorAll('.cre-phase-item').forEach((itemEl) => {
+                    itemEl.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const phase = itemEl.dataset.phaseValue;
+                        if (!phase) return;
+
+                        this.scenarioRows[rowIndex].phase = phase;
+
+                        if (triggerText) triggerText.textContent = this.getShortPhaseLabel(phase);
+
+                        panel.querySelectorAll('.cre-phase-item.active').forEach((activeEl) => {
+                            activeEl.classList.remove('active');
+                        });
+                        itemEl.classList.add('active');
+
+                        dw.classList.remove('open');
+                        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        });
+
+        if (!this._rowPhaseDropdownDocClickHandler) {
+            this._rowPhaseDropdownDocClickHandler = (e) => {
+                if (!this.modalEl) return;
+                const clicked = e.target && e.target.closest ? e.target.closest('.cre-row-phase-dropdown') : null;
+                if (clicked) return;
+                this.modalEl.querySelectorAll('.cre-row-phase-dropdown.open').forEach((openDw) => {
+                    openDw.classList.remove('open');
+                    const trigger = openDw.querySelector('.cre-phase-trigger');
+                    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+                });
+            };
+            document.addEventListener('click', this._rowPhaseDropdownDocClickHandler);
+        }
 
         tbody.querySelectorAll('[data-role="delete-row"]').forEach((btn) => {
             btn.addEventListener('click', () => {
@@ -1139,6 +1286,10 @@ class CreateRobustnessEvaluationComponent {
         if (this._phaseDropdownDocClickHandler) {
             document.removeEventListener('click', this._phaseDropdownDocClickHandler);
             this._phaseDropdownDocClickHandler = null;
+        }
+        if (this._rowPhaseDropdownDocClickHandler) {
+            document.removeEventListener('click', this._rowPhaseDropdownDocClickHandler);
+            this._rowPhaseDropdownDocClickHandler = null;
         }
         window.removeEventListener('keydown', this._boundEscHandler);
         this.modalEl.remove();
