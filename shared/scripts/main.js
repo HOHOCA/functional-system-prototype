@@ -195,37 +195,9 @@ function handleImport() {
     alert('导入功能待实现');
 }
 
-// 导出计划组件实例
-let exportPlanComponent = null;
-
 function handleExport() {
-    console.log('打开导出计划弹窗');
-    
-    // 检查组件是否已加载
-    if (typeof window.ExportPlanComponent === 'undefined') {
-        console.error('ExportPlanComponent未加载！请检查组件文件路径是否正确');
-        alert('导出计划组件未加载，请刷新页面重试');
-        return;
-    }
-    
-    // 创建或获取组件实例
-    if (!exportPlanComponent) {
-        exportPlanComponent = new window.ExportPlanComponent({
-            prefix: 'exportPlan',
-            onClose: () => {
-                console.log('导出计划弹窗已关闭');
-                exportPlanComponent = null;
-            },
-            onExport: (config) => {
-                console.log('执行导出:', config);
-                // TODO: 实现实际的导出逻辑
-                alert('导出功能待实现');
-            }
-        });
-    }
-    
-    // 显示弹窗
-    exportPlanComponent.show();
+    // 导出功能（占位）
+    alert('导出功能待实现');
 }
 
 function handleSave() {
@@ -1551,61 +1523,8 @@ function initializeOptimizationBeamList() {
 }
 
 // 初始化计划优化模块的能量层视图组件
-let optimizationEnergyLayerComponent = null;
 function initializeOptimizationEnergyLayer() {
-    const mount = document.getElementById('optimizationEnergyLayerContainer');
-    if (!mount) return;
-    if (mount.dataset.inited === 'true') return;
-    if (window.EnergyLayerViewComponent) {
-        optimizationEnergyLayerComponent = new window.EnergyLayerViewComponent(mount, {
-            onBeamSelect: (beamId) => {
-                console.log('选择射束:', beamId);
-            },
-            onLayerSelect: (layer, beamId) => {
-                console.log('选择能量层:', layer, '射束:', beamId);
-                // 与BEV视图同步
-                syncEnergyLayerToBEV(layer, beamId);
-            },
-            onLayerDelete: (layerIds, beamId) => {
-                console.log('删除能量层:', layerIds, '射束:', beamId);
-                if (optimizationEnergyLayerComponent) {
-                    optimizationEnergyLayerComponent.deleteLayers(layerIds);
-                }
-            },
-            onLayerAdd: (beamId) => {
-                console.log('添加能量层，射束:', beamId);
-                if (optimizationEnergyLayerComponent) {
-                    optimizationEnergyLayerComponent.addSampleLayer();
-                }
-            },
-            getBeamList: () => {
-                // 从射束列表组件获取射束列表
-                const beamContainer = document.getElementById('optimizationBeamListContainer');
-                if (!beamContainer) return [];
-                
-                // 尝试从BeamListComponent获取数据
-                const beamRows = beamContainer.querySelectorAll('.beam-row');
-                const beams = [];
-                beamRows.forEach((row, index) => {
-                    const nameInput = row.querySelector('input.name');
-                    const beamName = nameInput ? nameInput.value : `Beam ${index + 1}`;
-                    beams.push({
-                        id: parseInt(row.dataset.id, 10) || (index + 1),
-                        name: beamName
-                    });
-                });
-                
-                // 如果没有找到，返回示例数据
-                return beams.length > 0 ? beams : [
-                    { id: 1, name: 'Beam 1' },
-                    { id: 2, name: 'Beam 2' }
-                ];
-            }
-        });
-        mount.dataset.inited = 'true';
-    } else {
-        console.warn('EnergyLayerViewComponent not loaded yet');
-    }
+    // 能量层视图功能已移除，保留空实现避免旧入口报错
 }
 
 // 同步能量层到BEV视图
@@ -3546,37 +3465,6 @@ function handleToolbarButtonClick(toolName) {
             break;
         case '重置配准':
             console.log('执行重置配准操作');
-            break;
-        case '能谱CT分析':
-            if (!window._spectralCTModal) {
-                window._spectralCTModal = new SpectralCTAnalysisComponent({
-                    getCurrentGroup: () => {
-                        // TODO: 从当前序列树/上下文获取真实影像组
-                        return { id: 'group-1', name: '双能CT 20240302 19:02:25' };
-                    },
-                    getEnergyChoices: () => {
-                        // TODO: 返回当前影像组下可用的原始/虚拟单能影像
-                        return [
-                            { id: '140kvp', label: '140kVp' },
-                            { id: '80kvp', label: '80kVp' },
-                            { id: 'mono-40', label: '40keV 虚拟单能影像' },
-                            { id: 'mono-70', label: '70keV 虚拟单能影像' }
-                        ];
-                    },
-                    getSBIChoices: () => {
-                        // TODO: 返回当前影像组下可用的SBI数据
-                        return [
-                            { id: 'sbi-20240302', label: 'SBI 20240302 19:02:25' }
-                        ];
-                    },
-                    onConfirm: (params) => {
-                        // 调用后端生成接口的占位实现
-                        console.log('提交能谱CT任务参数:', params);
-                        return new Promise((resolve) => setTimeout(resolve, 1200));
-                    }
-                });
-            }
-            window._spectralCTModal.open();
             break;
         case '虚拟单能影像':
             if (!window._vmiModal) {

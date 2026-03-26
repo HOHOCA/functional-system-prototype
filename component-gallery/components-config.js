@@ -81,7 +81,7 @@ const COMPONENTS_CONFIG = {
             id: 'four-dct-robustness-evaluation-dvh',
             name: 'FourDCTRobustnessEvaluationDVH',
             displayName: '4DCT-鲁棒性评估DVH',
-            description: '4DCT 鲁棒性评估 DVH 组件（初版复用 DVH）',
+            description: '4DCT 鲁棒性评估 DVH 组件',
             className: 'FourDCTRobustnessEvaluationDVHComponent',
             filePath: '../shared/scripts/components/FourDCTRobustnessEvaluationDVHComponent.js'
         },
@@ -135,22 +135,6 @@ const COMPONENTS_CONFIG = {
             description: '临床目标组件，支持临床目标管理和状态显示',
             className: 'ClinicalTargetComponent',
             filePath: '../shared/scripts/components/ClinicalTargetComponent.js'
-        },
-        {
-            id: 'spectral-ct-analysis',
-            name: 'SpectralCTAnalysis',
-            displayName: '能谱CT分析',
-            description: '能谱CT图像分析',
-            className: 'SpectralCTAnalysisComponent',
-            filePath: '../shared/scripts/components/SpectralCTAnalysisComponent.js'
-        },
-        {
-            id: 'export-plan',
-            name: 'ExportPlan',
-            displayName: '导出计划',
-            description: '计划导出组件',
-            className: 'ExportPlanComponent',
-            filePath: '../shared/scripts/components/ExportPlanComponent.js'
         },
         {
             id: 'settings-data-transfer',
@@ -298,6 +282,30 @@ const COMPONENTS_CONFIG = {
     // 质子特有组件
     proton: [
         {
+            id: 'let',
+            name: 'LET',
+            displayName: 'LET',
+            description: 'LET 视图（复用 2D 横截面视图样式）',
+            className: 'LETComponent',
+            filePath: '../proton-client/scripts/LETComponent.js?v=1'
+        },
+        {
+            id: 'letd-vh',
+            name: 'LETdVH',
+            displayName: 'LETdVH',
+            description: 'LETd-体积直方图',
+            className: 'LETdVHComponent',
+            filePath: '../proton-client/scripts/LETdVHComponent.js'
+        },
+        {
+            id: 'letd-statistics',
+            name: 'LETdStatistics',
+            displayName: 'LETd统计',
+            description: 'LETd 全部统计与 ROI 统计表格',
+            className: 'LETdStatisticsComponent',
+            filePath: '../proton-client/scripts/LETdStatisticsComponent.js?v=1'
+        },
+        {
             id: 'proton-view-3d',
             name: 'ProtonView3D',
             displayName: '质子-3D重建视图',
@@ -315,18 +323,10 @@ const COMPONENTS_CONFIG = {
             filePath: '../proton-client/scripts/ProtonBeamEyeViewComponent.js'
         },
         {
-            id: 'energy-layer-view',
-            name: 'EnergyLayerView',
-            displayName: '能量层视图',
-            description: '能量层可视化',
-            className: 'EnergyLayerViewComponent',
-            filePath: '../proton-client/scripts/EnergyLayerViewComponent.js'
-        },
-        {
             id: 'proton-export-report',
             name: 'ProtonExportReport',
             displayName: '质子-导出报告',
-            description: '计划报告导出预览（排版参考光子原型，信息字段覆盖计划报告）',
+            description: '计划报告导出预览',
             className: 'ProtonExportReportComponent',
             filePath: '../proton-client/scripts/ProtonExportReportComponent.js?v=3'
         },

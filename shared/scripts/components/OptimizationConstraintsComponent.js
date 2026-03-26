@@ -28,6 +28,30 @@ class OptimizationConstraintsComponent {
             { id: 'roi7', name: 'External', type: 'EXTERNAL', color: '#cccccc' }
         ];
 
+        // ROI 候选库：用于“添加ROI”弹窗（可通过 options.roiLibrary 覆盖）
+        // 说明：state.rois 是“已添加到列表的 ROI”；roiLibrary 是“计划内可选 ROI”全集。
+        this.roiLibrary = Array.isArray(this.options?.roiLibrary) && this.options.roiLibrary.length
+            ? this.options.roiLibrary
+            : [
+                { name: 'CTV', type: 'CTV' },
+                { name: 'GTV', type: 'GTV' },
+                { name: 'PTV', type: 'PTV' },
+                { name: 'RTV 1', type: 'OAR' },
+                { name: 'RTV 2', type: 'OAR' },
+                { name: 'RTV 3', type: 'OAR' },
+                { name: 'RTV 4', type: 'OAR' },
+                { name: 'RTV 5', type: 'OAR' },
+                { name: 'BrachialPlexus_L', type: 'OAR' },
+                { name: 'BrachialPlexus_R', type: 'OAR' },
+                { name: 'Body', type: 'BODY' },
+                { name: 'CTV1', type: 'CTV' }
+            ].map((r, idx) => ({
+                id: `lib-${idx + 1}`,
+                name: r.name,
+                type: r.type,
+                color: '#888888'
+            }));
+
         // 约束函数列表（简化版，只含需求中提到的）
         this.functionOptions = [
             { value: 'MaxDose', label: 'Max Dose', group: 'max' },
@@ -51,18 +75,29 @@ class OptimizationConstraintsComponent {
             robustConfigured: true // 原型中简单默认已配置，可直接勾选鲁棒性
         };
 
-        // 列配置（用于“设置”弹窗）——按你要求隐藏体积/gEUDa/LETd/FallOff/靶区等列
+        // 列配置（用于“约束列表设置”弹窗）；columnLocked：必选列，与产品截图一致不可关闭
+        // 列顺序与「约束列表设置」/宽表一致；后段为扩展参数列（截图：实际剂量、体积、预测值、剂量、LETd…）
         this.columns = [
-            { key: 'visible', label: '', visible: true },
-            { key: 'color', label: '', visible: true },
-            { key: 'roi', label: 'ROI', visible: true },
+            { key: 'visible', label: 'Show/Hide', visible: true, columnLocked: true },
+            { key: 'color', label: '颜色', visible: true, columnLocked: true },
+            { key: 'roi', label: 'ROI', visible: true, columnLocked: true },
+            { key: 'roiType', label: '类型', visible: false },
             { key: 'func', label: '函数', visible: true },
             { key: 'expr', label: '约束', visible: true },
             { key: 'scope', label: '生效范围', visible: true },
             { key: 'robust', label: '鲁棒性', visible: true },
             { key: 'weight', label: '权重', visible: true },
             { key: 'penalty', label: '罚分', visible: true },
-            { key: 'actualDose', label: '实际剂量(cGy,RBE)', visible: true }
+            { key: 'actualDose', label: '实际剂量[cGy](RBE)', visible: true },
+            { key: 'volume', label: '体积[%]', visible: true },
+            { key: 'predicted', label: '预测值', visible: true },
+            { key: 'dose', label: '剂量[cGy](RBE)', visible: true },
+            { key: 'letd', label: 'LETd[keV/μm]', visible: true },
+            { key: 'gEUDa', label: 'gEUD a', visible: true },
+            { key: 'fallOffDistance', label: '跌落距离[cm]', visible: true },
+            { key: 'fallOffHighDose', label: '跌落高剂量[cGy](RBE)', visible: true },
+            { key: 'fallOffLowDose', label: '跌落低剂量[cGy](RBE)', visible: true },
+            { key: 'weakStrong', label: '强/弱', visible: true }
         ];
 
         // 模板列表（仅前端内存，演示用）
@@ -226,6 +261,8 @@ class OptimizationConstraintsComponent {
 
         // 初始化默认 ROI 与约束
         this.initDefaultData();
+        /** 列表字段设置按钮若被挂到 columnSettingsHost，需跟踪以便下次 render 前移除，避免重复节点 */
+        this._externalColumnSettingsBtn = null;
     }
 
     mount(container) {
@@ -241,6 +278,16 @@ class OptimizationConstraintsComponent {
         this.bindEvents();
     }
 
+    resolveColumnSettingsHost() {
+        const h = this.options && this.options.columnSettingsHost;
+        if (!h) return null;
+        if (typeof h === 'string') {
+            return document.getElementById(h) || document.querySelector(h);
+        }
+        if (h instanceof HTMLElement) return h;
+        return null;
+    }
+
     ensureStyles() {
         if (document.getElementById('opt-constraints-component-styles')) return;
         const style = document.createElement('style');
@@ -249,7 +296,7 @@ class OptimizationConstraintsComponent {
         .opt-constraints-root {
             display: flex;
             flex-direction: column;
-            height: 100%;
+            flex: 1;
             min-height: 0;
             background: #1a1a1a;
             color: #e5e5e5;
@@ -321,20 +368,22 @@ class OptimizationConstraintsComponent {
             background: #1a1a1a;
         }
         .opt-constraints-table {
-            width: 100%;
+            width: max-content;
+            min-width: 100%;
             border-collapse: separate;
             border-spacing: 0;
             font-size: 12px;
             border: 1px solid #2f2f2f;
+            table-layout: auto;
         }
         .opt-constraints-table th,
         .opt-constraints-table td {
             border-bottom: 1px solid #2f2f2f;
             border-right: 1px solid #2f2f2f;
-            padding: 4px 8px;
+            padding: 5px 10px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            overflow: visible;
+            vertical-align: middle;
             color: #ccc;
         }
         .opt-constraints-table th:last-child,
@@ -359,16 +408,39 @@ class OptimizationConstraintsComponent {
         .opt-constraints-table tbody tr.opt-row-selected {
             background: #30353f;
         }
-        .opt-constraints-table input,
+        .opt-constraints-table input:not([type="checkbox"]),
         .opt-constraints-table select {
-            width: 100%;
             background: #111;
             border: 1px solid #333;
             border-radius: 4px;
             color: #ddd;
-            padding: 3px 6px;
+            padding: 4px 8px;
             box-sizing: border-box;
             font-size: 12px;
+            max-width: 320px;
+        }
+        .opt-constraints-table select {
+            min-width: 120px;
+            width: auto;
+            field-sizing: content;
+        }
+        .opt-constraints-table input[type="number"] {
+            min-width: 56px;
+            width: 100%;
+            max-width: 140px;
+        }
+        /* 统一去掉 number 输入框上下箭头（Chrome/Safari/Firefox） */
+        .opt-constraints-root input[type="number"],
+        .opt-modal input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        .opt-constraints-root input[type="number"]::-webkit-outer-spin-button,
+        .opt-constraints-root input[type="number"]::-webkit-inner-spin-button,
+        .opt-modal input[type="number"]::-webkit-outer-spin-button,
+        .opt-modal input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         .opt-constraints-table input:focus,
         .opt-constraints-table select:focus {
@@ -401,6 +473,43 @@ class OptimizationConstraintsComponent {
         }
         .opt-penalty-highlight {
             color: #f97373;
+        }
+        .opt-predicted-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .opt-predicted-input {
+            flex: 1;
+            min-width: 0;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #9ca3af;
+            padding: 3px 6px;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+        .opt-predicted-arrow {
+            flex-shrink: 0;
+            color: #2dd4bf;
+            font-size: 14px;
+            line-height: 1;
+        }
+        .opt-weak-strong-select {
+            width: 100%;
+            max-width: 64px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #86efac;
+            padding: 2px 4px;
+            font-size: 11px;
+            box-sizing: border-box;
+        }
+        .opt-weak-strong-select option {
+            color: #ddd;
+            background: #1a1a1a;
         }
         .opt-constraints-footer {
             flex-shrink: 0;
@@ -484,16 +593,415 @@ class OptimizationConstraintsComponent {
         .opt-simple-list input[type="checkbox"] {
             margin-right: 4px;
         }
+        /* —— 约束列表设置弹窗（与视觉稿一致）—— */
+        .opt-modal-column-settings {
+            width: 380px;
+            min-width: 320px;
+            max-width: 92vw;
+            font-size: 12px;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            border-radius: 8px;
+            border: 1px solid #2a2a2a;
+            background: #141414;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+        }
+        .opt-modal-column-settings .opt-modal-header {
+            padding: 14px 16px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #2c2c2c;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .opt-modal-column-settings .opt-modal-body {
+            padding: 0;
+            background: #141414;
+        }
+        .opt-modal-column-settings .opt-modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #2c2c2c;
+            background: #1a1a1a;
+            gap: 10px;
+        }
+        .opt-column-settings-list {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
         .opt-column-setting-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 4px 0;
+            gap: 12px;
+            min-height: 44px;
+            padding: 0 16px;
+            margin: 0;
+            background: #1c1c1c;
+            border-bottom: 1px solid #2f2f2f;
+            user-select: none;
+            box-sizing: border-box;
+        }
+        .opt-column-setting-row:last-child {
+            border-bottom: none;
+        }
+        .opt-column-setting-row:hover {
+            background: #222222;
+        }
+        .opt-column-setting-row .opt-col-toggle {
+            flex-shrink: 0;
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: #3AACDE;
+            cursor: pointer;
+        }
+        .opt-column-setting-row .opt-col-toggle:disabled {
+            cursor: default;
+            opacity: 0.65;
+        }
+        .opt-column-setting-row .opt-col-label {
+            flex: 1;
+            min-width: 0;
+            font-size: 12px;
+            color: #ececec;
+            line-height: 1.3;
+            cursor: pointer;
+        }
+        .opt-column-setting-row.is-locked .opt-col-label {
+            cursor: default;
+            color: #c4c4c4;
+        }
+        .opt-column-settings-drag {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            padding: 6px 4px;
             cursor: grab;
+            opacity: 0.75;
         }
-        .opt-column-setting-row span.handle {
-            color: #6b7280;
+        .opt-column-settings-drag:active {
+            cursor: grabbing;
         }
+        .opt-column-settings-drag span {
+            display: block;
+            width: 16px;
+            height: 2px;
+            background: #7a7a7a;
+            border-radius: 1px;
+        }
+        .opt-modal-column-settings .opt-col-btn-cancel {
+            min-width: 72px;
+            height: 30px;
+            padding: 0 14px;
+            background: transparent;
+            border: 1px solid #b8b8b8;
+            color: #f0f0f0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .opt-modal-column-settings .opt-col-btn-cancel:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: #d0d0d0;
+        }
+        .opt-modal-column-settings .opt-col-btn-ok {
+            min-width: 72px;
+            height: 30px;
+            padding: 0 14px;
+            background: #3AACDE;
+            border: 1px solid #2f9bc9;
+            color: #fff;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+        .opt-modal-column-settings .opt-col-btn-ok:hover {
+            background: #4ab8e8;
+            border-color: #3AACDE;
+        }
+        /* —— 编辑约束弹窗（分区表单，随函数切换条件区）—— */
+        .opt-edit-constraint-modal {
+            width: 440px;
+            max-width: 94vw;
+            min-width: 320px;
+            font-size: 12px;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            background: #2b2b2b;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+        }
+        .opt-edit-constraint-modal .opt-modal-header {
+            padding: 14px 16px;
+            background: #2b2b2b;
+            border-bottom: 1px solid #3a3a3a;
+            font-size: 13px;
+            font-weight: 600;
+            color: #f0f0f0;
+        }
+        .opt-edit-constraint-modal .opt-modal-body.opt-ec-body {
+            padding: 12px 16px 8px;
+            max-height: 72vh;
+            overflow: auto;
+            background: #2b2b2b;
+        }
+        .opt-edit-constraint-modal .opt-modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #3a3a3a;
+            background: #2b2b2b;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .opt-ec-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+        .opt-ec-label {
+            flex: 0 0 100px;
+            text-align: right;
+            font-size: 12px;
+            color: #b0b0b0;
+            line-height: 1.3;
+        }
+        .opt-ec-req {
+            color: #ff5252;
+            margin-right: 2px;
+        }
+        .opt-ec-control {
+            flex: 1;
+            min-width: 0;
+        }
+        .opt-ec-input-wrap {
+            position: relative;
+            width: 100%;
+        }
+        .opt-ec-input {
+            width: 100%;
+            box-sizing: border-box;
+            height: 32px;
+            padding: 6px 10px;
+            background: #1a1a1a;
+            border: 1px solid #454545;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 12px;
+        }
+        .opt-ec-input.opt-ec-input--suffix {
+            padding-right: 92px;
+        }
+        .opt-ec-input:focus {
+            outline: none;
+            border-color: #5a5a5a;
+        }
+        .opt-ec-input-readonly {
+            cursor: default;
+            opacity: 0.95;
+        }
+        .opt-ec-suffix {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: #8a8a8a;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .opt-ec-select {
+            width: 100%;
+            height: 32px;
+            box-sizing: border-box;
+            padding: 4px 28px 4px 10px;
+            background: #1a1a1a;
+            border: 1px solid #454545;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 12px;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23999'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+        .opt-ec-select:focus {
+            outline: none;
+            border-color: #5a5a5a;
+        }
+        .opt-ec-select-scope {
+            color: #3AACDE;
+        }
+        .opt-ec-func-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opt-ec-func-bar {
+            flex-shrink: 0;
+            width: 4px;
+            height: 20px;
+            border-radius: 2px;
+            background: #757575;
+        }
+        .opt-ec-func-wrap .opt-ec-select {
+            flex: 1;
+            min-width: 0;
+        }
+        .opt-ec-section {
+            display: flex;
+            align-items: center;
+            margin: 16px 0 12px;
+            font-size: 11px;
+            color: #7a7a7a;
+        }
+        .opt-ec-section::before,
+        .opt-ec-section::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #404040;
+        }
+        .opt-ec-section span {
+            padding: 0 12px;
+            white-space: nowrap;
+        }
+        .opt-ec-row-robust .opt-ec-radio-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .opt-ec-radio {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #909090;
+            cursor: pointer;
+        }
+        .opt-ec-radio input {
+            accent-color: #6b6b6b;
+        }
+        .opt-ec-btn-cancel {
+            min-width: 72px;
+            height: 30px;
+            padding: 0 14px;
+            background: transparent !important;
+            border: 1px solid #c0c0c0 !important;
+            color: #f0f0f0 !important;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .opt-ec-btn-cancel:hover {
+            background: rgba(255,255,255,0.06) !important;
+        }
+        .opt-ec-btn-ok {
+            min-width: 72px;
+            height: 30px;
+            padding: 0 14px;
+            background: #3AACDE !important;
+            border: 1px solid #2f9bc9 !important;
+            color: #fff !important;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .opt-ec-btn-ok:hover {
+            background: #4ab8e8 !important;
+        }
+        /* —— 添加ROI 弹窗（左右双列表）—— */
+        .opt-add-roi-modal {
+            width: 760px;
+            max-width: 96vw;
+            min-width: 640px;
+            background: #2b2b2b;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+            font-size: 12px;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+        }
+        .opt-add-roi-modal .opt-modal-header {
+            padding: 14px 16px;
+            background: #2b2b2b;
+            border-bottom: 1px solid #3a3a3a;
+            font-size: 13px;
+            font-weight: 600;
+            color: #f0f0f0;
+        }
+        .opt-add-roi-modal .opt-modal-body {
+            padding: 12px 16px 8px;
+            background: #2b2b2b;
+        }
+        .opt-add-roi-modal .opt-modal-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #3a3a3a;
+            background: #2b2b2b;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .opt-add-roi-layout {
+            display: grid;
+            grid-template-columns: 1fr 56px 1fr;
+            gap: 16px;
+            align-items: center;
+        }
+        .opt-add-roi-panel-title {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+        .opt-add-roi-list {
+            height: 360px;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            background: #1a1a1a;
+            overflow: auto;
+        }
+        .opt-add-roi-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #2b2b2b;
+            color: #d8d8d8;
+            cursor: pointer;
+            user-select: none;
+        }
+        .opt-add-roi-item:last-child { border-bottom: none; }
+        .opt-add-roi-item:hover { background: #222; }
+        .opt-add-roi-item.active {
+            background: rgba(58, 172, 222, 0.22);
+            outline: 1px solid rgba(58, 172, 222, 0.7);
+        }
+        .opt-add-roi-transfer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-add-roi-transfer-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            border: 1px solid #4a4a4a;
+            background: #2f2f2f;
+            color: #ddd;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .opt-add-roi-transfer-btn:hover { background: #3a3a3a; }
+        .opt-add-roi-transfer-btn:disabled { opacity: 0.45; cursor: default; }
+        .opt-add-roi-addall {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #3AACDE;
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+        }
+        .opt-add-roi-addall:hover { text-decoration: underline; }
         `;
         document.head.appendChild(style);
     }
@@ -765,7 +1273,8 @@ class OptimizationConstraintsComponent {
             penalty: '',
             actualDose: '',
             actualLETd: '',
-            weakStrong: 'weak'
+            weakStrong: 'weak',
+            predicted: ''
         };
     }
 
@@ -783,6 +1292,10 @@ class OptimizationConstraintsComponent {
         if (!this.container) return;
         // 允许外部直接调用 render()（不走 mount）时也能注入样式
         this.ensureStyles();
+        if (this._externalColumnSettingsBtn && this._externalColumnSettingsBtn.parentNode) {
+            this._externalColumnSettingsBtn.remove();
+        }
+        this._externalColumnSettingsBtn = null;
         this.container.innerHTML = '';
 
         const root = document.createElement('div');
@@ -813,6 +1326,25 @@ class OptimizationConstraintsComponent {
 
         this.container.appendChild(root);
         this.root = root;
+
+        const columnSettingsBtn = root.querySelector('.opt-column-settings-btn');
+        if (columnSettingsBtn) {
+            columnSettingsBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.openColumnSettingsModal();
+            });
+        }
+
+        const settingsHost = this.resolveColumnSettingsHost();
+        if (settingsHost && columnSettingsBtn) {
+            settingsHost.appendChild(columnSettingsBtn);
+            this._externalColumnSettingsBtn = columnSettingsBtn;
+            const topToolbar = root.querySelector('.opt-constraints-toolbar');
+            if (topToolbar && topToolbar.childElementCount === 0) {
+                topToolbar.remove();
+            }
+        }
 
         this.updatePenaltyHighlight();
         this.updateToolbarButtonState();
@@ -855,8 +1387,38 @@ class OptimizationConstraintsComponent {
                 });
             });
 
+        const colMinPx = {
+            visible: 44,
+            color: 52,
+            roi: 132,
+            roiType: 72,
+            func: 136,
+            expr: 176,
+            scope: 124,
+            robust: 72,
+            weight: 80,
+            penalty: 112,
+            actualDose: 120,
+            volume: 96,
+            predicted: 108,
+            dose: 112,
+            letd: 100,
+            gEUDa: 88,
+            fallOffDistance: 108,
+            fallOffHighDose: 132,
+            fallOffLowDose: 132,
+            weakStrong: 76,
+            actualLETd: 100,
+            targetRoi: 120
+        };
+        const colgroup = visibleColumns.map(col => {
+            const w = colMinPx[col.key] ?? 88;
+            return `<col style="min-width:${w}px" />`;
+        }).join('');
+
         return `
             <table class="opt-constraints-table">
+                <colgroup>${colgroup}</colgroup>
                 <thead>
                     <tr>${headerCells}</tr>
                 </thead>
@@ -879,6 +1441,8 @@ class OptimizationConstraintsComponent {
                 return `<td><span class="opt-constraints-color-dot" style="background:${roi.color};"></span></td>`;
             case 'roi':
                 return `<td>${isFirstRowOfRoi ? roi.name : ''}</td>`;
+            case 'roiType':
+                return `<td>${isFirstRowOfRoi ? (roi.type || '') : ''}</td>`;
             case 'func':
                 return `<td>
                     <select data-field="func">
@@ -892,17 +1456,37 @@ class OptimizationConstraintsComponent {
             case 'expr':
                 return `<td>${this.buildConstraintExpression(c)}</td>`;
             case 'volume':
-                return `<td>${this.renderNumberInput('volume', c.volume, this.isVolumeEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('volume', c.volume, this.isVolumeEnabled(c), null, null, this.isVolumeEnabled(c) ? '' : '(0.01 …')}</td>`;
             case 'dose':
-                return `<td>${this.renderNumberInput('dose', c.dose, this.isDoseEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('dose', c.dose, this.isPrimaryDoseColumnEnabled(c), null, null, this.isPrimaryDoseColumnEnabled(c) ? '' : '')}</td>`;
+            case 'fallOffLowDose':
+                return `<td>${this.renderNumberInput('dose', c.dose, this.isFallOffLowDoseColumnEnabled(c), null, null, this.isFallOffLowDoseColumnEnabled(c) ? '' : '[0.00 ~ 10000…')}</td>`;
             case 'gEUDa':
-                return `<td>${this.renderNumberInput('gEUDa', c.gEUDa, this.isGEUDEaEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('gEUDa', c.gEUDa, this.isGEUDEaEnabled(c), null, null, this.isGEUDEaEnabled(c) ? '' : '[-40…')}</td>`;
             case 'letd':
-                return `<td>${this.renderNumberInput('letd', c.letd, this.isLETdEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('letd', c.letd, this.isLETdEnabled(c), null, null, this.isLETdEnabled(c) ? '' : '[0.01 ~…')}</td>`;
             case 'fallOffDistance':
-                return `<td>${this.renderNumberInput('fallOffDistance', c.fallOffDistance, this.isFallOffEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('fallOffDistance', c.fallOffDistance, this.isFallOffDistanceEnabled(c), null, null, this.isFallOffDistanceEnabled(c) ? '' : '[0.00 …')}</td>`;
             case 'fallOffHighDose':
-                return `<td>${this.renderNumberInput('fallOffHighDose', c.fallOffHighDose, this.isFallOffEnabled(c))}</td>`;
+                return `<td>${this.renderNumberInput('fallOffHighDose', c.fallOffHighDose, this.isFallOffHighDoseColumnEnabled(c), null, null, this.isFallOffHighDoseColumnEnabled(c) ? '' : '[0.00 ~ 10000…')}</td>`;
+            case 'predicted': {
+                const pv = c.predicted != null && c.predicted !== '' ? this._ecEscapeAttr(String(c.predicted)) : '';
+                return `<td class="opt-predicted-cell">
+                    <div class="opt-predicted-wrap">
+                        <input type="text" class="opt-predicted-input" data-field="predicted" value="${pv}">
+                        <span class="opt-predicted-arrow" aria-hidden="true">→</span>
+                    </div>
+                </td>`;
+            }
+            case 'weakStrong': {
+                const ws = c.weakStrong === 'strong' ? 'strong' : 'weak';
+                return `<td>
+                    <select data-field="weakStrong" class="opt-weak-strong-select">
+                        <option value="weak" ${ws === 'weak' ? 'selected' : ''}>弱</option>
+                        <option value="strong" ${ws === 'strong' ? 'selected' : ''}>强</option>
+                    </select>
+                </td>`;
+            }
             case 'targetRoi':
                 return `<td>${this.renderTargetRoiSelect(c)}</td>`;
             case 'scope':
@@ -924,12 +1508,15 @@ class OptimizationConstraintsComponent {
         }
     }
 
-    renderNumberInput(field, value, enabled, min, max) {
+    renderNumberInput(field, value, enabled, min, max, placeholder) {
+        const ph = placeholder
+            ? ` placeholder="${this._ecEscapeAttr(placeholder)}"`
+            : '';
         return `<input type="number" step="0.01" data-field="${field}" 
             ${enabled ? '' : 'disabled'} 
             ${min != null ? `min="${min}"` : ''} 
             ${max != null ? `max="${max}"` : ''} 
-            value="${value !== '' && value != null ? value : ''}">`;
+            value="${value !== '' && value != null ? value : ''}"${ph}>`;
     }
 
     renderTargetRoiSelect(c) {
@@ -970,16 +1557,30 @@ class OptimizationConstraintsComponent {
         return !!c.func;
     }
 
+    /** 宽表「剂量」列：跌落类函数在「跌落低剂量」列编辑，此处禁用避免重复 */
+    isPrimaryDoseColumnEnabled(c) {
+        if (!c.func) return false;
+        return c.func !== 'FallOff' && c.func !== 'InwardReduce';
+    }
+
+    isFallOffLowDoseColumnEnabled(c) {
+        return c.func === 'FallOff' || c.func === 'InwardReduce';
+    }
+
+    isFallOffHighDoseColumnEnabled(c) {
+        return c.func === 'FallOff' || c.func === 'InwardReduce';
+    }
+
+    isFallOffDistanceEnabled(c) {
+        return c.func === 'FallOff';
+    }
+
     isGEUDEaEnabled(c) {
         return c.func === 'UpperGEUD' || c.func === 'TargetGEUD' || c.func === 'LowerGEUD';
     }
 
     isLETdEnabled(c) {
         return c.func === 'MaxLETd' || c.func === 'MinLETd';
-    }
-
-    isFallOffEnabled(c) {
-        return c.func === 'FallOff';
     }
 
     buildConstraintExpression(c) {
@@ -1049,6 +1650,189 @@ class OptimizationConstraintsComponent {
         return item ? item.label : funcValue;
     }
 
+    getFunctionStyleGroup(funcValue) {
+        if (!funcValue) return 'other';
+        const item = this.functionOptions.find(f => f.value === funcValue);
+        return item && item.group ? item.group : 'other';
+    }
+
+    getFunctionAccentColor(group) {
+        if (group === 'max') return '#e53935';
+        if (group === 'min') return '#43a047';
+        if (group === 'avg') return '#3AACDE';
+        return '#757575';
+    }
+
+    _ecReadNumberInput(el) {
+        if (!el) return '';
+        const v = el.value;
+        if (v === '') return '';
+        const n = Number(v);
+        return Number.isNaN(n) ? '' : n;
+    }
+
+    _ecEscapeAttr(s) {
+        return String(s ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    getRoiLibrary() {
+        const lib = Array.isArray(this.roiLibrary) ? this.roiLibrary : [];
+        // 把 this.rois 也并入候选库，避免“库里没有默认 ROI”导致无法再次添加
+        const map = new Map();
+        lib.forEach(r => map.set(r.id, r));
+        (this.rois || []).forEach(r => {
+            if (r && r.id && !map.has(r.id)) map.set(r.id, r);
+        });
+        // 把当前已添加 ROI 也并入候选库，保证弹窗“已添加ROI”一定能显示
+        (this.state?.rois || []).forEach(r => {
+            if (r && r.id && !map.has(r.id)) {
+                map.set(r.id, {
+                    id: r.id,
+                    name: r.name,
+                    type: r.type,
+                    color: r.color || '#888888'
+                });
+            }
+        });
+        return Array.from(map.values());
+    }
+
+    buildEditConstraintScopeOptions(work) {
+        const items = [
+            { value: 'auto', label: '自动分配' },
+            { value: 'even', label: '射束均分' },
+            ...this.beams.map((b, idx) => ({ value: `beam-${idx + 1}`, label: b }))
+        ];
+        const current = Array.isArray(work.scope) ? (work.scope[0] || 'auto') : (work.scope || 'auto');
+        return items.map(item => `
+            <option value="${item.value}" ${current === item.value ? 'selected' : ''}>${item.label}</option>
+        `).join('');
+    }
+
+    buildEditConstraintTargetRoiOptions(work) {
+        let selectedValue = work.targetRoiId || '';
+        const byId = this.state.rois.find(r => r.id === selectedValue);
+        const byName = this.state.rois.find(r => r.name === selectedValue);
+        if (!byId && byName) selectedValue = byName.id;
+        return `
+            <option value=""></option>
+            ${this.state.rois.map(r => `
+                <option value="${r.id}" ${r.id === selectedValue ? 'selected' : ''}>${this._ecEscapeAttr(r.name)}</option>
+            `).join('')}
+        `;
+    }
+
+    buildEditConstraintConditionInnerHtml(work) {
+        const req = '<span class="opt-ec-req">*</span>';
+        const numRow = (field, label, required, suffix) => {
+            const v = work[field] !== '' && work[field] != null ? work[field] : '';
+            const suf = suffix ? `<span class="opt-ec-suffix">${suffix}</span>` : '';
+            const sufClass = suffix ? ' opt-ec-input--suffix' : '';
+            const mark = required ? req : '';
+            return `
+            <div class="opt-ec-row">
+                <label class="opt-ec-label">${mark}${label}</label>
+                <div class="opt-ec-control">
+                    <div class="opt-ec-input-wrap">
+                        <input type="number" step="0.01" class="opt-ec-input${sufClass}" data-field="${field}" value="${v}">
+                        ${suf}
+                    </div>
+                </div>
+            </div>`;
+        };
+
+        const rows = [];
+        const f = work.func;
+
+        if (!f) {
+            rows.push(numRow('dose', '剂量', true, 'cGy (RBE)'));
+        } else if (f === 'MaxDose' || f === 'MinDose' || f === 'MeanDose' || f === 'UniformDose') {
+            rows.push(numRow('dose', '剂量', true, 'cGy (RBE)'));
+        } else if (f === 'MaxDVH' || f === 'MinDVH') {
+            rows.push(numRow('volume', '体积', true, '%'));
+            rows.push(numRow('dose', '剂量', true, 'cGy (RBE)'));
+        } else if (f === 'UpperGEUD' || f === 'LowerGEUD' || f === 'TargetGEUD') {
+            rows.push(numRow('dose', '剂量', true, 'cGy (RBE)'));
+            rows.push(numRow('gEUDa', 'gEUDa', true, ''));
+        } else if (f === 'MaxLETd' || f === 'MinLETd') {
+            rows.push(numRow('letd', 'LETd', true, 'keV/μm'));
+        } else if (f === 'FallOff') {
+            rows.push(numRow('fallOffHighDose', '跌落高剂量', true, 'cGy (RBE)'));
+            rows.push(numRow('dose', '跌落低剂量', true, 'cGy (RBE)'));
+            rows.push(numRow('fallOffDistance', '跌落距离', true, 'cm'));
+        } else if (f === 'InwardReduce') {
+            rows.push(numRow('fallOffHighDose', '跌落高剂量', true, 'cGy (RBE)'));
+            rows.push(numRow('dose', '跌落低剂量', true, 'cGy (RBE)'));
+            rows.push(`
+            <div class="opt-ec-row">
+                <label class="opt-ec-label">${req}对应靶区</label>
+                <div class="opt-ec-control">
+                    <select class="opt-ec-select" data-field="targetRoiId">
+                        ${this.buildEditConstraintTargetRoiOptions(work)}
+                    </select>
+                </div>
+            </div>`);
+        }
+
+        const robustDisabled = !this.state.robustConfigured;
+        const onChecked = work.robust ? 'checked' : '';
+        const offChecked = !work.robust ? 'checked' : '';
+        rows.push(`
+        <div class="opt-ec-row opt-ec-row-robust">
+            <label class="opt-ec-label">鲁棒性优化</label>
+            <div class="opt-ec-control opt-ec-radio-group">
+                <label class="opt-ec-radio">
+                    <input type="radio" name="optEditRobust" value="1" ${onChecked} ${robustDisabled ? 'disabled' : ''}>
+                    <span>开启</span>
+                </label>
+                <label class="opt-ec-radio">
+                    <input type="radio" name="optEditRobust" value="0" ${offChecked} ${robustDisabled ? 'disabled' : ''}>
+                    <span>关闭</span>
+                </label>
+            </div>
+        </div>`);
+
+        return rows.join('');
+    }
+
+    syncEditConstraintWorkFromModal(modal, work) {
+        const funcEl = modal.querySelector('[data-field="func"]');
+        if (funcEl) work.func = funcEl.value;
+        const wEl = modal.querySelector('[data-field="weight"]');
+        if (wEl) work.weight = this._ecReadNumberInput(wEl);
+        const scEl = modal.querySelector('[data-field="scope"]');
+        if (scEl) work.scope = [scEl.value || 'auto'];
+        const rb = modal.querySelector('input[name="optEditRobust"]:checked');
+        if (rb && !rb.disabled) work.robust = rb.value === '1';
+
+        ['volume', 'dose', 'gEUDa', 'letd', 'fallOffDistance', 'fallOffHighDose'].forEach(field => {
+            const el = modal.querySelector(`input[data-field="${field}"]`);
+            if (el) work[field] = this._ecReadNumberInput(el);
+        });
+        const tr = modal.querySelector('[data-field="targetRoiId"]');
+        if (tr) work.targetRoiId = tr.value || '';
+    }
+
+    applyEditConstraintWorkToConstraint(constraint, work) {
+        constraint.func = work.func;
+        constraint.volume = work.volume;
+        constraint.dose = work.dose;
+        constraint.gEUDa = work.gEUDa;
+        constraint.letd = work.letd;
+        constraint.fallOffDistance = work.fallOffDistance;
+        constraint.fallOffHighDose = work.fallOffHighDose;
+        constraint.targetRoiId = work.targetRoiId || '';
+        constraint.weight = work.weight;
+        constraint.robust = work.robust;
+        constraint.scope = Array.isArray(work.scope) ? [...work.scope] : [work.scope || 'auto'];
+        constraint.weakStrong = work.weakStrong === 'strong' ? 'strong' : 'weak';
+        constraint.predicted = work.predicted != null ? work.predicted : '';
+    }
+
     bindEvents() {
         if (!this.container) return;
 
@@ -1084,6 +1868,9 @@ class OptimizationConstraintsComponent {
             const btn = clicked.closest('.opt-btn[data-action]');
             if (btn) {
                 const action = btn.dataset.action;
+                if (action === 'column-settings') {
+                    return;
+                }
                 switch (action) {
                     case 'add-roi': this.openAddRoiModal(); break;
                     case 'delete-roi': this.confirmDeleteRoi(); break;
@@ -1092,7 +1879,6 @@ class OptimizationConstraintsComponent {
                     case 'delete-constraint': this.confirmDeleteConstraint(); break;
                     case 'move-up': this.moveRoi(-1); break;
                     case 'move-down': this.moveRoi(1); break;
-                    case 'column-settings': this.openColumnSettingsModal(); break;
                     case 'load-template':
                         this.openLoadTemplateModal();
                         break;
@@ -1148,6 +1934,10 @@ class OptimizationConstraintsComponent {
                 this.render();
             } else if (field === 'targetRoiId') {
                 constraint.targetRoiId = target.value;
+            } else if (field === 'weakStrong') {
+                constraint.weakStrong = target.value === 'strong' ? 'strong' : 'weak';
+            } else if (field === 'predicted') {
+                constraint.predicted = target.value;
             } else {
                 // 数值字段
                 const v = target.value;
@@ -1392,14 +2182,15 @@ class OptimizationConstraintsComponent {
 
     openAddRoiModal() {
         const existingIds = new Set(this.state.rois.map(r => r.id));
-        const candidates = this.rois.filter(r => !existingIds.has(r.id));
+        const library = this.getRoiLibrary();
+        const candidates = library.filter(r => !existingIds.has(r.id));
 
         const backdrop = document.createElement('div');
         backdrop.className = 'opt-modal-backdrop';
         backdrop.innerHTML = `
-            <div class="opt-modal">
+            <div class="opt-modal opt-add-roi-modal" role="dialog" aria-labelledby="optAddRoiTitle">
                 <div class="opt-modal-header">
-                    <span>添加ROI</span>
+                    <span id="optAddRoiTitle">添加ROI</span>
                     <button class="opt-btn opt-icon-btn opt-modal-close" type="button" data-role="close" aria-label="关闭">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z"/>
@@ -1407,46 +2198,203 @@ class OptimizationConstraintsComponent {
                     </button>
                 </div>
                 <div class="opt-modal-body">
-                    <div class="opt-simple-list">
-                        ${candidates.map(r => `
-                            <label>
-                                <input type="checkbox" value="${r.id}"> ${r.name}
-                            </label>
-                        `).join('')}
+                    <div class="opt-add-roi-layout">
+                        <div>
+                            <div class="opt-add-roi-panel-title">备选ROI</div>
+                            <div class="opt-add-roi-list" id="optRoiCandidateList"></div>
+                            <div class="opt-add-roi-addall" data-role="add-all">添加全部ROI</div>
+                        </div>
+                        <div class="opt-add-roi-transfer">
+                            <button class="opt-add-roi-transfer-btn" type="button" data-role="move-right" title="添加">&gt;</button>
+                            <button class="opt-add-roi-transfer-btn" type="button" data-role="move-left" title="移除">&lt;</button>
+                        </div>
+                        <div>
+                            <div class="opt-add-roi-panel-title">已添加ROI</div>
+                            <div class="opt-add-roi-list" id="optRoiSelectedList"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="opt-modal-footer">
-                    <button class="opt-btn" data-role="cancel">取消</button>
-                    <button class="opt-btn" data-role="ok">确定</button>
+                    <button class="opt-btn opt-ec-btn-cancel" type="button" data-role="cancel">取消</button>
+                    <button class="opt-btn opt-ec-btn-ok" type="button" data-role="ok">确定</button>
                 </div>
             </div>
         `;
         document.body.appendChild(backdrop);
 
+        const candidateListEl = backdrop.querySelector('#optRoiCandidateList');
+        const selectedListEl = backdrop.querySelector('#optRoiSelectedList');
+        const moveRightBtn = backdrop.querySelector('[data-role="move-right"]');
+        const moveLeftBtn = backdrop.querySelector('[data-role="move-left"]');
+
+        const roiById = new Map(library.map(r => [r.id, r]));
+        // 打开即回显：右侧=当前已添加 ROI（按 state.rois 当前顺序），左侧=剩余候选
+        const selectedIds = this.state.rois.map(r => r.id).filter(id => roiById.has(id));
+        const selectedIdSet = new Set(selectedIds);
+        const candidateIds = candidates.map(r => r.id).filter(id => !selectedIdSet.has(id));
+
+        let activeCandidateId = candidateIds[0] || '';
+        let activeSelectedId = selectedIds[0] || '';
+
+        const renderLists = () => {
+            candidateListEl.innerHTML = candidateIds.length
+                ? candidateIds.map(id => {
+                    const r = roiById.get(id);
+                    if (!r) return '';
+                    return `<div class="opt-add-roi-item ${id === activeCandidateId ? 'active' : ''}" data-list="candidate" data-id="${id}">${this._ecEscapeAttr(r.name)}</div>`;
+                }).join('')
+                : `<div class="opt-add-roi-item" style="cursor:default;color:#7a7a7a;">无可添加ROI</div>`;
+
+            selectedListEl.innerHTML = selectedIds.length
+                ? selectedIds.map(id => {
+                    const r = roiById.get(id);
+                    if (!r) return '';
+                    return `<div class="opt-add-roi-item ${id === activeSelectedId ? 'active' : ''}" data-list="selected" data-id="${id}">${this._ecEscapeAttr(r.name)}</div>`;
+                }).join('')
+                : `<div class="opt-add-roi-item" style="cursor:default;color:#7a7a7a;">未选择ROI</div>`;
+
+            moveRightBtn.disabled = !activeCandidateId;
+            moveLeftBtn.disabled = !activeSelectedId;
+        };
+
+        const pickNextActive = () => {
+            if (activeCandidateId && !candidateIds.includes(activeCandidateId)) {
+                activeCandidateId = candidateIds[0] || '';
+            }
+            if (activeSelectedId && !selectedIds.includes(activeSelectedId)) {
+                activeSelectedId = selectedIds[0] || '';
+            }
+        };
+
+        const moveRight = () => {
+            if (!activeCandidateId) return;
+            const idx = candidateIds.indexOf(activeCandidateId);
+            if (idx < 0) return;
+            candidateIds.splice(idx, 1);
+            selectedIds.push(activeCandidateId);
+            activeSelectedId = activeCandidateId;
+            activeCandidateId = candidateIds[Math.min(idx, candidateIds.length - 1)] || '';
+            renderLists();
+        };
+
+        const moveLeft = () => {
+            if (!activeSelectedId) return;
+            const idx = selectedIds.indexOf(activeSelectedId);
+            if (idx < 0) return;
+            selectedIds.splice(idx, 1);
+            candidateIds.push(activeSelectedId);
+            activeCandidateId = activeSelectedId;
+            activeSelectedId = selectedIds[Math.min(idx, selectedIds.length - 1)] || '';
+            renderLists();
+        };
+
+        backdrop.addEventListener('click', (e) => {
+            const item = e.target.closest('.opt-add-roi-item');
+            if (item) {
+                const id = item.getAttribute('data-id');
+                const list = item.getAttribute('data-list');
+                if (list === 'candidate') {
+                    activeCandidateId = id;
+                    activeSelectedId = '';
+                } else {
+                    activeSelectedId = id;
+                    activeCandidateId = '';
+                }
+                renderLists();
+                return;
+            }
+            const roleEl = e.target.closest('[data-role]');
+            if (!roleEl) return;
+            const role = roleEl.getAttribute('data-role');
+            if (role === 'move-right') moveRight();
+            if (role === 'move-left') moveLeft();
+            if (role === 'add-all') {
+                while (candidateIds.length) {
+                    const id = candidateIds.shift();
+                    selectedIds.push(id);
+                }
+                activeCandidateId = '';
+                activeSelectedId = selectedIds[0] || '';
+                renderLists();
+            }
+        });
+
+        // 双击快速移动
+        backdrop.addEventListener('dblclick', (e) => {
+            const item = e.target.closest('.opt-add-roi-item');
+            if (!item) return;
+            const list = item.getAttribute('data-list');
+            if (list === 'candidate') {
+                activeCandidateId = item.getAttribute('data-id');
+                moveRight();
+            } else {
+                activeSelectedId = item.getAttribute('data-id');
+                moveLeft();
+            }
+        });
+
         const okBtn = backdrop.querySelector('[data-role="ok"]');
         const cancelBtn = backdrop.querySelector('[data-role="cancel"]');
         const closeBtn = backdrop.querySelector('[data-role="close"]');
-        cancelBtn.addEventListener('click', () => backdrop.remove());
-        closeBtn.addEventListener('click', () => backdrop.remove());
+        const close = () => backdrop.remove();
+        cancelBtn.addEventListener('click', close);
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) close();
+        });
         okBtn.addEventListener('click', () => {
-            const checked = Array.from(backdrop.querySelectorAll('input[type="checkbox"]:checked'))
-                .map(c => c.value);
-            checked.forEach(id => {
-                const roi = this.rois.find(r => r.id === id);
+            // 同步为“选择集”：允许在弹窗中移除已添加 ROI
+            const selectedSet = new Set(selectedIds);
+
+            // 1) 移除：仅移除那些在 roiById 中存在、且不在 selectedSet 中的 state.rois
+            const removedIds = new Set(
+                (this.state.rois || [])
+                    .map(r => r.id)
+                    .filter(id => roiById.has(id) && !selectedSet.has(id))
+            );
+            if (removedIds.size) {
+                this.state.rois = (this.state.rois || []).filter(r => !removedIds.has(r.id));
+                if (this.selectedRowId) {
+                    const hit = Array.from(removedIds).some(id => String(this.selectedRowId).startsWith(id + '-'));
+                    if (hit) this.selectedRowId = null;
+                }
+            }
+
+            // 2) 新增：把 selectedSet 里尚未存在的 ROI 加进 state.rois
+            const existedAfterRemoval = new Set((this.state.rois || []).map(r => r.id));
+            selectedIds.forEach(id => {
+                if (existedAfterRemoval.has(id)) return;
+                const roi = roiById.get(id);
                 if (!roi) return;
                 this.state.rois.push({
                     id: roi.id,
                     name: roi.name,
                     type: roi.type,
-                    color: roi.color,
+                    color: roi.color || '#888888',
                     visible: true,
                     order: this.state.rois.length,
                     constraints: [this.createEmptyConstraint(roi)]
                 });
             });
-            backdrop.remove();
+
+            // 3) 排序：按 selectedIds 顺序重排（仅对候选库中的 ROI 生效，其它 ROI 保持相对顺序）
+            const orderIndex = new Map(selectedIds.map((id, i) => [id, i]));
+            const inLib = [];
+            const outLib = [];
+            (this.state.rois || []).forEach(r => {
+                if (orderIndex.has(r.id)) inLib.push(r);
+                else outLib.push(r);
+            });
+            inLib.sort((a, b) => (orderIndex.get(a.id) ?? 1e9) - (orderIndex.get(b.id) ?? 1e9));
+            this.state.rois = [...inLib, ...outLib];
+            this.state.rois.forEach((r, i) => { r.order = i; });
+
+            close();
             this.render();
         });
+
+        pickNextActive();
+        renderLists();
     }
 
     confirmDeleteRoi() {
@@ -1479,90 +2427,127 @@ class OptimizationConstraintsComponent {
         if (!selInfo.constraint || !selInfo.roi) return;
         const { roi, constraint } = selInfo;
 
+        const work = {
+            func: constraint.func || '',
+            volume: constraint.volume,
+            dose: constraint.dose,
+            gEUDa: constraint.gEUDa,
+            letd: constraint.letd,
+            fallOffDistance: constraint.fallOffDistance,
+            fallOffHighDose: constraint.fallOffHighDose,
+            targetRoiId: constraint.targetRoiId || '',
+            scope: Array.isArray(constraint.scope) ? [...constraint.scope] : (constraint.scope ? [constraint.scope] : ['auto']),
+            weight: constraint.weight,
+            robust: !!constraint.robust,
+            weakStrong: constraint.weakStrong || 'weak',
+            predicted: constraint.predicted != null ? constraint.predicted : ''
+        };
+
+        const grp0 = this.getFunctionStyleGroup(work.func);
+        const barColor0 = this.getFunctionAccentColor(grp0);
+        const condHtml = this.buildEditConstraintConditionInnerHtml(work);
+        const wVal = work.weight !== '' && work.weight != null ? work.weight : '';
+
         const backdrop = document.createElement('div');
         backdrop.className = 'opt-modal-backdrop';
         backdrop.innerHTML = `
-            <div class="opt-modal">
+            <div class="opt-modal opt-edit-constraint-modal" role="dialog" aria-labelledby="optEditConstraintTitle">
                 <div class="opt-modal-header">
-                    <span>编辑约束 - ${roi.name}</span>
+                    <span id="optEditConstraintTitle">编辑约束</span>
                     <button class="opt-btn opt-icon-btn opt-modal-close" type="button" data-role="close" aria-label="关闭">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z"/>
                         </svg>
                     </button>
                 </div>
-                <div class="opt-modal-body">
-                    <div class="opt-simple-list">
-                        <label>函数
-                            <select data-field="func">
+                <div class="opt-modal-body opt-ec-body">
+                    <div class="opt-ec-row">
+                        <label class="opt-ec-label"><span class="opt-ec-req">*</span>ROI</label>
+                        <div class="opt-ec-control">
+                            <input type="text" class="opt-ec-input opt-ec-input-readonly" readonly
+                                value="${this._ecEscapeAttr(roi.name)}">
+                        </div>
+                    </div>
+                    <div class="opt-ec-row">
+                        <label class="opt-ec-label"><span class="opt-ec-req">*</span>函数</label>
+                        <div class="opt-ec-control opt-ec-func-wrap">
+                            <span class="opt-ec-func-bar" aria-hidden="true" style="background:${barColor0}"></span>
+                            <select class="opt-ec-select" data-field="func">
                                 <option value=""></option>
                                 ${this.functionOptions.map(opt => `
-                                    <option value="${opt.value}" ${opt.value === constraint.func ? 'selected' : ''}>
-                                        ${opt.label}
-                                    </option>
+                                    <option value="${opt.value}" ${opt.value === work.func ? 'selected' : ''}>${opt.label}</option>
                                 `).join('')}
                             </select>
-                        </label>
-                        <label>体积[%]
-                            <input type="number" step="0.01" data-field="volume" value="${constraint.volume || ''}">
-                        </label>
-                        <label>剂量[cGy](RBE)
-                            <input type="number" step="0.01" data-field="dose" value="${constraint.dose || ''}">
-                        </label>
-                        <label>gEUD a
-                            <input type="number" step="0.01" data-field="gEUDa" value="${constraint.gEUDa || ''}">
-                        </label>
-                        <label>LETd[keV/μm]
-                            <input type="number" step="0.01" data-field="letd" value="${constraint.letd || ''}">
-                        </label>
-                        <label>跌落距离[cm]
-                            <input type="number" step="0.01" data-field="fallOffDistance" value="${constraint.fallOffDistance || ''}">
-                        </label>
-                        <label>跌落高剂量[cGy](RBE)
-                            <input type="number" step="0.01" data-field="fallOffHighDose" value="${constraint.fallOffHighDose || ''}">
-                        </label>
-                        <label>权重
-                            <input type="number" step="1" data-field="weight" value="${constraint.weight || ''}">
-                        </label>
-                        <label>鲁棒性
-                            <input type="checkbox" data-field="robust" ${constraint.robust ? 'checked' : ''} ${this.state.robustConfigured ? '' : 'disabled'}>
-                        </label>
+                        </div>
+                    </div>
+                    <div class="opt-ec-section"><span>条件</span></div>
+                    <div id="optEditConditionMount">${condHtml}</div>
+                    <div class="opt-ec-section"><span>生效范围</span></div>
+                    <div class="opt-ec-row">
+                        <label class="opt-ec-label"><span class="opt-ec-req">*</span>生效范围</label>
+                        <div class="opt-ec-control">
+                            <select class="opt-ec-select opt-ec-select-scope" data-field="scope">
+                                ${this.buildEditConstraintScopeOptions(work)}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="opt-ec-section"><span>权重</span></div>
+                    <div class="opt-ec-row">
+                        <label class="opt-ec-label">权重</label>
+                        <div class="opt-ec-control">
+                            <div class="opt-ec-input-wrap">
+                                <input type="number" step="1" class="opt-ec-input" data-field="weight" value="${wVal}">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="opt-modal-footer">
-                    <span style="flex:1;align-items:center;display:flex;color:#9ca3af;font-size:11px;">回车=确定</span>
-                    <button class="opt-btn" data-role="cancel">取消</button>
-                    <button class="opt-btn" data-role="ok">确定</button>
+                    <button class="opt-btn opt-ec-btn-cancel" type="button" data-role="cancel">取消</button>
+                    <button class="opt-btn opt-ec-btn-ok" type="button" data-role="ok">确定</button>
                 </div>
             </div>
         `;
         document.body.appendChild(backdrop);
 
-        const modal = backdrop.querySelector('.opt-modal');
+        const modal = backdrop.querySelector('.opt-edit-constraint-modal');
+        const conditionMount = modal.querySelector('#optEditConditionMount');
+        const funcSelect = modal.querySelector('[data-field="func"]');
+
+        const updateFuncBar = () => {
+            const bar = modal.querySelector('.opt-ec-func-bar');
+            if (!bar || !funcSelect) return;
+            const g = this.getFunctionStyleGroup(funcSelect.value);
+            bar.style.background = this.getFunctionAccentColor(g);
+        };
+
+        const refreshConditionBlock = () => {
+            this.syncEditConstraintWorkFromModal(modal, work);
+            work.func = funcSelect ? funcSelect.value : work.func;
+            this.applyDefaultsForFunction(roi, work);
+            conditionMount.innerHTML = this.buildEditConstraintConditionInnerHtml(work);
+            updateFuncBar();
+        };
+
+        funcSelect.addEventListener('change', refreshConditionBlock);
+
         const okBtn = backdrop.querySelector('[data-role="ok"]');
         const cancelBtn = backdrop.querySelector('[data-role="cancel"]');
         const closeBtn = backdrop.querySelector('[data-role="close"]');
 
         const applyFromModal = () => {
-            const fields = modal.querySelectorAll('[data-field]');
-            fields.forEach(el => {
-                const field = el.dataset.field;
-                if (field === 'robust') {
-                    constraint.robust = el.checked;
-                } else if (field === 'func') {
-                    constraint.func = el.value;
-                } else {
-                    const v = el.value;
-                    constraint[field] = v === '' ? '' : Number(v);
-                }
-            });
+            this.syncEditConstraintWorkFromModal(modal, work);
+            this.applyEditConstraintWorkToConstraint(constraint, work);
             backdrop.remove();
             this.render();
         };
 
         okBtn.addEventListener('click', applyFromModal);
-        cancelBtn.addEventListener('click', () => backdrop.remove());
-        closeBtn.addEventListener('click', () => backdrop.remove());
+        const close = () => backdrop.remove();
+        cancelBtn.addEventListener('click', close);
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) close();
+        });
         modal.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1609,9 +2594,9 @@ class OptimizationConstraintsComponent {
         const backdrop = document.createElement('div');
         backdrop.className = 'opt-modal-backdrop';
         backdrop.innerHTML = `
-            <div class="opt-modal">
+            <div class="opt-modal opt-modal-column-settings" role="dialog" aria-labelledby="optColumnSettingsTitle">
                 <div class="opt-modal-header">
-                    <span>列表字段设置</span>
+                    <span id="optColumnSettingsTitle">约束列表设置</span>
                     <button class="opt-btn opt-icon-btn opt-modal-close" type="button" data-role="close" aria-label="关闭">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4z"/>
@@ -1619,21 +2604,24 @@ class OptimizationConstraintsComponent {
                     </button>
                 </div>
                 <div class="opt-modal-body">
-                    <div class="opt-simple-list" id="optColumnList">
-                        ${this.columns.map(col => `
-                            <div class="opt-column-setting-row" draggable="true" data-key="${col.key}">
-                                <span class="handle"><i class="fas fa-grip-vertical"></i></span>
-                                <label>
-                                    <input type="checkbox" data-role="toggle" ${col.visible ? 'checked' : ''}>
-                                    ${col.label || '(图标)'}
-                                </label>
-                            </div>
-                        `).join('')}
+                    <div class="opt-column-settings-list" id="optColumnList">
+                        ${this.columns.map(col => {
+                            const locked = !!col.columnLocked;
+                            const checked = locked ? true : !!col.visible;
+                            return `
+                            <div class="opt-column-setting-row ${locked ? 'is-locked' : ''}" data-key="${col.key}">
+                                <input type="checkbox" class="opt-col-toggle" data-role="toggle"
+                                    ${checked ? 'checked' : ''}
+                                    ${locked ? 'disabled' : ''} />
+                                <span class="opt-col-label" data-role="col-label">${col.label || ''}</span>
+                                <span class="opt-column-settings-drag" draggable="true" title="拖拽排序" aria-hidden="true"><span></span><span></span></span>
+                            </div>`;
+                        }).join('')}
                     </div>
                 </div>
                 <div class="opt-modal-footer">
-                    <button class="opt-btn" data-role="cancel">取消</button>
-                    <button class="opt-btn" data-role="ok">确定</button>
+                    <button class="opt-btn opt-col-btn-cancel" type="button" data-role="cancel">取消</button>
+                    <button class="opt-btn opt-col-btn-ok" type="button" data-role="ok">确定</button>
                 </div>
             </div>
         `;
@@ -1641,33 +2629,61 @@ class OptimizationConstraintsComponent {
 
         const list = backdrop.querySelector('#optColumnList');
         let dragEl = null;
+
+        list.addEventListener('click', (e) => {
+            const lab = e.target.closest('[data-role="col-label"]');
+            if (!lab) return;
+            const row = lab.closest('.opt-column-setting-row');
+            if (!row || row.classList.contains('is-locked')) return;
+            const cb = row.querySelector('.opt-col-toggle');
+            if (cb && !cb.disabled) cb.checked = !cb.checked;
+        });
+
         list.addEventListener('dragstart', (e) => {
-            const row = e.target.closest('.opt-column-setting-row');
-            if (!row) return;
-            dragEl = row;
+            const handle = e.target.closest('.opt-column-settings-drag');
+            if (!handle) {
+                e.preventDefault();
+                return;
+            }
+            dragEl = handle.closest('.opt-column-setting-row');
+            if (!dragEl) return;
             e.dataTransfer.effectAllowed = 'move';
+            try {
+                e.dataTransfer.setData('text/plain', dragEl.dataset.key || '');
+            } catch (_) {
+                // ignore
+            }
         });
         list.addEventListener('dragover', (e) => {
             e.preventDefault();
+            if (!dragEl) return;
             const row = e.target.closest('.opt-column-setting-row');
             if (!row || row === dragEl) return;
             const rect = row.getBoundingClientRect();
             const after = (e.clientY - rect.top) > rect.height / 2;
             list.insertBefore(dragEl, after ? row.nextSibling : row);
         });
+        list.addEventListener('dragend', () => {
+            dragEl = null;
+        });
 
         const okBtn = backdrop.querySelector('[data-role="ok"]');
         const cancelBtn = backdrop.querySelector('[data-role="cancel"]');
         const closeBtn = backdrop.querySelector('[data-role="close"]');
-        cancelBtn.addEventListener('click', () => backdrop.remove());
-        closeBtn.addEventListener('click', () => backdrop.remove());
+        const close = () => backdrop.remove();
+        cancelBtn.addEventListener('click', close);
+        closeBtn.addEventListener('click', close);
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) close();
+        });
         okBtn.addEventListener('click', () => {
             const newColumns = [];
             list.querySelectorAll('.opt-column-setting-row').forEach(row => {
                 const key = row.dataset.key;
                 const src = this.columns.find(c => c.key === key);
                 if (!src) return;
-                const visible = row.querySelector('input[type="checkbox"]').checked;
+                const cb = row.querySelector('.opt-col-toggle');
+                const visible = src.columnLocked ? true : !!(cb && cb.checked);
                 newColumns.push({ ...src, visible });
             });
             this.columns = newColumns;
@@ -1698,7 +2714,8 @@ class OptimizationConstraintsComponent {
                     weight: c.weight,
                     robust: c.robust,
                     scope: Array.isArray(c.scope) ? [...c.scope] : (c.scope ? [c.scope] : ['auto']),
-                    weakStrong: c.weakStrong || 'weak'
+                    weakStrong: c.weakStrong || 'weak',
+                    predicted: c.predicted != null ? c.predicted : ''
                 }))
             }));
         return { roiEntries };
@@ -2289,6 +3306,7 @@ class OptimizationConstraintsComponent {
                 target.robust = tplC.robust;
                 target.scope = Array.isArray(tplC.scope) ? [...tplC.scope] : (tplC.scope ? [tplC.scope] : ['auto']);
                 target.weakStrong = tplC.weakStrong || 'weak';
+                target.predicted = tplC.predicted != null ? tplC.predicted : '';
             });
         });
     }

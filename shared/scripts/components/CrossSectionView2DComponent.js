@@ -157,7 +157,7 @@ class CrossSectionView2DComponent {
 renderToolbar() {
         return `
             <div class="cross-section-view2d-toolbar">
-                <div class="toolbar-title">2D</div>
+                <div class="toolbar-title">Axial</div>
                 <div class="toolbar-group toolbar-group-right">
                     <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="false">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">

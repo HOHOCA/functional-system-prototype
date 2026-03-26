@@ -272,7 +272,11 @@ class ComponentGallery {
                     await this.loadScriptIfNeeded(component.filePath);
                 }
             }
-            if (component.className === 'FourDCTRobustnessEvaluationDVHComponent' && typeof DVHComponent === 'undefined') {
+            if (
+                (component.className === 'FourDCTRobustnessEvaluationDVHComponent' ||
+                    component.className === 'LETdVHComponent') &&
+                typeof DVHComponent === 'undefined'
+            ) {
                 await this.loadScriptIfNeeded('../shared/scripts/components/DVHComponent.js');
             }
         } catch (error) {
@@ -475,6 +479,65 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'LETdVHComponent':
+                    if (typeof LETdVHComponent !== 'undefined') {
+                        instance = new LETdVHComponent(componentContainer, {
+                            enableToolbar: true,
+                            enableContextMenu: true
+                        });
+                    }
+                    break;
+
+                case 'LETdStatisticsComponent':
+                    if (typeof LETdStatisticsComponent !== 'undefined') {
+                        instance = new LETdStatisticsComponent(componentContainer.id);
+                    }
+                    break;
+
+                case 'LETComponent':
+                    if (typeof LETComponent !== 'undefined') {
+                        instance = new LETComponent(componentContainer.id, {
+                            enableToolbar: true,
+                            enableLayerControl: true,
+                            contoursVisible: true
+                        });
+
+                        // 组件库预览：补充两条示例轮廓，增强“横截面视图”观感
+                        setTimeout(() => {
+                            if (!instance || !instance.imageData) {
+                                setTimeout(arguments.callee, 100);
+                                return;
+                            }
+
+                            const imageWidth = instance.imageData.width;
+                            const imageHeight = instance.imageData.height;
+                            const centerX = imageWidth / 2;
+                            const centerY = imageHeight / 2;
+                            const radius = Math.min(imageWidth, imageHeight) * 0.15;
+
+                            const contour1Points = [];
+                            for (let i = 0; i < 8; i++) {
+                                const angle = (i / 8) * Math.PI * 2;
+                                contour1Points.push({
+                                    x: centerX + radius * Math.cos(angle),
+                                    y: centerY + radius * Math.sin(angle)
+                                });
+                            }
+                            instance.addContour('let-demo-roi-1', contour1Points, '#FFFF00');
+
+                            const contour2Points = [];
+                            for (let i = 0; i < 8; i++) {
+                                const angle = (i / 8) * Math.PI * 2;
+                                contour2Points.push({
+                                    x: centerX + radius * 1.5 * Math.cos(angle),
+                                    y: centerY + radius * 1.5 * Math.sin(angle)
+                                });
+                            }
+                            instance.addContour('let-demo-roi-2', contour2Points, '#00FF00');
+                        }, 300);
+                    }
+                    break;
+
                 case 'FourDCTRobustnessEvaluationDVHComponent':
                     if (typeof FourDCTRobustnessEvaluationDVHComponent !== 'undefined') {
                         instance = new FourDCTRobustnessEvaluationDVHComponent(componentContainer, {
@@ -638,15 +701,6 @@ class ComponentGallery {
                         });
                     }
                     break;
-                    
-                case 'EnergyLayerViewComponent':
-                    if (typeof EnergyLayerViewComponent !== 'undefined') {
-                        instance = new EnergyLayerViewComponent(componentContainer, {
-                            onBeamSelect: (beamId) => console.log('Beam selected:', beamId),
-                            onLayerSelect: (layerId) => console.log('Layer selected:', layerId)
-                        });
-                    }
-                    break;
 
                 case 'ProtonExportReportComponent':
                     if (typeof ProtonExportReportComponent !== 'undefined') {
@@ -677,37 +731,6 @@ class ComponentGallery {
                             plan1Name: 'Plan 1',
                             plan2Name: 'Plan 2'
                         });
-                    }
-                    break;
-                    
-                case 'SpectralCTAnalysisComponent':
-                    if (typeof SpectralCTAnalysisComponent !== 'undefined') {
-                        instance = new SpectralCTAnalysisComponent({
-                            container: componentContainer, // 传入容器，让组件直接渲染到预览区域
-                            getCurrentGroup: () => ({ id: 'group-1', name: '当前影像组' }),
-                            getEnergyChoices: () => [
-                                { id: 'high-140', label: '140kVp' },
-                                { id: 'low-80', label: '80kVp' }
-                            ]
-                        });
-                        // SpectralCTAnalysisComponent 需要手动调用 open
-                        if (instance && typeof instance.open === 'function') {
-                            setTimeout(() => instance.open(), 100);
-                        }
-                    }
-                    break;
-                    
-                case 'ExportPlanComponent':
-                    if (typeof ExportPlanComponent !== 'undefined') {
-                        instance = new ExportPlanComponent({
-                            container: componentContainer, // 传入容器，让组件直接渲染到预览区域
-                            prefix: 'preview-',
-                            onExport: (data) => console.log('Export data:', data)
-                        });
-                        // ExportPlanComponent 需要手动调用 show
-                        if (instance && typeof instance.show === 'function') {
-                            setTimeout(() => instance.show(), 100);
-                        }
                     }
                     break;
                     

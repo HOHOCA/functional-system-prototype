@@ -242,6 +242,59 @@
             background: #2a2a2a;
         }
 
+        /* 右上：DVH/LETdVH/BEV/LET 内容区切换 */
+        #dvhViewContainer {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #dvhViewContainer .dvh-top-content {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        #dvhViewContainer .dvh-top-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #dvhViewContainer .bottom-control-tabs-right {
+            display: flex;
+            align-items: center;
+            padding-right: 8px;
+            gap: 6px;
+        }
+
+        #dvhViewContainer .dvh-top-toolbar-host {
+            display: none;
+            align-items: center;
+        }
+
+        #dvhViewContainer .dvh-top-toolbar-host.active {
+            display: flex;
+        }
+
+        /* LET 复用 2D 工具栏样式：挂到右侧 host 后做轻量化 */
+        #dvhViewContainer #optLetToolbarHost .cross-section-view2d-toolbar {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            height: auto;
+            gap: 0;
+        }
+
+        #dvhViewContainer #optLetToolbarHost .cross-section-view2d-toolbar .toolbar-title {
+            display: none;
+        }
+
+        #dvhViewContainer #optLetToolbarHost .cross-section-view2d-toolbar .toolbar-group-right {
+            margin-left: 0;
+        }
+
         .bottom-control-content {
             flex: 1;
             min-height: 0;
@@ -280,6 +333,24 @@
         /* 左侧三视图区域：让内部2D工具栏浮到标签右侧 */
         #leftPanelContainer {
             position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #leftPanelContainer .bottom-control-tabs {
+            flex: 0 0 auto;
+        }
+
+        #leftPanelContainer .left-view-content {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        #leftPanelContainer .left-view-content.active {
+            display: block;
         }
 
         #leftPanelContainer .cross-section-view2d-toolbar {
@@ -372,7 +443,9 @@
                                     <button class="bottom-control-tab" data-tab="coronalView">Coronal</button>
                                 </div>
                             </div>
-                            <!-- 下方内容区域先留空，后续再挂具体组件 -->
+                            <div class="left-view-content active" id="axialViewContainer"></div>
+                            <div class="left-view-content" id="sagittalViewContainer"></div>
+                            <div class="left-view-content" id="coronalViewContainer"></div>
                         </div>
                     </div>
                     <div class="view-panel" id="dvhViewContainer">
@@ -383,8 +456,17 @@
                                 <button class="bottom-control-tab" data-tab="bevView">BEV</button>
                                 <button class="bottom-control-tab" data-tab="letView">LET</button>
                             </div>
+                            <div class="bottom-control-tabs-right">
+                                <div id="optDvhToolbarHost" class="dvh-top-toolbar-host"></div>
+                                <div id="optLETdVhToolbarHost" class="dvh-top-toolbar-host"></div>
+                                <div id="optBevToolbarHost" class="dvh-top-toolbar-host"></div>
+                                <div id="optLetToolbarHost" class="dvh-top-toolbar-host"></div>
+                            </div>
                         </div>
-                        <!-- 下方内容区域先留空，后续再挂具体组件 -->
+                        <div class="dvh-top-content active" id="dvhViewContent"></div>
+                        <div class="dvh-top-content" id="letdvhViewContent"></div>
+                        <div class="dvh-top-content" id="bevViewContent"></div>
+                        <div class="dvh-top-content" id="letViewContent"></div>
                     </div>
                 </div>
 
@@ -433,11 +515,14 @@
     <script src="../scripts/ProtonView3DComponent.js"></script>
     <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../scripts/LETdVHComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
     <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
     <script src="../../shared/scripts/components/DOSEComponent.js"></script>
     <script src="../../shared/scripts/components/OptimizationConstraintsComponent.js"></script>
+    <script src="../scripts/LETComponent.js"></script>
+    <script src="../scripts/LETdStatisticsComponent.js"></script>
 
     <script>
         let planSequenceTreeComponent = null;
@@ -449,6 +534,16 @@
         let patientOverviewComponent = null;
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
+        let letdStatisticsComponent = null;
+
+        let leftAxialViewComponent = null;
+        let leftSagittalViewComponent = null;
+        let leftCoronalViewComponent = null;
+
+        let optimizationDVHComponent = null;
+        let optimizationLETdVHComponent = null;
+        let optimizationBEVComponent = null;
+        let optimizationLETComponent = null;
 
         const defaultPatient = {
             name: 'Li Shan',
@@ -501,6 +596,9 @@
                     if (tabName === 'doseStats') {
                         initDoseStatisticsComponent();
                     }
+                    if (tabName === 'letdStats') {
+                        initLETdStatisticsComponent();
+                    }
                     // 优化约束的「列表字段设置」按钮仅在「优化约束」页签下显示
                     const tabsRight = document.getElementById('bottomControlTabsRight');
                     if (tabsRight) {
@@ -516,8 +614,10 @@
             const leftViewTabs = document.querySelectorAll('#leftPanelContainer .bottom-control-tab');
             leftViewTabs.forEach(tab => {
                 tab.addEventListener('click', function () {
+                    const tabName = this.getAttribute('data-tab');
                     leftViewTabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
+                    switchLeftView(tabName);
                 });
             });
 
@@ -525,34 +625,195 @@
             const dvhViewTabs = document.querySelectorAll('#dvhViewContainer .bottom-control-tab');
             dvhViewTabs.forEach(tab => {
                 tab.addEventListener('click', function () {
+                    const tabName = this.getAttribute('data-tab');
                     dvhViewTabs.forEach(t => t.classList.remove('active'));
                     this.classList.add('active');
+                    switchOptimizationTopRightView(tabName);
                 });
             });
 
             initComponents();
+            switchLeftView('axialView');
+            switchOptimizationTopRightView('dvhView');
 
             // 初始化优化约束列表组件
             const optContainer = document.getElementById('optConstraintsContent');
             if (optContainer && typeof OptimizationConstraintsComponent !== 'undefined') {
-                const optComponent = new OptimizationConstraintsComponent();
+                const optComponent = new OptimizationConstraintsComponent({
+                    columnSettingsHost: document.getElementById('bottomControlTabsRight')
+                });
                 optComponent.mount(optContainer);
-
-                // 如果底部有页签（应用壳子场景），把「列表字段设置」按钮挪到页签条右侧，避免看起来像“跑到页签上”
-                const tabsRight = document.getElementById('bottomControlTabsRight');
-                if (tabsRight) {
-                    const settingsBtn = optContainer.querySelector('.opt-column-settings-btn');
-                    if (settingsBtn) {
-                        tabsRight.appendChild(settingsBtn);
-                        // 如果原来的工具栏里已经没有别的内容，则隐藏掉空白标题栏
-                        const toolbar = optContainer.querySelector('.opt-constraints-toolbar');
-                        if (toolbar && !toolbar.querySelector('.opt-btn')) {
-                            toolbar.style.display = 'none';
-                        }
-                    }
-                }
             }
         });
+
+        function switchOptimizationTopRightView(tabName) {
+            const tabToContentId = {
+                dvhView: 'dvhViewContent',
+                letdvhView: 'letdvhViewContent',
+                bevView: 'bevViewContent',
+                letView: 'letViewContent'
+            };
+
+            const contentIds = Object.values(tabToContentId);
+            contentIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active');
+            });
+
+            const targetContentId = tabToContentId[tabName];
+            const targetEl = targetContentId ? document.getElementById(targetContentId) : null;
+            if (targetEl) targetEl.classList.add('active');
+
+            // toolbar host 切换（DVH/LETdVH/BEV 可外置工具栏；LET 复用 2D 组件内部工具栏）
+            const dvhHost = document.getElementById('optDvhToolbarHost');
+            const letdvhHost = document.getElementById('optLETdVhToolbarHost');
+            const bevHost = document.getElementById('optBevToolbarHost');
+            const letHost = document.getElementById('optLetToolbarHost');
+            [dvhHost, letdvhHost, bevHost, letHost].forEach(h => h && h.classList.remove('active'));
+            if (tabName === 'dvhView' && dvhHost) dvhHost.classList.add('active');
+            if (tabName === 'letdvhView' && letdvhHost) letdvhHost.classList.add('active');
+            if (tabName === 'bevView' && bevHost) bevHost.classList.add('active');
+            if (tabName === 'letView' && letHost) letHost.classList.add('active');
+
+            if (tabName === 'dvhView') initOptimizationDVHView();
+            if (tabName === 'letdvhView') initOptimizationLETdVHView();
+            if (tabName === 'bevView') initOptimizationBEVView();
+            if (tabName === 'letView') initOptimizationLETView();
+
+            // 组件在隐藏状态初始化会拿到 0 尺寸，这里统一在切换到可见时触发一次重算/重绘
+            if (tabName === 'dvhView' && optimizationDVHComponent?.setupCanvas && optimizationDVHComponent?.draw) {
+                optimizationDVHComponent.setupCanvas();
+                optimizationDVHComponent.draw();
+            }
+            if (tabName === 'letdvhView' && optimizationLETdVHComponent?.setupCanvas && optimizationLETdVHComponent?.draw) {
+                optimizationLETdVHComponent.setupCanvas();
+                optimizationLETdVHComponent.draw();
+            }
+            if (tabName === 'bevView' && optimizationBEVComponent?.resizeCanvas && optimizationBEVComponent?.renderAll) {
+                optimizationBEVComponent.resizeCanvas();
+                optimizationBEVComponent.renderAll();
+            }
+            if (tabName === 'letView' && optimizationLETComponent?.resizeCanvas && optimizationLETComponent?.renderAll) {
+                optimizationLETComponent.resizeCanvas();
+                optimizationLETComponent.renderAll();
+            }
+        }
+
+        function initOptimizationDVHView() {
+            if (optimizationDVHComponent || typeof DVHComponent === 'undefined') return;
+            const container = document.getElementById('dvhViewContent');
+            if (!container) return;
+            container.innerHTML = '';
+            optimizationDVHComponent = new DVHComponent(container, {
+                showHeader: false,
+                toolbarTitle: 'DVH',
+                toolbarContainerId: 'optDvhToolbarHost'
+            });
+        }
+
+        function initOptimizationLETdVHView() {
+            if (optimizationLETdVHComponent || typeof LETdVHComponent === 'undefined') return;
+            const container = document.getElementById('letdvhViewContent');
+            if (!container) return;
+            container.innerHTML = '';
+            optimizationLETdVHComponent = new LETdVHComponent(container, {
+                showHeader: false,
+                toolbarTitle: 'LETdVH',
+                toolbarContainerId: 'optLETdVhToolbarHost'
+            });
+        }
+
+        function initOptimizationBEVView() {
+            if (optimizationBEVComponent || typeof ProtonBeamEyeViewComponent === 'undefined') return;
+            const container = document.getElementById('bevViewContent');
+            if (!container) return;
+            container.innerHTML = '';
+            optimizationBEVComponent = new ProtonBeamEyeViewComponent(container, {
+                showHeader: false,
+                toolbarTitle: 'BEV',
+                toolbarContainerId: 'optBevToolbarHost'
+            });
+        }
+
+        function initOptimizationLETView() {
+            if (optimizationLETComponent || typeof LETComponent === 'undefined') return;
+            const container = document.getElementById('letViewContent');
+            if (!container) return;
+            container.innerHTML = '';
+            // 注意：CrossSectionView2DComponent 用 containerId 拼接内部 DOM id（如 `${containerId}-pan`）。
+            // 这里必须传字符串 id，否则会出现 `[object HTMLDivElement]-pan` 之类的无效 id，导致按钮图标不可见。
+            optimizationLETComponent = new LETComponent('letViewContent', {
+                enableToolbar: true,
+                enableLayerControl: true,
+                showDoseLegend: true,
+                contoursVisible: false
+            });
+
+            // 将 LET 的 2D 工具栏挪到页签右侧（对齐左侧三视图的交互体验）
+            const host = document.getElementById('optLetToolbarHost');
+            if (host) {
+                const toolbar = container.querySelector('.cross-section-view2d-toolbar');
+                if (toolbar) {
+                    host.innerHTML = '';
+                    host.appendChild(toolbar);
+                }
+            }
+        }
+
+        function switchLeftView(tabName) {
+            const viewIds = ['axialViewContainer', 'sagittalViewContainer', 'coronalViewContainer'];
+            viewIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('active');
+            });
+
+            const targetId = tabName + 'Container';
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.classList.add('active');
+
+            if (tabName === 'axialView') initLeftAxialView();
+            if (tabName === 'sagittalView') initLeftSagittalView();
+            if (tabName === 'coronalView') initLeftCoronalView();
+        }
+
+        function initLeftAxialView() {
+            if (leftAxialViewComponent || typeof CrossSectionView2DComponent === 'undefined') return;
+            const container = document.getElementById('axialViewContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            leftAxialViewComponent = new CrossSectionView2DComponent('axialViewContainer', {
+                enableToolbar: true,
+                enableLayerControl: true,
+                showDoseLegend: false,
+                contoursVisible: false
+            });
+        }
+
+        function initLeftSagittalView() {
+            if (leftSagittalViewComponent || typeof SagittalView2DComponent === 'undefined') return;
+            const container = document.getElementById('sagittalViewContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            leftSagittalViewComponent = new SagittalView2DComponent('sagittalViewContainer', {
+                enableToolbar: true,
+                enableLayerControl: true,
+                showDoseLegend: false,
+                contoursVisible: false
+            });
+        }
+
+        function initLeftCoronalView() {
+            if (leftCoronalViewComponent || typeof CoronalView2DComponent === 'undefined') return;
+            const container = document.getElementById('coronalViewContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            leftCoronalViewComponent = new CoronalView2DComponent('coronalViewContainer', {
+                enableToolbar: true,
+                enableLayerControl: true,
+                showDoseLegend: false,
+                contoursVisible: false
+            });
+        }
 
         function initComponents() {
             if (window.SequenceTreeComponent) {
@@ -672,9 +933,10 @@
 
         function initDoseStatisticsComponent() {
             if (typeof DoseStatisticsComponent !== 'undefined') {
-                const doseStatsContainer = document.getElementById('doseStatsContainer');
-                if (doseStatsContainer && !doseStatsContainer.dataset.inited) {
-                    doseStatisticsComponent = new DoseStatisticsComponent('doseStatsContainer', {
+                // 计划优化页：剂量统计挂载到 #doseStatsContent（tab 对应的内容容器）
+                const doseStatsHost = document.getElementById('doseStatsContent');
+                if (doseStatsHost && !doseStatsHost.dataset.inited) {
+                    doseStatisticsComponent = new DoseStatisticsComponent('doseStatsContent', {
                         showDoseType: false,
                         getRoiStats: () => null,
                         getPoiStats: () => null,
@@ -690,7 +952,22 @@
                             }
                         }
                     });
-                    doseStatsContainer.dataset.inited = 'true';
+                    doseStatsHost.dataset.inited = 'true';
+                }
+            }
+        }
+
+        function initLETdStatisticsComponent() {
+            if (typeof LETdStatisticsComponent !== 'undefined') {
+                // 计划优化页：LETd统计挂载到 #letdStatsContent（tab 对应的内容容器）
+                const letdStatsHost = document.getElementById('letdStatsContent');
+                if (letdStatsHost && !letdStatsHost.dataset.inited) {
+                    letdStatsHost.innerHTML = '';
+                    letdStatisticsComponent = new LETdStatisticsComponent('letdStatsContent', {
+                        getGlobalStats: () => null,
+                        getRoiStats: () => null
+                    });
+                    letdStatsHost.dataset.inited = 'true';
                 }
             }
         }
