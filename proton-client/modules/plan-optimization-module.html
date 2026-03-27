@@ -31,6 +31,9 @@
             width: 100%;
             height: 100vh;
             background: #1a1a1a;
+            /* 与下方左侧栏一致：顶部患者区宽度 = 页签 + 内容区（内容区含内部纵向滚动条） */
+            --td-left-tabs-width: 48px;
+            --td-left-content-width: 280px;
         }
 
         .top-area {
@@ -41,7 +44,9 @@
         }
 
         .patient-overview {
-            width: 328px;
+            width: calc(var(--td-left-tabs-width) + var(--td-left-content-width));
+            flex: 0 0 calc(var(--td-left-tabs-width) + var(--td-left-content-width));
+            min-width: calc(var(--td-left-tabs-width) + var(--td-left-content-width));
             background: #2a2a2a;
             border-right: 1px solid #404040;
             display: flex;
@@ -52,6 +57,7 @@
 
         .toolbar-area {
             flex: 1;
+            min-width: 0; /* 允许收缩，触发内部工具栏横向滚动 */
             background: #2a2a2a;
             display: flex;
             align-items: center;
@@ -72,7 +78,7 @@
         }
 
         .left-sidebar-tabs {
-            width: 48px;
+            width: var(--td-left-tabs-width);
             background: #252525;
             border-right: 1px solid #404040;
             display: flex;
@@ -113,7 +119,7 @@
         }
 
         .left-sidebar-content {
-            width: 280px;
+            width: var(--td-left-content-width);
             background: #2a2a2a;
             border-right: 1px solid #404040;
             display: flex;
@@ -379,7 +385,7 @@
     </style>
 </head>
 <body>
-    <div class="plan-optimization-content">
+    <div class="plan-optimization-content module-toolbar-layout-root">
         <div class="top-area">
             <div class="patient-overview">
                 <div id="patientOverviewCard"></div>

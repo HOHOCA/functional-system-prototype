@@ -29,6 +29,9 @@
             width: 100%;
             height: 100vh;
             background: #1a1a1a;
+            /* 与下方左侧栏一致：顶部患者区宽度 = 页签 + 内容区（内容区含内部纵向滚动条） */
+            --td-left-tabs-width: 48px;
+            --td-left-content-width: 280px;
         }
 
         /* 顶部区域（患者概览 + 工具栏） */
@@ -41,7 +44,9 @@
 
         /* 患者概览区域 */
         .patient-overview {
-            width: 328px; /* 48px (页签) + 280px (内容) */
+            width: calc(var(--td-left-tabs-width) + var(--td-left-content-width));
+            flex: 0 0 calc(var(--td-left-tabs-width) + var(--td-left-content-width));
+            min-width: calc(var(--td-left-tabs-width) + var(--td-left-content-width));
             background: #2a2a2a;
             border-right: 1px solid #404040;
             display: flex;
@@ -78,6 +83,7 @@
         /* 工具栏区域 */
         .toolbar-area {
             flex: 1;
+            min-width: 0; /* 允许收缩，触发内部工具栏横向滚动 */
             background: #2a2a2a;
             display: flex;
             align-items: center;
@@ -93,7 +99,7 @@
 
         /* 左侧栏页签区域 */
         .left-sidebar-tabs {
-            width: 48px;
+            width: var(--td-left-tabs-width);
             background: #252525;
             border-right: 1px solid #404040;
             display: flex;
@@ -135,7 +141,7 @@
 
         /* 左侧栏内容区域 */
         .left-sidebar-content {
-            width: 280px;
+            width: var(--td-left-content-width);
             background: #2a2a2a;
             border-right: 1px solid #404040;
             display: flex;
@@ -371,7 +377,7 @@
     </style>
 </head>
 <body>
-    <div class="image-processing-content">
+    <div class="image-processing-content module-toolbar-layout-root">
         <!-- 顶部区域 -->
         <div class="top-area">
             <!-- 患者概览区域 -->

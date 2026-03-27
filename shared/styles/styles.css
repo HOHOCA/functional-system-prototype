@@ -9897,6 +9897,77 @@ body {
     width: 100%;
 }
 
+/* 悬浮模式：隐藏顶部工具栏槽位（不占位） */
+.toolbar-area.module-toolbar-host-hidden {
+    display: none !important;
+}
+
+/*
+ * 悬浮模式：根容器改为 Grid，右侧主内容跨两行占满（原工具栏行 + 原主内容行）。
+ * 左侧患者卡 + 左栏仍在原列，不随整体上移；仅右侧向上扩展。
+ * .module-toolbar-layout-root 标在含「患者条 + 左栏 + 主内容」的模块根节点上（质子/后装各业务模块）。
+ */
+.module-toolbar-layout-root.module-toolbar-floating-active {
+    display: grid !important;
+    grid-template-columns:
+        var(--td-left-tabs-width, 48px)
+        var(--td-left-content-width, 280px)
+        minmax(0, 1fr);
+    grid-template-rows: 80px minmax(0, 1fr);
+    height: 100vh;
+    min-height: 0;
+    flex-direction: unset;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .top-area {
+    display: contents;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .content-wrapper {
+    display: contents;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .patient-overview {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    flex: unset;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .left-sidebar-tabs {
+    grid-column: 1;
+    grid-row: 2;
+    width: var(--td-left-tabs-width, 48px) !important;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .left-sidebar-content {
+    grid-column: 2;
+    grid-row: 2;
+    width: var(--td-left-content-width, 280px) !important;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .main-display-area {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    min-height: 0;
+    height: auto;
+    align-self: stretch;
+}
+
+.module-toolbar-layout-root.module-toolbar-floating-active .main-content-area {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    min-height: 0;
+    height: auto;
+    align-self: stretch;
+}
+
 .module-toolbar-fixed {
     display: flex;
     align-items: center;

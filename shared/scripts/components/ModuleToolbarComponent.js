@@ -1104,33 +1104,52 @@ class ModuleToolbarComponent {
      * 应用模式
      */
     applyMode() {
+        const layoutRoot = this.container?.closest(
+            '.module-toolbar-layout-root, .target-delineation-content, .plan-design-content, .plan-optimization-content, .image-processing-content'
+        );
+
         if (this.state.mode === 'floating') {
+            // 固定槽位隐藏并释放占位，由页面根级 Grid 让右侧主内容上扩占满
+            if (this.container) {
+                this.container.classList.add('module-toolbar-host-hidden');
+            }
+            if (layoutRoot) {
+                layoutRoot.classList.add('module-toolbar-floating-active');
+            }
+
             // 显示悬浮容器，隐藏固定容器
             if (this.elements.fixedContainer) {
                 this.elements.fixedContainer.style.display = 'none';
             }
-            
+
             if (this.elements.floatingContainer) {
                 this.elements.floatingContainer.style.display = 'block';
-                
+
                 // 设置位置
                 this.elements.floatingContainer.style.left = `${this.state.position.x}px`;
                 this.elements.floatingContainer.style.top = `${this.state.position.y}px`;
-                
+
                 // 应用尺寸限制
                 this.applySizeConstraints();
             }
         } else {
+            if (this.container) {
+                this.container.classList.remove('module-toolbar-host-hidden');
+            }
+            if (layoutRoot) {
+                layoutRoot.classList.remove('module-toolbar-floating-active');
+            }
+
             // 显示固定容器，隐藏悬浮容器
             if (this.elements.fixedContainer) {
                 this.elements.fixedContainer.style.display = 'block';
             }
-            
+
             if (this.elements.floatingContainer) {
                 this.elements.floatingContainer.style.display = 'none';
             }
         }
-        
+
         // 保存配置
         this.saveConfig();
     }
@@ -1331,7 +1350,17 @@ class ModuleToolbarComponent {
         if (this.handleWindowResize) {
             window.removeEventListener('resize', this.handleWindowResize);
         }
-        
+
+        const layoutRoot = this.container?.closest(
+            '.module-toolbar-layout-root, .target-delineation-content, .plan-design-content, .plan-optimization-content, .image-processing-content'
+        );
+        if (this.container) {
+            this.container.classList.remove('module-toolbar-host-hidden');
+        }
+        if (layoutRoot) {
+            layoutRoot.classList.remove('module-toolbar-floating-active');
+        }
+
         // 移除DOM元素
         if (this.elements.fixedContainer) {
             this.elements.fixedContainer.remove();
