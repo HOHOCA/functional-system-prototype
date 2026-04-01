@@ -282,6 +282,30 @@ const COMPONENTS_CONFIG = {
     // 质子特有组件
     proton: [
         {
+            id: 'proton-create-plan',
+            name: 'ProtonCreatePlan',
+            displayName: '质子-新建计划',
+            description: '新建计划弹窗：计划基本信息 + 射束组信息 + 目标剂量/靶区',
+            className: 'ProtonCreatePlanComponent',
+            filePath: '../proton-client/scripts/ProtonCreatePlanComponent.js?v=2'
+        },
+        {
+            id: 'proton-energy-layer-pbs',
+            name: 'ProtonEnergyLayerPBS',
+            displayName: '质子-能量层-PBS',
+            description: '某个射束内的能量层明细（只读深色表格：能量/MU/权重/束斑/束斑跳数/扫描次数）',
+            className: 'ProtonEnergyLayerListComponentPBS',
+            filePath: '../proton-client/scripts/ProtonEnergyLayerListComponentPBS.js'
+        },
+        {
+            id: 'proton-beam-list',
+            name: 'ProtonBeamListPBS',
+            displayName: '质子-射束列表-PBS',
+            description: '射束列表（深色表格、行选择、底部操作栏：添加/编辑/删除/复制/排序）',
+            className: 'ProtonBeamListComponentPBS',
+            filePath: '../proton-client/scripts/ProtonBeamListComponentPBS.js'
+        },
+        {
             id: 'let',
             name: 'LET',
             displayName: 'LET',

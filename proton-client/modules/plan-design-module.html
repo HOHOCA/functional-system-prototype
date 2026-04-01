@@ -877,6 +877,9 @@
     <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
     <script src="../scripts/ProtonView3DComponent.js"></script>
     <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
+    <script src="../scripts/ProtonCreatePlanComponent.js"></script>
+    <script src="../scripts/ProtonBeamListComponentPBS.js"></script>
+    <script src="../scripts/ProtonEnergyLayerListComponentPBS.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
@@ -890,6 +893,9 @@
         let poiComponent = null;
         let registrationComponent = null;
         let moduleToolbar = null;
+        let createPlanModal = null;
+        let beamListComponentPBS = null;
+        let energyLayerListComponentPBS = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
         let clinicalTargetComponent = null;
@@ -1037,7 +1043,75 @@
                     // accountId: 'user123', // 账号ID（可选，用于跟随账号存储）
                     onToolClick: (toolId) => {
                         console.log('工具点击:', toolId);
-                        // 这里可以添加具体的工具功能
+                        if (toolId === 'new-plan') {
+                            if (typeof ProtonCreatePlanComponent === 'undefined') {
+                                console.error('ProtonCreatePlanComponent 未加载，无法打开“新建计划”弹窗');
+                                return;
+                            }
+
+                            if (!createPlanModal) {
+                                createPlanModal = new ProtonCreatePlanComponent({
+                                    mountContainer: document.body,
+                                    onConfirm: (data) => {
+                                        console.log('Create proton plan:', data);
+
+                                        const technique = (data?.group?.technique || '').toString().toUpperCase();
+                                        if (technique !== 'PBS') return;
+
+                                        if (typeof ProtonBeamListComponentPBS === 'undefined') {
+                                            console.error('ProtonBeamListComponentPBS 未加载，无法初始化射束列表');
+                                            return;
+                                        }
+                                        if (typeof ProtonEnergyLayerListComponentPBS === 'undefined') {
+                                            console.error('ProtonEnergyLayerListComponentPBS 未加载，无法初始化能量层列表');
+                                            return;
+                                        }
+
+                                        const beamListContainer = document.getElementById('beamListContainer');
+                                        const energyLayerContainer = document.getElementById('energyLayerContainer');
+                                        if (!beamListContainer || !energyLayerContainer) {
+                                            console.error('射束列表/能量层容器不存在，无法挂载 PBS 组件');
+                                            return;
+                                        }
+
+                                        // 重新挂载前先清空容器（该原型组件不提供 destroy）
+                                        beamListContainer.innerHTML = '';
+                                        energyLayerContainer.innerHTML = '';
+
+                                        const prefix = 'plan-design-';
+                                        const defaultMachine = data?.group?.machine || 'ProBeam_TR3';
+                                        const defaultGroupName = data?.group?.name || data?.group?.groupName || 'Group 1';
+
+                                        beamListComponentPBS = new ProtonBeamListComponentPBS('beamListContainer', {
+                                            prefix,
+                                            defaultMachine,
+                                            defaultGroupName,
+                                            onSelect: (beam) => {
+                                                const beamName = beam?.name || 'Beam 1';
+                                                if (energyLayerListComponentPBS && typeof energyLayerListComponentPBS.setBeam === 'function') {
+                                                    energyLayerListComponentPBS.setBeam({ beamName });
+                                                }
+                                            }
+                                        });
+
+                                        const initialBeamName = beamListComponentPBS?.beams?.[0]?.name || 'Beam 1';
+                                        energyLayerListComponentPBS = new ProtonEnergyLayerListComponentPBS('energyLayerContainer', {
+                                            prefix,
+                                            beamName: initialBeamName,
+                                            beamOptions: (beamListComponentPBS?.beams || []).map(b => b.name).filter(Boolean)
+                                        });
+                                    },
+                                    onCancel: () => {
+                                        console.log('Cancel create proton plan');
+                                    }
+                                });
+                            }
+
+                            if (createPlanModal && typeof createPlanModal.show === 'function') {
+                                createPlanModal.show();
+                            }
+                            return;
+                        }
                     }
                 });
             }

@@ -632,6 +632,29 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'ProtonBeamListComponentPBS':
+                    if (typeof ProtonBeamListComponentPBS !== 'undefined') {
+                        instance = new ProtonBeamListComponentPBS(componentContainer.id, {
+                            prefix: 'preview-',
+                            onSelect: (beam) => console.log('Selected beam:', beam),
+                            onAdd: () => console.log('Add beam'),
+                            onEdit: (beam) => console.log('Edit beam:', beam),
+                            onDelete: (beam) => console.log('Delete beam:', beam),
+                            onCopy: (beam) => console.log('Copy beam:', beam),
+                            onSort: (beams) => console.log('Sort beams:', beams)
+                        });
+                    }
+                    break;
+
+                case 'ProtonEnergyLayerListComponentPBS':
+                    if (typeof ProtonEnergyLayerListComponentPBS !== 'undefined') {
+                        instance = new ProtonEnergyLayerListComponentPBS(componentContainer.id, {
+                            prefix: 'preview-',
+                            beamName: 'Beam 1'
+                        });
+                    }
+                    break;
                     
                 case 'ModuleToolbarComponent':
                     if (typeof ModuleToolbarComponent !== 'undefined') {
@@ -718,6 +741,21 @@ class ComponentGallery {
                             mountContainer: componentContainer,
                             onConfirm: (data) => console.log('Create robustness evaluation:', data),
                             onCancel: () => console.log('Cancel create robustness evaluation')
+                        });
+                        if (instance && typeof instance.show === 'function') {
+                            setTimeout(() => instance.show(), 60);
+                        }
+                    }
+                    break;
+
+                case 'ProtonCreatePlanComponent':
+                    if (typeof ProtonCreatePlanComponent !== 'undefined') {
+                        componentContainer.style.height = '760px';
+                        componentContainer.style.minHeight = '760px';
+                        instance = new ProtonCreatePlanComponent({
+                            mountContainer: componentContainer,
+                            onConfirm: (data) => console.log('Create proton plan:', data),
+                            onCancel: () => console.log('Cancel create proton plan')
                         });
                         if (instance && typeof instance.show === 'function') {
                             setTimeout(() => instance.show(), 60);
