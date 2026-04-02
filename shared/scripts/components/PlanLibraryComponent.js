@@ -29,6 +29,60 @@ class PlanLibraryComponent {
     }
 
     /**
+     * 计划优化模块运行在 shell 页的 iframe 中时，
+     * 将当前 iframe 临时抬到最顶层，确保“生成计划库”可以盖住外层顶部导航。
+     * 这里不把弹窗 DOM 挂到父文档，避免破坏组件内部对 document 的查询逻辑。
+     */
+    enterFullscreenBridge() {
+        try {
+            const frameEl = typeof window !== 'undefined' ? window.frameElement : null;
+            if (!frameEl || frameEl.nodeType !== 1) return;
+
+            const parentDoc = frameEl.ownerDocument;
+            if (!parentDoc?.head) return;
+
+            const styleId = 'plc-plan-library-iframe-bridge-style';
+            if (!parentDoc.getElementById(styleId)) {
+                const style = parentDoc.createElement('style');
+                style.id = styleId;
+                style.textContent = `
+                    iframe.plc-plan-library-iframe-bridge{
+                        position: fixed !important;
+                        inset: 0 !important;
+                        width: 100vw !important;
+                        height: 100vh !important;
+                        max-width: none !important;
+                        max-height: none !important;
+                        z-index: 2147483646 !important;
+                        display: block !important;
+                        border: none !important;
+                        margin: 0 !important;
+                    }
+                `;
+                parentDoc.head.appendChild(style);
+            }
+
+            if (frameEl.classList) {
+                frameEl.classList.add('plc-plan-library-iframe-bridge');
+            } else {
+                frameEl.className = `${frameEl.className || ''} plc-plan-library-iframe-bridge`.trim();
+            }
+        } catch (_) {
+            /* ignore */
+        }
+    }
+
+    exitFullscreenBridge() {
+        try {
+            const frameEl = typeof window !== 'undefined' ? window.frameElement : null;
+            if (!frameEl || frameEl.nodeType !== 1) return;
+            frameEl.classList?.remove('plc-plan-library-iframe-bridge');
+        } catch (_) {
+            /* ignore */
+        }
+    }
+
+    /**
      * 计算 shared/styles 相对路径前缀。
      * - component-gallery/* → ../shared/styles/
      * - *-client/modules/* → ../../shared/styles/
@@ -1909,6 +1963,7 @@ class PlanLibraryComponent {
         this.ensureCenterView2dComponents();
         this.syncPlanLibraryCenterMounts();
         window.addEventListener('keydown', this._boundEscHandler);
+        this.enterFullscreenBridge();
     }
 
     openClinicalGoalsModal() {
@@ -2231,6 +2286,7 @@ class PlanLibraryComponent {
 
     hide() {
         if (!this.modalEl) return;
+        this.exitFullscreenBridge();
         this.disposePlanLibraryCenterProtonPhoton();
         this.disposeCenterView2dInstances();
         this.disposeRailSubInstances();
