@@ -618,6 +618,19 @@ class PlanLibraryComponent {
                 box-sizing: border-box;
             }
             .plc-bottom-panel.is-active{ display: block; }
+            /* 射束列表面板：仅表格区域滚动，底部工具条不随外层滚动 */
+            .plc-bottom-panel[data-plc-bottom-panel="beam-list"].is-active{
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                min-height: 0;
+            }
+            .plc-bottom-panel[data-plc-bottom-panel="beam-list"].is-active .dmlc-beam-list,
+            .plc-bottom-panel[data-plc-bottom-panel="beam-list"].is-active .proton-beam-list{
+                flex: 1 1 0;
+                min-height: 0;
+                height: auto;
+            }
             .plc-center-half:first-child{
                 border-right: 1px solid #2c2c2c;
             }

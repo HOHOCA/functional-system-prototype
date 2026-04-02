@@ -91,6 +91,7 @@ class ProtonBeamListComponentPBS {
             .proton-beam-list {
                 width: 100%;
                 height: 100%;
+                min-height: 0;
                 display: flex;
                 flex-direction: column;
                 background: #0b0b0b;
@@ -102,7 +103,8 @@ class ProtonBeamListComponentPBS {
             }
 
             .proton-beam-list-table-wrap {
-                flex: 1;
+                flex: 1 1 0;
+                min-height: 0;
                 overflow: auto;
                 background: #070707;
             }
