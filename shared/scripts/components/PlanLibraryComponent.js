@@ -25,6 +25,9 @@ class PlanLibraryComponent {
         this._clinicalGoalsOpen = false;
         this._optSettingsOpen = false;
         this._optSettingsIterations = 20;
+        // 仅在“计划库”首次注入时置 true，用于关闭时回收样式，避免污染主页面样式级联顺序
+        this._injectedPlanView2dCss = false;
+        this._injectedView3dCss = false;
         this.ensureStyles();
     }
 
@@ -1089,6 +1092,7 @@ class PlanLibraryComponent {
         link.rel = 'stylesheet';
         link.href = `${this.getSharedStylesPrefix()}styles_plan_view_2d.css`;
         document.head.appendChild(link);
+        this._injectedPlanView2dCss = true;
     }
 
     /** Proton 3D / BEV 等依赖 shared/styles/styles_view_3d.css。 */
@@ -1100,6 +1104,7 @@ class PlanLibraryComponent {
         link.rel = 'stylesheet';
         link.href = `${this.getSharedStylesPrefix()}styles_view_3d.css`;
         document.head.appendChild(link);
+        this._injectedView3dCss = true;
     }
 
     getActiveBeamCardFromModal() {
@@ -2306,6 +2311,16 @@ class PlanLibraryComponent {
         window.removeEventListener('keydown', this._boundEscHandler);
         this.modalEl.remove();
         this.modalEl = null;
+
+        // 关闭时回收本组件注入的样式表，避免影响主页面同名 class（如 .cross-section-view2d-toolbar）
+        if (this._injectedPlanView2dCss) {
+            document.getElementById('plan-library-plan-view-2d-css')?.remove();
+            this._injectedPlanView2dCss = false;
+        }
+        if (this._injectedView3dCss) {
+            document.getElementById('plan-library-view-3d-css')?.remove();
+            this._injectedView3dCss = false;
+        }
     }
 
     destroy() {
