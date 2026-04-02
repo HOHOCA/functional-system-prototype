@@ -693,7 +693,8 @@ class ClinicalTargetComponent {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                z-index: 10000;
+                /* 需高于生成计划库结果弹窗（plg-mask.fixed = 100000） */
+                z-index: 100200;
             }
             .ct-modal {
                 background: #1a1a1a;
@@ -1247,4 +1248,8 @@ class ClinicalTargetComponent {
             });
         });
     }
+}
+
+if (typeof window !== 'undefined') {
+    window.ClinicalTargetComponent = ClinicalTargetComponent;
 }

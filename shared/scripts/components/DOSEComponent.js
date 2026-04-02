@@ -66,38 +66,8 @@ class DOSEComponent {
     render() {
         if (!this.container) return;
         
-        // 生成射束组选项
-        const beamGroupOptions = this.isMultiBeamGroup 
-            ? this.beamGroups.filter(g => g.hasDose).map(g => 
-                `<option value="beamGroup:${g.id}">${g.name}</option>`
-            ).join('')
-            : '';
-        
-        // 生成射束选项
-        const beamOptions = this.beams.filter(b => b.hasDose).map(b => 
-            `<option value="beam:${b.id}">${b.name}</option>`
-        ).join('');
-        
         this.container.innerHTML = `
             <div class="dose-panel-container">
-                <!-- 顶部下拉菜单区域 -->
-                <div class="dose-header-section">
-                    <div class="dose-dropdown-group">
-                        <select class="dose-dropdown" id="${this.options.prefix}doseTypeDropdown">
-                            <option value="physical" ${this.doseType === 'physical' ? 'selected' : ''}>物理剂量</option>
-                            <option value="biological" ${this.doseType === 'biological' ? 'selected' : ''}>生物剂量</option>
-                        </select>
-                        <select class="dose-dropdown" id="${this.options.prefix}doseSourceDropdown">
-                            <option value="planned" ${this.doseSource === 'planned' ? 'selected' : ''}>计划剂量</option>
-                            ${this.hasBasePlan ? `<option value="base" ${this.doseSource === 'base' ? 'selected' : ''}>基底剂量</option>` : ''}
-                            ${this.hasBasePlan ? `<option value="group+base" ${this.doseSource === 'group+base' ? 'selected' : ''}>射束组+基底剂量</option>` : ''}
-                            ${this.hasJointOptimization ? `<option value="joint" ${this.doseSource === 'joint' ? 'selected' : ''}>共同优化剂量</option>` : ''}
-                            ${beamGroupOptions}
-                            ${beamOptions}
-                        </select>
-                    </div>
-                </div>
-                
                 <!-- 参考值区域 -->
                 <div class="dose-reference-section">
                     <div class="dose-reference-row">
@@ -208,28 +178,6 @@ class DOSEComponent {
     }
 
     bindEvents() {
-        // 下拉框1：剂量类型
-        const doseTypeDropdown = document.getElementById(`${this.options.prefix}doseTypeDropdown`);
-        if (doseTypeDropdown) {
-            doseTypeDropdown.addEventListener('change', (e) => {
-                this.doseType = e.target.value;
-                if (this.options.onDoseTypeChange) {
-                    this.options.onDoseTypeChange(this.doseType);
-                }
-            });
-        }
-        
-        // 下拉框2：剂量来源
-        const doseSourceDropdown = document.getElementById(`${this.options.prefix}doseSourceDropdown`);
-        if (doseSourceDropdown) {
-            doseSourceDropdown.addEventListener('change', (e) => {
-                this.doseSource = e.target.value;
-                if (this.options.onDoseSourceChange) {
-                    this.options.onDoseSourceChange(this.doseSource);
-                }
-            });
-        }
-        
         // 参考值输入框事件
         const referencePercentInput = document.getElementById(`${this.options.prefix}doseReferencePercent`);
         const referenceCgyInput = document.getElementById(`${this.options.prefix}doseReferenceCgy`);

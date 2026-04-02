@@ -1,3 +1,15 @@
+/* 全局：隐藏 number 输入框的上下步进箭头 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 /* 计划优化：优化约束列表表格样式 */
 .optimization-table { width: 100%; border-collapse: collapse; background-color: #1a1a1a; border-radius: 6px; overflow: hidden; }
 .optimization-table.opt-resizable { table-layout: fixed; }
@@ -4753,46 +4765,6 @@ body {
     height: 100%;
     background-color: #1a1a1a;
     overflow: hidden;
-}
-
-/* 顶部下拉菜单区域 */
-.dose-header-section {
-    flex-shrink: 0;
-    padding: 10px 15px;
-    border-bottom: 1px solid #2A2A2A;
-    background-color: #1a1a1a;
-}
-
-.dose-dropdown-group {
-    display: flex;
-    gap: 10px;
-}
-
-.dose-dropdown {
-    flex: 1;
-    padding: 6px 30px 6px 12px;
-    background-color: #2a2a2a;
-    border: 1px solid #404040;
-    border-radius: 4px;
-    color: #ffffff;
-    font-size: 13px;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    transition: all 0.3s ease;
-}
-
-.dose-dropdown:hover {
-    border-color: #3AACDE;
-    background-color: #2d2d2d;
-}
-
-.dose-dropdown:focus {
-    outline: none;
-    border-color: #3AACDE;
-    background-color: #2d2d2d;
 }
 
 /* 参考值区域 */

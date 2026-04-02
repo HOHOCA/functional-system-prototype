@@ -375,6 +375,21 @@ class ComponentGallery {
                         });
                     }
                     break;
+
+                case 'PhotonView3DComponent':
+                    if (typeof PhotonView3DComponent !== 'undefined') {
+                        instance = new PhotonView3DComponent(componentContainer.id, {
+                            enableToolbar: true,
+                            enableRightClick: true,
+                            showBeams: true,
+                            showROIs: true,
+                            showIsocenter: true,
+                            showToolbar: true,
+                            showHeader: true,
+                            toolbarTitle: '3D'
+                        });
+                    }
+                    break;
                     
                 case 'CoronalView2DComponent':
                     if (typeof CoronalView2DComponent !== 'undefined') {
@@ -647,6 +662,48 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'ProtonBeamOptimizationSettingsComponent':
+                    if (typeof ProtonBeamOptimizationSettingsComponent !== 'undefined') {
+                        instance = new ProtonBeamOptimizationSettingsComponent(componentContainer.id, {
+                            prefix: 'preview-',
+                            onSettingsChange: (beamId, field, value) =>
+                                console.log('质子射束优化设置变更:', beamId, field, value)
+                        });
+                    }
+                    break;
+
+                case 'DMLCBeamListComponent':
+                    if (typeof DMLCBeamListComponent !== 'undefined') {
+                        instance = new DMLCBeamListComponent(componentContainer.id, {
+                            prefix: 'gallery-preview-',
+                            onSelect: (beam) => console.log('DMLC 选中射束:', beam),
+                            onChange: (e) => console.log('DMLC 字段变更:', e),
+                            onToolbar: (e) => console.log('DMLC 工具栏:', e)
+                        });
+                    }
+                    break;
+
+                case 'PhotonProtonBeamOptimizationSettingsComponent':
+                    if (typeof PhotonProtonBeamOptimizationSettingsComponent !== 'undefined') {
+                        instance = new PhotonProtonBeamOptimizationSettingsComponent(componentContainer.id, {
+                            prefix: 'gallery-preview-',
+                            onSelect: (beam) => console.log('光子射束优化设置 选中:', beam),
+                            onChange: (e) => console.log('光子射束优化设置 变更:', e)
+                        });
+                    }
+                    break;
+
+                case 'PhotonBeamEyeViewComponent':
+                    if (typeof PhotonBeamEyeViewComponent !== 'undefined') {
+                        instance = new PhotonBeamEyeViewComponent(componentContainer.id, {
+                            showToolbar: true,
+                            showHeader: true,
+                            toolbarTitle: 'BEV',
+                            onBeamSelect: (beamId) => console.log('光子 BEV 射束:', beamId)
+                        });
+                    }
+                    break;
+
                 case 'ProtonEnergyLayerListComponentPBS':
                     if (typeof ProtonEnergyLayerListComponentPBS !== 'undefined') {
                         instance = new ProtonEnergyLayerListComponentPBS(componentContainer.id, {
@@ -756,6 +813,21 @@ class ComponentGallery {
                             mountContainer: componentContainer,
                             onConfirm: (data) => console.log('Create proton plan:', data),
                             onCancel: () => console.log('Cancel create proton plan')
+                        });
+                        if (instance && typeof instance.show === 'function') {
+                            setTimeout(() => instance.show(), 60);
+                        }
+                    }
+                    break;
+
+                case 'PlanLibraryComponent':
+                    if (typeof PlanLibraryComponent !== 'undefined') {
+                        componentContainer.style.height = '920px';
+                        componentContainer.style.minHeight = '920px';
+                        instance = new PlanLibraryComponent({
+                            mountContainer: componentContainer,
+                            onConfirm: (data) => console.log('Plan library:', data),
+                            onCancel: () => console.log('Cancel plan library')
                         });
                         if (instance && typeof instance.show === 'function') {
                             setTimeout(() => instance.show(), 60);

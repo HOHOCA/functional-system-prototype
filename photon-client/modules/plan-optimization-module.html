@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>计划优化 - MOZI Proton</title>
+    <title>计划优化 - MOZI Photon</title>
     <link rel="stylesheet" href="../../shared/styles/styles.css">
     <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
     <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
@@ -518,27 +518,13 @@
     <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
     <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
     <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
-    <script src="../scripts/ProtonView3DComponent.js"></script>
-    <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
-    <script src="../scripts/ProtonBeamListComponentPBS.js"></script>
-    <script src="../scripts/ProtonBeamOptimizationSettingsComponent.js"></script>
-    <script src="../../photon-client/scripts/PhotonView3DComponent.js"></script>
-    <script src="../../photon-client/scripts/PhotonBeamEyeViewComponent.js"></script>
-    <script src="../../photon-client/scripts/DMLCBeamListComponent.js"></script>
-    <script src="../../photon-client/scripts/PhotonProtonBeamOptimizationSettingsComponent.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
-    <script src="../scripts/LETdVHComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
     <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
     <script src="../../shared/scripts/components/DOSEComponent.js"></script>
     <script src="../../shared/scripts/components/OptimizationConstraintsComponent.js"></script>
-    <script src="../../shared/scripts/components/PromptProgressModalComponent.js"></script>
-    <script src="../../shared/scripts/components/PromptSimpleConfirmModalComponent.js"></script>
-    <script src="../../shared/scripts/components/PlanLibraryGeneratedModalComponent.js"></script>
-    <script src="../../shared/scripts/components/PlanLibraryComponent.js"></script>
-    <script src="../scripts/LETComponent.js"></script>
-    <script src="../scripts/LETdStatisticsComponent.js"></script>
+    <script src="../../photon-client/scripts/PhotonBeamEyeViewComponent.js"></script>
 
     <script>
         let planSequenceTreeComponent = null;
@@ -551,7 +537,6 @@
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
         let letdStatisticsComponent = null;
-        let planLibraryModal = null;
 
         let leftAxialViewComponent = null;
         let leftSagittalViewComponent = null;
@@ -741,11 +726,11 @@
         }
 
         function initOptimizationBEVView() {
-            if (optimizationBEVComponent || typeof ProtonBeamEyeViewComponent === 'undefined') return;
+            if (optimizationBEVComponent || typeof PhotonBeamEyeViewComponent === 'undefined') return;
             const container = document.getElementById('bevViewContent');
             if (!container) return;
             container.innerHTML = '';
-            optimizationBEVComponent = new ProtonBeamEyeViewComponent(container, {
+            optimizationBEVComponent = new PhotonBeamEyeViewComponent(container, {
                 showHeader: false,
                 toolbarTitle: 'BEV',
                 toolbarContainerId: 'optBevToolbarHost'
@@ -858,8 +843,7 @@
                     { id: 'robust-settings', icon: 'fas fa-shield-alt', label: '鲁棒性设置', tooltip: '鲁棒性设置', category: '常规' },
                     { id: 'optimization-settings', icon: 'fas fa-cog', label: '优化设置', tooltip: '优化设置', category: '常规' },
                     { id: 'dose-calculation', icon: 'fas fa-calculator', label: '剂量计算', tooltip: '剂量计算', category: '常规' },
-                    { id: 'dose-scaling', icon: 'fas fa-sliders-h', label: '剂量缩放', tooltip: '剂量缩放', category: '常规' },
-                    { id: 'plan-library', icon: 'fas fa-book', label: '计划库', tooltip: '计划库', category: '常规' }
+                    { id: 'dose-scaling', icon: 'fas fa-sliders-h', label: '剂量缩放', tooltip: '剂量缩放', category: '常规' }
                 ];
 
                 moduleToolbar = new ModuleToolbarComponent('moduleToolbarContainer', {
@@ -868,23 +852,6 @@
                     moduleId: 'plan-optimization-v2',
                     onToolClick: (toolId) => {
                         console.log('计划优化工具点击:', toolId);
-                        if (toolId === 'plan-library') {
-                            if (typeof PlanLibraryComponent === 'undefined') {
-                                console.error('PlanLibraryComponent 未加载，无法打开“计划库”弹窗');
-                                return;
-                            }
-                            if (!planLibraryModal) {
-                                planLibraryModal = new PlanLibraryComponent({
-                                    mountContainer: document.body,
-                                    onConfirm: (data) => console.log('Plan library:', data),
-                                    onCancel: () => console.log('Cancel plan library')
-                                });
-                            }
-                            if (planLibraryModal && typeof planLibraryModal.show === 'function') {
-                                planLibraryModal.show();
-                            }
-                            return;
-                        }
                     }
                 });
             }

@@ -316,7 +316,7 @@
                                 </div>
                                 
             <!-- 光子系统 -->
-            <div class="product-card photon disabled">
+            <div class="product-card photon" onclick="navigateTo('photon-client/index.html', this)">
                 <div class="card-icon">
                     <i class="fas fa-radiation"></i>
                                 </div>
@@ -366,7 +366,8 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === '1') navigateTo('brachy-client/index.html');
             if (e.key === '2') navigateTo('proton-client/index.html');
-            if (e.key === '3') navigateTo('component-gallery/index.html');
+            if (e.key === '3') navigateTo('photon-client/index.html');
+            if (e.key === '4') navigateTo('component-gallery/index.html');
         });
 
         // 页面加载动画

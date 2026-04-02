@@ -239,6 +239,14 @@ const COMPONENTS_CONFIG = {
             description: '警告弹窗：富文本/表格内容，支持忽略操作',
             className: 'WarningRichTextModalComponent',
             filePath: '../shared/scripts/components/WarningRichTextModalComponent.js'
+        },
+        {
+            id: 'plan-library',
+            name: 'PlanLibrary',
+            displayName: '计划库',
+            description: '生成计划库弹窗：侧栏计划/射束表单；主区 #planLibraryCenterRoot 为空容器，待接入布局',
+            className: 'PlanLibraryComponent',
+            filePath: '../shared/scripts/components/PlanLibraryComponent.js'
         }
     ],
     
@@ -306,6 +314,14 @@ const COMPONENTS_CONFIG = {
             filePath: '../proton-client/scripts/ProtonBeamListComponentPBS.js'
         },
         {
+            id: 'proton-beam-optimization-settings',
+            name: 'ProtonBeamOptimizationSettings',
+            displayName: '质子-射束优化设置',
+            description: '质子计划优化：射束权重/RTV/束斑与层间距/近远端层束斑等（深色表格，与截图一致）',
+            className: 'ProtonBeamOptimizationSettingsComponent',
+            filePath: '../proton-client/scripts/ProtonBeamOptimizationSettingsComponent.js'
+        },
+        {
             id: 'let',
             name: 'LET',
             displayName: 'LET',
@@ -362,6 +378,43 @@ const COMPONENTS_CONFIG = {
             className: 'CreateRobustnessEvaluationComponent',
             filePath: '../proton-client/scripts/CreateRobustnessEvaluationComponent.js'
         }
+    ],
+
+    // 光子组件
+    photon: [
+        {
+            id: 'dmlc-beam-list',
+            name: 'DMLCBeamList',
+            displayName: 'DMLC-射束列表',
+            description: '光子 DMLC 射束参数表格：分组表头、可编辑单元格与底部工具栏',
+            className: 'DMLCBeamListComponent',
+            filePath: '../photon-client/scripts/DMLCBeamListComponent.js'
+        },
+        {
+            id: 'photon-view-3d',
+            name: 'PhotonView3D',
+            displayName: '光子-3D重建视图',
+            description: '使用 Three.js 的三维重建视图（光子）',
+            className: 'PhotonView3DComponent',
+            filePath: '../photon-client/scripts/PhotonView3DComponent.js',
+            dependencies: ['Three.js']
+        },
+        {
+            id: 'photon-bev',
+            name: 'PhotonBeamEyeView',
+            displayName: '光子-BEV',
+            description: '光子射束眼视图：DRR 示意、射野框与十字线；工具含 DRR 设置（占位）、缩放、移动、测量、最大化',
+            className: 'PhotonBeamEyeViewComponent',
+            filePath: '../photon-client/scripts/PhotonBeamEyeViewComponent.js'
+        },
+        {
+            id: 'photon-beam-optimization-settings',
+            name: 'PhotonBeamOptimizationSettings',
+            displayName: '光子-射束优化设置',
+            description: '光子射束优化参数表：数值列为展示；可见性列与坞门限制列可点击（表头为全部切换/全选）',
+            className: 'PhotonProtonBeamOptimizationSettingsComponent',
+            filePath: '../photon-client/scripts/PhotonProtonBeamOptimizationSettingsComponent.js'
+        }
     ]
 };
 
@@ -369,5 +422,6 @@ const COMPONENTS_CONFIG = {
 const PROJECTS = {
     shared: { name: '公共组件', icon: 'fa-cube', color: '#21a1f1' },
     brachy: { name: '后装组件', icon: 'fa-radiation', color: '#10b981' },
-    proton: { name: '质子组件', icon: 'fa-atom', color: '#f59e0b' }
+    proton: { name: '质子组件', icon: 'fa-atom', color: '#f59e0b' },
+    photon: { name: '光子组件', icon: 'fa-radiation', color: '#ef4444' }
 };
