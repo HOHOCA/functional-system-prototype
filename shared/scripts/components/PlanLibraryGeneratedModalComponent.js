@@ -36,6 +36,82 @@ class PlanLibraryGeneratedModalComponent {
         this.ensureStyles();
     }
 
+    /**
+     * 结果页运行在模块 iframe 内时，把当前 iframe 临时抬到 shell 顶层，
+     * 这样结果页才能真正盖住外层导航栏。
+     */
+    enterFullscreenBridge() {
+        try {
+            const frameEl = typeof window !== 'undefined' ? window.frameElement : null;
+            if (!frameEl || frameEl.nodeType !== 1) return;
+
+            const fe = /** @type {HTMLElement} */ (frameEl);
+            if (!fe.dataset.plcBridgePrevStyle) {
+                fe.dataset.plcBridgePrevStyle = fe.getAttribute('style') || '';
+            }
+            fe.style.setProperty('position', 'fixed', 'important');
+            fe.style.setProperty('top', '0', 'important');
+            fe.style.setProperty('left', '0', 'important');
+            fe.style.setProperty('right', '0', 'important');
+            fe.style.setProperty('bottom', '0', 'important');
+            fe.style.setProperty('width', '100vw', 'important');
+            fe.style.setProperty('height', '100vh', 'important');
+            fe.style.setProperty('max-width', 'none', 'important');
+            fe.style.setProperty('max-height', 'none', 'important');
+            fe.style.setProperty('z-index', '2147483646', 'important');
+            fe.style.setProperty('display', 'block', 'important');
+            fe.style.setProperty('border', 'none', 'important');
+            fe.style.setProperty('margin', '0', 'important');
+
+            try {
+                const parentDoc = frameEl.ownerDocument;
+                const styleId = 'plc-plan-library-iframe-bridge-style';
+                if (parentDoc?.head && !parentDoc.getElementById(styleId)) {
+                    const style = parentDoc.createElement('style');
+                    style.id = styleId;
+                    style.textContent = `
+                        iframe.plc-plan-library-iframe-bridge{
+                            position: fixed !important;
+                            inset: 0 !important;
+                            width: 100vw !important;
+                            height: 100vh !important;
+                            max-width: none !important;
+                            max-height: none !important;
+                            z-index: 2147483646 !important;
+                            display: block !important;
+                            border: none !important;
+                            margin: 0 !important;
+                        }
+                    `;
+                    parentDoc.head.appendChild(style);
+                }
+            } catch (_) {
+                /* ignore */
+            }
+
+            fe.classList?.add('plc-plan-library-iframe-bridge');
+        } catch (_) {
+            /* ignore */
+        }
+    }
+
+    exitFullscreenBridge() {
+        try {
+            const frameEl = typeof window !== 'undefined' ? window.frameElement : null;
+            if (!frameEl || frameEl.nodeType !== 1) return;
+            const fe = /** @type {HTMLElement} */ (frameEl);
+            fe.classList?.remove('plc-plan-library-iframe-bridge');
+            const prev = fe.dataset.plcBridgePrevStyle;
+            if (typeof prev === 'string') {
+                if (prev) fe.setAttribute('style', prev);
+                else fe.removeAttribute('style');
+                delete fe.dataset.plcBridgePrevStyle;
+            }
+        } catch (_) {
+            /* ignore */
+        }
+    }
+
     escapeHtml(str) {
         return String(str ?? '')
             .replaceAll('&', '&amp;')
@@ -1510,6 +1586,7 @@ class PlanLibraryGeneratedModalComponent {
         `;
 
         mc.appendChild(this.root);
+        this.enterFullscreenBridge();
         this.initClinicalGoalFilters();
         this.renderMachineFilterUI();
         this.renderGeneratedPlanList();
@@ -1648,6 +1725,7 @@ class PlanLibraryGeneratedModalComponent {
 
     hide() {
         if (!this.root) return;
+        this.exitFullscreenBridge();
         this.setMachinePanelOpen(false);
         Object.values(this._mainAreaInstances || {}).forEach((inst) => {
             try {
