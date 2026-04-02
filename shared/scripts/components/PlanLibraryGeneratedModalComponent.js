@@ -1618,7 +1618,13 @@ class PlanLibraryGeneratedModalComponent {
                 navigator.clipboard.writeText(text).catch(() => {});
             }
         });
-        this.root.querySelector('[data-plg-close]')?.addEventListener('click', () => this.hide());
+        this.root.addEventListener('click', (e) => {
+            const closer = e.target?.closest?.('[data-plg-close]');
+            if (!closer || !this.root?.contains(closer)) return;
+            e.preventDefault();
+            e.stopPropagation();
+            this._requestCloseWithConfirm();
+        });
         this.bindPlgRailEvents();
     }
 
@@ -1721,6 +1727,35 @@ class PlanLibraryGeneratedModalComponent {
             /* noop */
         }
         this._railSubInstances = { roi: null, poi: null, dose: null };
+    }
+
+    _requestCloseWithConfirm() {
+        const msg = '请确保已复制需要加入到患者序列树中的计划，关闭后需重新生成！';
+        const PSCC =
+            (typeof globalThis !== 'undefined' && typeof globalThis.PromptSimpleConfirmCancelModalComponent === 'function' && globalThis.PromptSimpleConfirmCancelModalComponent) ||
+            (typeof window !== 'undefined' && typeof window.PromptSimpleConfirmCancelModalComponent === 'function' && window.PromptSimpleConfirmCancelModalComponent);
+
+        const doHide = () => this.hide();
+
+        if (typeof PSCC === 'function') {
+            const modal = new PSCC({
+                mountContainer: document.body,
+                title: '提示',
+                message: msg,
+                confirmText: '确定',
+                cancelText: '取消',
+                onConfirm: doHide
+            });
+            modal.show?.();
+            return;
+        }
+
+        if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+            if (window.confirm(msg)) doHide();
+            return;
+        }
+
+        doHide();
     }
 
     hide() {
