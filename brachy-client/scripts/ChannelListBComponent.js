@@ -4441,6 +4441,12 @@ class ChannelListBII2Component {
                             ${this.getTailImageSVG()}
                         </div>
                     </div>
+                    <div class="select-holes-image-container select-holes-3d-container" aria-label="3D 预览（占位）">
+                        <div class="select-holes-image-label">3D</div>
+                        <div class="select-holes-image-content select-holes-3d-content">
+                            
+                        </div>
+                    </div>
                 </div>
                 <!-- 底部按钮 -->
                 <div class="select-holes-modal-footer">
@@ -4865,6 +4871,12 @@ class ChannelListBII2Component {
                 min-height: 0;
             }
 
+            .select-holes-3d-container{
+                flex: 1;
+                min-width: 0;
+                max-width: none;
+            }
+
             .select-holes-image-label {
                 font-size: 13px;
                 color: #aaa;
@@ -4883,6 +4895,40 @@ class ChannelListBII2Component {
                 align-items: center;
                 justify-content: center;
                 min-height: 0;
+            }
+
+            .select-holes-3d-content{
+                padding: 10px;
+            }
+
+            .select-holes-3d-placeholder{
+                width: 100%;
+                height: 100%;
+                border-radius: 6px;
+                border: 1px dashed rgba(58, 172, 222, 0.55);
+                background: radial-gradient(120% 120% at 20% 10%, rgba(58, 172, 222, 0.16), rgba(0,0,0,0) 55%),
+                    linear-gradient(135deg, rgba(58,172,222,0.10), rgba(255,255,255,0.03));
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                color: #cfd8dc;
+                text-align: center;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+
+            .select-holes-3d-placeholder-title{
+                font-size: 14px;
+                font-weight: 600;
+                color: #e6eef2;
+            }
+
+            .select-holes-3d-placeholder-sub{
+                font-size: 12px;
+                color: #9fb2bc;
+                line-height: 1.4;
             }
 
             .select-holes-control-group {

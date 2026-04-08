@@ -810,11 +810,6 @@ class PlanLibraryComponent {
                 line-height: 1.45;
                 flex-shrink: 0;
             }
-            .plc-cg-req-note{
-                display: inline-block;
-                margin-top: 4px;
-                color: #c9c9c9;
-            }
             .plc-cg-main-top{
                 display: flex;
                 align-items: flex-start;
@@ -1777,7 +1772,7 @@ class PlanLibraryComponent {
                             </aside>
                             <div class="plc-cg-main">
                                 <div class="plc-cg-main-top">
-                                    <p class="plc-cg-req">要求：必须包含 Body 和 PTV 的临床目标，其中 PTV 至少设置一个 Min Dose 或 Min DVH<br><span class="plc-cg-req-note">注意：以下函数仅对Proton计划生效：Fall Off、Inward Reduce</span></p>
+                                    <p class="plc-cg-req">要求：必须包含 Body 和 PTV 的临床目标，其中 PTV 至少设置一个 Min Dose 或 Min DVH</p>
                                     <button type="button" class="plc-cg-btn-ghost" data-role="cg-opt-settings">优化设置</button>
                                 </div>
                                 <div class="plc-cg-scroll" aria-label="临床目标优先级分区">
