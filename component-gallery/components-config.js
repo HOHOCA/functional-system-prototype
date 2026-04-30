@@ -253,6 +253,14 @@ const COMPONENTS_CONFIG = {
     // 后装特有组件
     brachy: [
         {
+            id: 'brachy-export-report-normal-plan',
+            name: 'BrachyExportReportNormalPlan',
+            displayName: '后装-导出报告-普通计划',
+            description: '普通计划报告导出预览（后装）',
+            className: 'BrachyExportReportNormalPlanComponent',
+            filePath: '../brachy-client/scripts/BrachyExportReportNormalPlanComponent.js'
+        },
+        {
             id: 'brachy-view-3d',
             name: 'BrachyView3D',
             displayName: '后装-3D重建视图',
@@ -343,7 +351,7 @@ const COMPONENTS_CONFIG = {
             displayName: 'LET',
             description: 'LET 视图（复用 2D 横截面视图样式）',
             className: 'LETComponent',
-            filePath: '../proton-client/scripts/LETComponent.js?v=1'
+            filePath: '../proton-client/scripts/LETComponent.js'
         },
         {
             id: 'letd-vh',
@@ -359,7 +367,7 @@ const COMPONENTS_CONFIG = {
             displayName: 'LETd统计',
             description: 'LETd 全部统计与 ROI 统计表格',
             className: 'LETdStatisticsComponent',
-            filePath: '../proton-client/scripts/LETdStatisticsComponent.js?v=1'
+            filePath: '../proton-client/scripts/LETdStatisticsComponent.js'
         },
         {
             id: 'proton-view-3d',
@@ -384,7 +392,7 @@ const COMPONENTS_CONFIG = {
             displayName: '质子-导出报告',
             description: '计划报告导出预览',
             className: 'ProtonExportReportComponent',
-            filePath: '../proton-client/scripts/ProtonExportReportComponent.js?v=3'
+            filePath: '../proton-client/scripts/ProtonExportReportComponent.js'
         },
         {
             id: 'create-robustness-evaluation',

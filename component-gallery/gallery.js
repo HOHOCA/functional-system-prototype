@@ -7,6 +7,7 @@ class ComponentGallery {
         this.searchKeyword = '';
         this.componentInstances = new Map();
         this.scriptPromises = new Map(); // 缓存脚本加载，避免重复加载
+        this.storageKeyLastSelection = 'component-gallery:last-selection';
         // 默认展开所有项目分类
         this.expandedProjects = new Set(Object.keys(this.componentsConfig));
         this.init();
@@ -16,11 +17,61 @@ class ComponentGallery {
         this.renderComponentTree();
         this.bindEvents();
         
-        // 默认选择第一个组件
-        const firstProject = Object.keys(this.componentsConfig)[0];
-        if (firstProject && this.componentsConfig[firstProject].length > 0) {
-            this.selectComponent(this.componentsConfig[firstProject][0].id, firstProject);
+        // 刷新时优先恢复“上一次打开的组件”；若已被删/找不到，则默认打开第一个
+        if (!this.restoreLastSelection()) {
+            this.openFirstComponent();
         }
+    }
+
+    // 尝试恢复上一次选中组件（成功返回 true）
+    restoreLastSelection() {
+        let saved = null;
+        try {
+            const raw = window.localStorage ? window.localStorage.getItem(this.storageKeyLastSelection) : null;
+            if (!raw) return false;
+            saved = JSON.parse(raw);
+        } catch (_) {
+            return false;
+        }
+
+        const componentId = saved?.componentId;
+        const projectKey = saved?.projectKey;
+        if (!componentId) return false;
+
+        // 只有当该组件当前仍存在时才恢复
+        const found = this.findComponent(componentId, projectKey);
+        if (!found) return false;
+        this.selectComponent(found.component.id, found.projectKey);
+        return true;
+    }
+
+    // 打开第一个组件（按配置顺序）
+    openFirstComponent() {
+        for (const projectKey of Object.keys(this.componentsConfig)) {
+            const list = this.componentsConfig[projectKey] || [];
+            if (list.length > 0) {
+                this.selectComponent(list[0].id, projectKey);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // 查找组件（支持传入 projectKey 作为提示）
+    findComponent(componentId, projectKey) {
+        if (!componentId) return null;
+
+        if (projectKey && this.componentsConfig[projectKey]) {
+            const component = this.componentsConfig[projectKey].find(c => c.id === componentId);
+            if (component) return { component, projectKey };
+        }
+
+        for (const key of Object.keys(this.componentsConfig)) {
+            const component = (this.componentsConfig[key] || []).find(c => c.id === componentId);
+            if (component) return { component, projectKey: key };
+        }
+
+        return null;
     }
     
     // 渲染组件树
@@ -105,27 +156,25 @@ class ComponentGallery {
     
     // 选择组件
     selectComponent(componentId, projectKey) {
-        // 查找组件
-        let component = null;
-        let foundProject = projectKey;
-        
-        if (projectKey) {
-            component = this.componentsConfig[projectKey]?.find(c => c.id === componentId);
-        } else {
-            // 如果没有指定项目，遍历所有项目查找
-            for (const key of Object.keys(this.componentsConfig)) {
-                component = this.componentsConfig[key].find(c => c.id === componentId);
-                if (component) {
-                    foundProject = key;
-                    break;
-                }
-            }
-        }
-        
-        if (!component) return;
+        const found = this.findComponent(componentId, projectKey);
+        if (!found) return;
+        const component = found.component;
+        const foundProject = found.projectKey;
         
         this.currentComponent = component;
         this.currentProject = foundProject;
+
+        // 记录“上一次打开的组件”，用于刷新恢复
+        try {
+            if (window.localStorage) {
+                window.localStorage.setItem(
+                    this.storageKeyLastSelection,
+                    JSON.stringify({ componentId: component.id, projectKey: foundProject })
+                );
+            }
+        } catch (_) {
+            // ignore
+        }
         
         // 确保所属项目是展开的
         if (!this.expandedProjects.has(foundProject)) {
@@ -809,6 +858,14 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'BrachyExportReportNormalPlanComponent':
+                    if (typeof BrachyExportReportNormalPlanComponent !== 'undefined') {
+                        instance = new BrachyExportReportNormalPlanComponent(componentContainer.id, {
+                            mode: 'gallery-preview'
+                        });
+                    }
+                    break;
+
                 case 'CreateRobustnessEvaluationComponent':
                     if (typeof CreateRobustnessEvaluationComponent !== 'undefined') {
                         componentContainer.style.height = '800px';
@@ -1065,17 +1122,15 @@ class ComponentGallery {
             return resolved;
         }
 
-        // 规范化目标路径用于去重
-        // 说明：之前只按 pathname 去重，导致脚本修改后无法通过 refreshPreview 获取新版本。
-        // 这里把 search(query) 也纳入去重判断，允许使用 ?v=xxx 进行缓存刷新。
+        // 规范化目标路径用于去重（忽略 query）
         const targetUrl = new URL(url, window.location.href);
-        const targetKey = `${targetUrl.pathname}${targetUrl.search || ''}`;
+        const targetKey = targetUrl.pathname;
 
         // 如果页面上已有该脚本，直接返回
         const existed = Array.from(document.scripts).some(s => {
             if (!s.src) return false;
             const existingUrl = new URL(s.src, window.location.href);
-            const existingKey = `${existingUrl.pathname}${existingUrl.search || ''}`;
+            const existingKey = existingUrl.pathname;
             return existingKey === targetKey;
         });
         if (existed) {
@@ -1101,6 +1156,8 @@ class ComponentGallery {
         if (!url) return Promise.resolve();
 
         const targetUrl = new URL(url, window.location.href);
+        // cache bust：确保即使浏览器缓存了相同路径脚本，也会重新拉取最新内容
+        targetUrl.searchParams.set('_t', String(Date.now()));
 
         // 移除同 pathname 的旧脚本（忽略 query），避免旧代码继续生效
         Array.from(document.scripts).forEach(s => {
@@ -1115,16 +1172,11 @@ class ComponentGallery {
             }
         });
 
-        // 自动追加时间戳，避免浏览器缓存导致“画廊不更新”
-        // 说明：不要求业务侧或配置侧维护 ?v= 版本号；仅在组件库预览运行时做 cache-bust。
-        const busted = new URL(targetUrl.toString());
-        busted.searchParams.set('_ts', String(Date.now()));
-
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = busted.toString();
+            script.src = targetUrl.toString();
             script.onload = () => resolve();
-            script.onerror = () => reject(new Error(`无法加载脚本: ${busted.toString()}`));
+            script.onerror = () => reject(new Error(`无法加载脚本: ${targetUrl.toString()}`));
             document.body.appendChild(script);
         });
     }
