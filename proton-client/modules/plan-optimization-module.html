@@ -486,6 +486,7 @@
                                 <button class="bottom-control-tab" data-tab="doseStats">剂量统计</button>
                                 <button class="bottom-control-tab" data-tab="letdStats">LETd统计</button>
                                 <button class="bottom-control-tab" data-tab="energyLayer">能量层</button>
+                                <button class="bottom-control-tab" data-tab="arcSettings">Arc设置</button>
                                 <button class="bottom-control-tab" data-tab="beamList">射束列表</button>
                                 <button class="bottom-control-tab" data-tab="beamOptimization">射束优化设置</button>
                                 <button class="bottom-control-tab" data-tab="lineDose">线剂量</button>
@@ -500,6 +501,7 @@
                         <div class="bottom-control-content" id="doseStatsContent"></div>
                         <div class="bottom-control-content" id="letdStatsContent"></div>
                         <div class="bottom-control-content" id="energyLayerContent"></div>
+                        <div class="bottom-control-content" id="arcSettingsContent"></div>
                         <div class="bottom-control-content" id="beamListContent"></div>
                         <div class="bottom-control-content" id="beamOptimizationContent"></div>
                         <div class="bottom-control-content" id="lineDoseContent"></div>
@@ -522,6 +524,7 @@
     <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
     <script src="../scripts/ProtonBeamListComponentPBS.js"></script>
     <script src="../scripts/ProtonBeamOptimizationSettingsComponent.js"></script>
+    <script src="../scripts/ProtonArcSettingsComponent.js"></script>
     <script src="../../photon-client/scripts/PhotonView3DComponent.js"></script>
     <script src="../../photon-client/scripts/PhotonBeamEyeViewComponent.js"></script>
     <script src="../../photon-client/scripts/DMLCBeamListComponent.js"></script>
@@ -552,6 +555,7 @@
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
         let letdStatisticsComponent = null;
+        let arcSettingsComponent = null;
         let planLibraryModal = null;
 
         let leftAxialViewComponent = null;
@@ -616,6 +620,9 @@
                     }
                     if (tabName === 'letdStats') {
                         initLETdStatisticsComponent();
+                    }
+                    if (tabName === 'arcSettings') {
+                        initArcSettingsComponent();
                     }
                     // 优化约束的「列表字段设置」按钮仅在「优化约束」页签下显示
                     const tabsRight = document.getElementById('bottomControlTabsRight');
@@ -1006,6 +1013,19 @@
                     letdStatsHost.dataset.inited = 'true';
                 }
             }
+        }
+
+        function initArcSettingsComponent() {
+            const host = document.getElementById('arcSettingsContent');
+            if (!host || host.dataset.inited || typeof ProtonArcSettingsComponent === 'undefined') return;
+            host.innerHTML = '<div class="bottom-control-panel-body" id="arcSettingsContainer"></div>';
+            arcSettingsComponent = new ProtonArcSettingsComponent('arcSettingsContainer', {
+                prefix: 'plan-opt-',
+                onSettingsChange: (beamId, field, value) => {
+                    console.log('计划优化 Arc 设置变更:', beamId, field, value);
+                }
+            });
+            host.dataset.inited = 'true';
         }
     </script>
 </body>

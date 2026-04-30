@@ -253,24 +253,19 @@ class ComponentGallery {
         previewContainer.appendChild(componentContainer);
 
         // 如果有独立文件路径，先按需加载
-        // 说明：组件库预览常需要快速迭代脚本。若 filePath 带 ?v= 版本号，则强制重新加载脚本，
-        // 避免 window 上已有旧的 class 导致无法更新。
+        // 说明：组件库预览需要快速迭代脚本。这里不依赖 query 版本号，
+        // 每次预览都会移除旧脚本并重新加载，确保拿到最新代码。
         try {
             if (component.filePath) {
-                const hasVersion = component.filePath.includes('?v=');
-                if (hasVersion) {
-                    try {
-                        // 清理旧全局定义，确保新脚本生效
-                        if (typeof window[component.className] !== 'undefined') {
-                            delete window[component.className];
-                        }
-                    } catch (_) {
-                        // ignore
+                try {
+                    // 清理旧全局定义，确保新脚本生效
+                    if (typeof window[component.className] !== 'undefined') {
+                        delete window[component.className];
                     }
-                    await this.loadScriptIfNeeded(component.filePath);
-                } else if (typeof window[component.className] === 'undefined') {
-                    await this.loadScriptIfNeeded(component.filePath);
+                } catch (_) {
+                    // ignore
                 }
+                await this.reloadScript(component.filePath);
             }
             if (
                 (component.className === 'FourDCTRobustnessEvaluationDVHComponent' ||
@@ -662,12 +657,36 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'ProtonBeamListComponentPBSArc':
+                    if (typeof ProtonBeamListComponentPBSArc !== 'undefined') {
+                        instance = new ProtonBeamListComponentPBSArc(componentContainer.id, {
+                            prefix: 'preview-',
+                            onSelect: (beam) => console.log('Selected beam:', beam),
+                            onAdd: () => console.log('Add beam'),
+                            onEdit: (beam) => console.log('Edit beam:', beam),
+                            onDelete: (beam) => console.log('Delete beam:', beam),
+                            onCopy: (beam) => console.log('Copy beam:', beam),
+                            onSort: (beams) => console.log('Sort beams:', beams)
+                        });
+                    }
+                    break;
+
                 case 'ProtonBeamOptimizationSettingsComponent':
                     if (typeof ProtonBeamOptimizationSettingsComponent !== 'undefined') {
                         instance = new ProtonBeamOptimizationSettingsComponent(componentContainer.id, {
                             prefix: 'preview-',
                             onSettingsChange: (beamId, field, value) =>
                                 console.log('质子射束优化设置变更:', beamId, field, value)
+                        });
+                    }
+                    break;
+
+                case 'ProtonArcSettingsComponent':
+                    if (typeof ProtonArcSettingsComponent !== 'undefined') {
+                        instance = new ProtonArcSettingsComponent(componentContainer.id, {
+                            prefix: 'preview-',
+                            onSettingsChange: (beamId, field, value) =>
+                                console.log('质子 Arc 设置变更:', beamId, field, value)
                         });
                     }
                     break;
@@ -1075,6 +1094,39 @@ class ComponentGallery {
 
         this.scriptPromises.set(url, promise);
         return promise;
+    }
+
+    // 强制重新加载脚本：移除旧 script + 自动 cache-bust 重拉最新内容
+    reloadScript(url) {
+        if (!url) return Promise.resolve();
+
+        const targetUrl = new URL(url, window.location.href);
+
+        // 移除同 pathname 的旧脚本（忽略 query），避免旧代码继续生效
+        Array.from(document.scripts).forEach(s => {
+            if (!s.src) return;
+            try {
+                const existingUrl = new URL(s.src, window.location.href);
+                if (existingUrl.pathname === targetUrl.pathname) {
+                    s.parentNode && s.parentNode.removeChild(s);
+                }
+            } catch (_) {
+                // ignore
+            }
+        });
+
+        // 自动追加时间戳，避免浏览器缓存导致“画廊不更新”
+        // 说明：不要求业务侧或配置侧维护 ?v= 版本号；仅在组件库预览运行时做 cache-bust。
+        const busted = new URL(targetUrl.toString());
+        busted.searchParams.set('_ts', String(Date.now()));
+
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = busted.toString();
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`无法加载脚本: ${busted.toString()}`));
+            document.body.appendChild(script);
+        });
     }
     
     // 刷新预览

@@ -4,13 +4,14 @@
  *
  * Columns:
  * 1) 序号（0 起，与截图一致）
- * 2) 能量[MeV]
- * 3) MU
- * 4) 权重[%]（展示为 0.02 形式）
- * 5) 束斑数量（强调色）
- * 6) 最小束斑跳数[MU/fx]
- * 7) 最大束斑跳数[MU/fx]
- * 8) 扫描次数
+ * 2) 机架角[°]
+ * 3) 能量[MeV]
+ * 4) MU
+ * 5) 权重[%]（展示为 0.02 形式）
+ * 6) 束斑数量（强调色）
+ * 7) 最小束斑跳数[MU/fx]
+ * 8) 最大束斑跳数[MU/fx]
+ * 9) 扫描次数
  */
 (function (global) {
     if (!global) return;
@@ -37,7 +38,17 @@
 
     /** 前 8 行与截图一致；第 9–35 行为原型补轨，与「能量层总计: 35」一致 */
     function buildDemoLayers35() {
-        const out = DEMO_LAYERS_FROM_SCREENSHOT.map(row => ({ ...row }));
+        const randomSortedUniqueAngles5 = (() => {
+            const set = new Set();
+            while (set.size < 5) set.add(Math.floor(Math.random() * 3600) / 10);
+            return Array.from(set).sort((a, b) => a - b);
+        })();
+        const pickAngleByRowIndex = (i) => {
+            // 35 行按 5 个角度分段重复，保证整体升序且允许重复
+            const idx = Math.min(4, Math.floor((i * 5) / 35));
+            return randomSortedUniqueAngles5[idx];
+        };
+        const out = DEMO_LAYERS_FROM_SCREENSHOT.map((row, i) => ({ ...row, gantryAngleDeg: pickAngleByRowIndex(i) }));
         const lastShot = out[out.length - 1];
         let lastEnergy = lastShot.energyMeV;
         for (let i = 8; i < 35; i++) {
@@ -50,6 +61,7 @@
             const maxSpotJump = Number((minSpotJump + 12 + (step % 13) * 1.1).toFixed(4));
             out.push({
                 index: i,
+                gantryAngleDeg: pickAngleByRowIndex(i),
                 energyMeV: lastEnergy,
                 mu,
                 weightPercent,
@@ -209,7 +221,7 @@
                     width: 100%;
                     border-collapse: collapse;
                     table-layout: fixed;
-                    min-width: 1100px;
+                    min-width: 1190px;
                     font-size: 12px;
                 }
 
@@ -248,6 +260,13 @@
                 .pel-col-index {
                     width: 56px;
                     min-width: 56px;
+                    text-align: left;
+                    color: #bdbdbd;
+                }
+
+                .pel-col-gantry {
+                    width: 90px;
+                    min-width: 90px;
                     text-align: left;
                     color: #bdbdbd;
                 }
@@ -300,6 +319,7 @@
                             <thead>
                                 <tr>
                                     <th class="pel-col-index">序号</th>
+                                    <th class="pel-col-gantry">机架角[°]</th>
                                     <th style="width: 110px;">能量[MeV]</th>
                                     <th style="width: 110px;">MU</th>
                                     <th style="width: 90px;">权重[%]</th>
@@ -357,7 +377,7 @@
             if (!layers.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="pel-empty">暂无能量层数据</td>
+                        <td colspan="9" class="pel-empty">暂无能量层数据</td>
                     </tr>
                 `;
                 return;
@@ -375,12 +395,30 @@
                 return n.toFixed(2);
             };
 
+            const fmtAngle = (v) => {
+                const n = typeof v === 'number' ? v : Number.parseFloat(String(v ?? '').trim());
+                if (!Number.isFinite(n)) return String(v ?? '');
+                // 固定 1 位小数：例如 8 -> 8.0
+                return n.toFixed(1);
+            };
+
             tbody.innerHTML = layers
                 .map((l, i) => {
                     const idx = l.index != null ? l.index : (l.rowIndex != null ? l.rowIndex : i);
+                    const gantryAngle =
+                        l.gantryAngleDeg ??
+                        l.gantryAngle ??
+                        l.gantryDeg ??
+                        l.gantry ??
+                        this.options.gantryAngleDeg ??
+                        this.options.gantryAngle ??
+                        this.options.gantryDeg ??
+                        this.options.gantry ??
+                        '';
                     return `
                     <tr>
                         <td class="pel-col-index">${idx != null ? idx : ''}</td>
+                        <td class="pel-col-gantry" title="${this.escapeAttr(gantryAngle)}">${this.escapeHtml(fmtAngle(gantryAngle))}</td>
                         <td class="pel-num" title="${this.escapeAttr(l.energyMeV)}">${this.escapeHtml(fmt(l.energyMeV, 2))}</td>
                         <td class="pel-num" title="${this.escapeAttr(l.mu)}">${this.escapeHtml(fmt(l.mu, 4))}</td>
                         <td class="pel-num" title="${this.escapeAttr(l.weightPercent)}">${this.escapeHtml(fmtWeight(l.weightPercent))}</td>

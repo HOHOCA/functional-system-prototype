@@ -408,7 +408,7 @@ class ProtonCreatePlanComponent {
 
             groupName: 'Group 1',
             beamType: 'PROTON',
-            machine: 'ProBeam_TR3',
+            machine: 'ProBeam',
             technique: 'PBS',
             groupDescription: '',
             toleranceTable: 'T1',
@@ -510,7 +510,7 @@ class ProtonCreatePlanComponent {
                                 <div class="pcp-cell">
                                     <div class="pcp-label required">治疗机</div>
                                     <select class="pcp-control" id="pcpMachine">
-                                        ${this.renderOptions(['ProBeam_TR3', 'ProBeam_TR2', 'ProBeam_TR1'], values.machine)}
+                                        ${this.renderOptions(['ProBeam', 'IBA'], values.machine)}
                                     </select>
                                 </div>
                             </div>
@@ -524,7 +524,7 @@ class ProtonCreatePlanComponent {
                                 <div class="pcp-cell">
                                     <div class="pcp-label required">技术</div>
                                     <select class="pcp-control" id="pcpTechnique">
-                                        ${this.renderOptions(['PBS', 'DS', 'SFO', 'MFO'], values.technique)}
+                                        ${this.renderOptions(['PBS', 'PBSArc'], values.technique)}
                                     </select>
                                 </div>
                             </div>
@@ -661,6 +661,24 @@ class ProtonCreatePlanComponent {
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
             });
         });
+
+        // 联动：技术选项
+        const machineEl = getEl('pcpMachine');
+        const techniqueEl = getEl('pcpTechnique');
+        const getTechniqueOptionsByMachine = (machine) => {
+            void machine;
+            return ['PBS', 'PBSArc'];
+        };
+        const syncTechniqueOptions = () => {
+            if (!machineEl || !techniqueEl) return;
+            const opts = getTechniqueOptionsByMachine(machineEl.value);
+            const current = (techniqueEl.value ?? '').toString();
+            const nextSelected = opts.includes(current) ? current : opts[0];
+            techniqueEl.innerHTML = this.renderOptions(opts, nextSelected);
+            techniqueEl.value = nextSelected;
+        };
+        machineEl?.addEventListener('change', syncTechniqueOptions);
+        syncTechniqueOptions();
 
         // 自动计算：分次剂量(RBE) = 总剂量(RBE) / 分次数
         const totalDoseRbeEl = getEl('pcpTotalDoseRbe');

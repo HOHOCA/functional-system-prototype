@@ -295,7 +295,7 @@ const COMPONENTS_CONFIG = {
             displayName: '质子-新建计划',
             description: '新建计划弹窗：计划基本信息 + 射束组信息 + 目标剂量/靶区',
             className: 'ProtonCreatePlanComponent',
-            filePath: '../proton-client/scripts/ProtonCreatePlanComponent.js?v=2'
+            filePath: '../proton-client/scripts/ProtonCreatePlanComponent.js'
         },
         {
             id: 'proton-energy-layer-pbs',
@@ -314,12 +314,28 @@ const COMPONENTS_CONFIG = {
             filePath: '../proton-client/scripts/ProtonBeamListComponentPBS.js'
         },
         {
+            id: 'proton-beam-list-pbs-arc',
+            name: 'ProtonBeamListPBSArc',
+            displayName: '质子-射束列表-PBSArc',
+            description: '射束列表（PBS Arc：机架起始/终止/弧长/方向；排序按机架起始，交互与 PBS 一致）',
+            className: 'ProtonBeamListComponentPBSArc',
+            filePath: '../proton-client/scripts/ProtonBeamListComponentPBSArc.js'
+        },
+        {
             id: 'proton-beam-optimization-settings',
             name: 'ProtonBeamOptimizationSettings',
             displayName: '质子-射束优化设置',
             description: '质子计划优化：射束权重/RTV/束斑与层间距/近远端层束斑等（深色表格，与截图一致）',
             className: 'ProtonBeamOptimizationSettingsComponent',
             filePath: '../proton-client/scripts/ProtonBeamOptimizationSettingsComponent.js'
+        },
+        {
+            id: 'proton-arc-settings',
+            name: 'ProtonArcSettings',
+            displayName: '质子-Arc设置',
+            description: 'PBS Arc 技术下的 Arc 设置列表：序号、名称、类型、子野数',
+            className: 'ProtonArcSettingsComponent',
+            filePath: '../proton-client/scripts/ProtonArcSettingsComponent.js'
         },
         {
             id: 'let',

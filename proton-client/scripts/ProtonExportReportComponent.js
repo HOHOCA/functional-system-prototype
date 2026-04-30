@@ -61,7 +61,7 @@ class ProtonExportReportComponent {
                 '性别': 'None',
                 '出生日期': '20250115',
                 '计划系统': 'MOZI-PROTON 1.0.1.1',
-                '治疗技术': 'ProBeam_TR3',
+                '治疗技术': 'ProBeam',
                 '计划批准状态': '未审批',
                 '工作站': 'DESKTOP-3H7FTHQ 192.168.10.169',
                 '治疗机': 'PBS',
@@ -111,7 +111,7 @@ class ProtonExportReportComponent {
                 {
                     index: 1,
                     name: 'Beam 1',
-                    machine: 'ProBeam_TR3',
+                    machine: 'ProBeam',
                     technique: 'PBS',
                     radiationType: 'Proton',
                     mu: '3244.880893',
@@ -131,7 +131,7 @@ class ProtonExportReportComponent {
                 {
                     index: 2,
                     name: 'Beam 2',
-                    machine: 'ProBeam_TR3',
+                    machine: 'ProBeam',
                     technique: 'PBS',
                     radiationType: 'Proton',
                     mu: '3439.264582',
@@ -151,7 +151,7 @@ class ProtonExportReportComponent {
                 {
                     index: 3,
                     name: 'Beam 3',
-                    machine: 'ProBeam_TR3',
+                    machine: 'ProBeam',
                     technique: 'PBS',
                     radiationType: 'Proton',
                     mu: '3416.683645',

@@ -804,6 +804,7 @@
                 <div class="bottom-control-tabs">
                     <div class="bottom-control-tabs-left">
                         <button class="bottom-control-tab active" data-tab="beamList">射束列表</button>
+                        <button class="bottom-control-tab" data-tab="arcSettings" style="display: none;">Arc设置</button>
                         <button class="bottom-control-tab" data-tab="beamOptimization">射束优化设置</button>
                         <button class="bottom-control-tab" data-tab="clinicalTarget">临床目标</button>
                         <button class="bottom-control-tab" data-tab="doseStats">剂量统计</button>
@@ -831,6 +832,13 @@
                 <div class="bottom-control-content active" id="beamListContent">
                     <div class="bottom-control-panel-body" id="beamListContainer">
                         <!-- 射束列表组件将在这里渲染 -->
+                    </div>
+                </div>
+
+                <!-- Arc设置内容 -->
+                <div class="bottom-control-content" id="arcSettingsContent">
+                    <div class="bottom-control-panel-body" id="arcSettingsContainer">
+                        <!-- Arc设置组件将在这里渲染 -->
                     </div>
                 </div>
 
@@ -879,6 +887,8 @@
     <script src="../scripts/ProtonBeamEyeViewComponent.js"></script>
     <script src="../scripts/ProtonCreatePlanComponent.js"></script>
     <script src="../scripts/ProtonBeamListComponentPBS.js"></script>
+    <script src="../scripts/ProtonBeamListComponentPBSArc.js"></script>
+    <script src="../scripts/ProtonArcSettingsComponent.js"></script>
     <script src="../scripts/ProtonEnergyLayerListComponentPBS.js"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
@@ -895,6 +905,8 @@
         let moduleToolbar = null;
         let createPlanModal = null;
         let beamListComponentPBS = null;
+        let beamListComponentPBSArc = null;
+        let arcSettingsComponent = null;
         let energyLayerListComponentPBS = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
@@ -1056,10 +1068,18 @@
                                         console.log('Create proton plan:', data);
 
                                         const technique = (data?.group?.technique || '').toString().toUpperCase();
-                                        if (technique !== 'PBS') return;
+                                        if (technique !== 'PBS' && technique !== 'PBSARC') return;
 
                                         if (typeof ProtonBeamListComponentPBS === 'undefined') {
                                             console.error('ProtonBeamListComponentPBS 未加载，无法初始化射束列表');
+                                            return;
+                                        }
+                                        if (technique === 'PBSARC' && typeof ProtonBeamListComponentPBSArc === 'undefined') {
+                                            console.error('ProtonBeamListComponentPBSArc 未加载，无法初始化射束列表');
+                                            return;
+                                        }
+                                        if (technique === 'PBSARC' && typeof ProtonArcSettingsComponent === 'undefined') {
+                                            console.error('ProtonArcSettingsComponent 未加载，无法初始化 Arc 设置列表');
                                             return;
                                         }
                                         if (typeof ProtonEnergyLayerListComponentPBS === 'undefined') {
@@ -1068,37 +1088,85 @@
                                         }
 
                                         const beamListContainer = document.getElementById('beamListContainer');
+                                        const arcSettingsContainer = document.getElementById('arcSettingsContainer');
                                         const energyLayerContainer = document.getElementById('energyLayerContainer');
-                                        if (!beamListContainer || !energyLayerContainer) {
-                                            console.error('射束列表/能量层容器不存在，无法挂载 PBS 组件');
+                                        if (!beamListContainer || !arcSettingsContainer || !energyLayerContainer) {
+                                            console.error('射束列表/Arc设置/能量层容器不存在，无法挂载 PBS 组件');
                                             return;
                                         }
 
                                         // 重新挂载前先清空容器（该原型组件不提供 destroy）
                                         beamListContainer.innerHTML = '';
+                                        arcSettingsContainer.innerHTML = '';
                                         energyLayerContainer.innerHTML = '';
+                                        arcSettingsComponent = null;
+
+                                        const arcSettingsTab = document.querySelector('.bottom-control-tab[data-tab="arcSettings"]');
+                                        if (arcSettingsTab) {
+                                            arcSettingsTab.style.display = technique === 'PBSARC' ? '' : 'none';
+                                        }
+                                        if (technique !== 'PBSARC' && document.getElementById('arcSettingsContent')?.classList.contains('active')) {
+                                            document.querySelectorAll('.bottom-control-tab').forEach(t => t.classList.remove('active'));
+                                            document.querySelectorAll('.bottom-control-content').forEach(c => c.classList.remove('active'));
+                                            document.querySelector('.bottom-control-tab[data-tab="beamList"]')?.classList.add('active');
+                                            document.getElementById('beamListContent')?.classList.add('active');
+                                        }
 
                                         const prefix = 'plan-design-';
-                                        const defaultMachine = data?.group?.machine || 'ProBeam_TR3';
+                                        const defaultMachine = data?.group?.machine || 'ProBeam';
                                         const defaultGroupName = data?.group?.name || data?.group?.groupName || 'Group 1';
 
-                                        beamListComponentPBS = new ProtonBeamListComponentPBS('beamListContainer', {
-                                            prefix,
-                                            defaultMachine,
-                                            defaultGroupName,
-                                            onSelect: (beam) => {
-                                                const beamName = beam?.name || 'Beam 1';
-                                                if (energyLayerListComponentPBS && typeof energyLayerListComponentPBS.setBeam === 'function') {
-                                                    energyLayerListComponentPBS.setBeam({ beamName });
-                                                }
+                                        const onSelectBeam = (beam) => {
+                                            const beamName = beam?.name || 'Beam 1';
+                                            if (energyLayerListComponentPBS && typeof energyLayerListComponentPBS.setBeam === 'function') {
+                                                energyLayerListComponentPBS.setBeam({ beamName });
                                             }
-                                        });
+                                        };
 
-                                        const initialBeamName = beamListComponentPBS?.beams?.[0]?.name || 'Beam 1';
+                                        if (technique === 'PBSARC') {
+                                            const refreshArcSettings = () => {
+                                                if (arcSettingsComponent && typeof arcSettingsComponent.loadBeamList === 'function') {
+                                                    arcSettingsComponent.loadBeamList();
+                                                }
+                                            };
+                                            beamListComponentPBSArc = new ProtonBeamListComponentPBSArc('beamListContainer', {
+                                                prefix,
+                                                defaultMachine,
+                                                defaultGroupName,
+                                                onSelect: onSelectBeam,
+                                                onChange: refreshArcSettings,
+                                                onAdd: refreshArcSettings,
+                                                onDelete: refreshArcSettings,
+                                                onCopy: refreshArcSettings,
+                                                onSort: refreshArcSettings
+                                            });
+                                            arcSettingsComponent = new ProtonArcSettingsComponent('arcSettingsContainer', {
+                                                prefix,
+                                                getBeamList: () => beamListComponentPBSArc?.beams || [],
+                                                onSettingsChange: (beamId, field, value) => {
+                                                    console.log('计划设计 Arc 设置变更:', beamId, field, value);
+                                                }
+                                            });
+                                        } else {
+                                            beamListComponentPBS = new ProtonBeamListComponentPBS('beamListContainer', {
+                                                prefix,
+                                                defaultMachine,
+                                                defaultGroupName,
+                                                onSelect: onSelectBeam
+                                            });
+                                        }
+
+                                        const initialBeamName =
+                                            (technique === 'PBSARC'
+                                                ? (beamListComponentPBSArc?.beams?.[0]?.name)
+                                                : (beamListComponentPBS?.beams?.[0]?.name)) || 'Beam 1';
                                         energyLayerListComponentPBS = new ProtonEnergyLayerListComponentPBS('energyLayerContainer', {
                                             prefix,
                                             beamName: initialBeamName,
-                                            beamOptions: (beamListComponentPBS?.beams || []).map(b => b.name).filter(Boolean)
+                                            beamOptions: (technique === 'PBSARC'
+                                                ? (beamListComponentPBSArc?.beams || [])
+                                                : (beamListComponentPBS?.beams || [])
+                                            ).map(b => b.name).filter(Boolean)
                                         });
                                     },
                                     onCancel: () => {

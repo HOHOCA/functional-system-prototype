@@ -1,4 +1,4 @@
-class ProtonBeamListComponentPBS {
+class ProtonBeamListComponentPBSArc {
     constructor(containerId, options = {}) {
         this.containerId = containerId;
         this.container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
@@ -16,16 +16,21 @@ class ProtonBeamListComponentPBS {
 
         this.beams = Array.isArray(options.beams) ? options.beams : this.getDemoBeams();
         this.selectedBeamId = this.beams[0]?.id ?? null;
+
         this.machineOptions = options.machineOptions || ['ProBeam', 'IBA'];
-        this.modeOptions = options.modeOptions || ['PBS', 'PBS Arc'];
+        this.modeOptions = options.modeOptions || ['PBSArc'];
         this.targetOptions = options.targetOptions || ['CTV1', 'CTV2', 'PTV', 'GTV'];
         this.isoOptions = options.isoOptions || ['ISO1', 'ISO2', 'ISO3'];
         this.rangeShifterOptions = options.rangeShifterOptions || ['NONE', 'RS1', 'RS2', 'RS3'];
+        this.directionOptions = options.directionOptions || ['CW', 'CCW'];
         this.defaultMachine = options.defaultMachine || 'ProBeam';
         this.defaultGroupName = options.defaultGroupName || 'Group 1';
 
+        // 初始化弧长（若外部未提供）
+        this.beams.forEach(b => this.ensureArcFields(b));
+
         if (!this.container) {
-            console.error('ProtonBeamListComponentPBS: 容器不存在', containerId);
+            console.error('ProtonBeamListComponentPBSArc: 容器不存在', containerId);
             return;
         }
 
@@ -35,7 +40,6 @@ class ProtonBeamListComponentPBS {
         try {
             const rect = this.container.getBoundingClientRect?.();
             if (rect && rect.height === 0) {
-                // 仅设置 height，不强行设置 max-height，业务可自行覆写
                 this.container.style.height = this.container.style.height || '400px';
             }
         } catch (_) {
@@ -50,48 +54,90 @@ class ProtonBeamListComponentPBS {
     }
 
     getDemoBeams() {
-        return [
-            {
-                id: 'beam-1',
-                visible: true,
-                name: 'Beam 1',
-                machine: 'ProBeam',
-                mode: 'PBS',
-                planId: '35402.205803',
-                mu: '35402.205803',
-                gantry: '80.0',
-                couch: '0.0',
-                target: 'CTV1',
-                iso: 'ISO1',
-                x: '1.42',
-                y: '-47.90',
-                z: '29.02',
-                snout: '42.10',
-                airMin: '',
-                airCax: '',
-                rangeShifter: 'NONE'
-            },
-            {
-                id: 'beam-2',
-                visible: true,
-                name: 'Beam 2',
-                machine: 'ProBeam',
-                mode: 'PBS',
-                planId: '41302.528675',
-                mu: '41302.528675',
-                gantry: '270.0',
-                couch: '0.0',
-                target: 'CTV1',
-                iso: 'ISO1',
-                x: '1.42',
-                y: '-47.90',
-                z: '29.02',
-                snout: '42.10',
-                airMin: '',
-                airCax: '',
-                rangeShifter: 'NONE'
-            }
-        ];
+        const b1 = {
+            id: 'beam-arc-1',
+            visible: true,
+            name: 'Beam 1',
+            machine: 'ProBeam',
+            mode: 'PBSArc',
+            gantryStart: '80.0',
+            gantryEnd: '270.0',
+            direction: 'CW',
+            couch: '0.0',
+            target: 'CTV1',
+            iso: 'ISO1',
+            x: '1.42',
+            y: '-47.90',
+            z: '29.02',
+            snout: '42.10',
+            airMin: '',
+            airCax: '',
+            rangeShifter: 'NONE'
+        };
+        const b2 = {
+            id: 'beam-arc-2',
+            visible: true,
+            name: 'Beam 2',
+            machine: 'ProBeam',
+            mode: 'PBSArc',
+            gantryStart: '270.0',
+            gantryEnd: '80.0',
+            direction: 'CCW',
+            couch: '0.0',
+            target: 'CTV1',
+            iso: 'ISO1',
+            x: '1.42',
+            y: '-47.90',
+            z: '29.02',
+            snout: '42.10',
+            airMin: '',
+            airCax: '',
+            rangeShifter: 'NONE'
+        };
+        this.ensureArcFields(b1);
+        this.ensureArcFields(b2);
+        return [b1, b2];
+    }
+
+    ensureArcFields(beam) {
+        if (!beam) return;
+        if (!beam.mode) beam.mode = 'PBSArc';
+        if (!beam.direction) beam.direction = 'CW';
+        if (beam.gantryStart == null && beam.gantry != null) beam.gantryStart = beam.gantry;
+        if (beam.gantryEnd == null && beam.gantry != null) beam.gantryEnd = beam.gantry;
+        const length = this.computeArcLength(beam.gantryStart, beam.gantryEnd, beam.direction);
+        if (beam.arcLength == null || beam.arcLength === '') {
+            beam.arcLength = this.formatAngle(length);
+        }
+    }
+
+    parseAngle(v) {
+        const n = Number.parseFloat(String(v ?? '').trim());
+        return Number.isFinite(n) ? n : null;
+    }
+
+    formatAngle(n) {
+        const num = Number(n);
+        if (!Number.isFinite(num)) return '';
+        // 与原型其它角度字段保持一致：1 位小数
+        return num.toFixed(1);
+    }
+
+    computeArcLength(start, end, direction) {
+        const s = this.parseAngle(start);
+        const e = this.parseAngle(end);
+        if (s == null || e == null) return null;
+        const dir = String(direction || 'CW').toUpperCase();
+        if (dir === 'CCW') {
+            return (s - e + 360) % 360;
+        }
+        return (e - s + 360) % 360;
+    }
+
+    recomputeArcLengthForBeam(beam) {
+        if (!beam) return;
+        const len = this.computeArcLength(beam.gantryStart, beam.gantryEnd, beam.direction);
+        beam.arcLength = this.formatAngle(len);
     }
 
     ensureStyles() {
@@ -104,8 +150,6 @@ class ProtonBeamListComponentPBS {
             .proton-beam-list {
                 width: 100%;
                 height: 100%;
-                /* 关键：组件本体必须有“可计算的高度”，
-                   让滚动发生在 table-wrap 内部，从而底部工具条不随竖直滚动条移动。 */
                 min-height: 0;
                 display: flex;
                 flex-direction: column;
@@ -128,7 +172,7 @@ class ProtonBeamListComponentPBS {
                 width: 100%;
                 border-collapse: collapse;
                 table-layout: fixed;
-                min-width: 1200px;
+                min-width: 1350px;
                 font-size: 12px;
             }
 
@@ -294,7 +338,7 @@ class ProtonBeamListComponentPBS {
                 opacity: 0.95;
             }
 
-            /* 添加射束弹窗 */
+            /* 添加/编辑/排序弹窗 */
             .proton-beam-modal-overlay {
                 position: fixed;
                 inset: 0;
@@ -494,9 +538,11 @@ class ProtonBeamListComponentPBS {
                                 </th>
                                 <th style="width: 110px;">名称</th>
                                 <th style="width: 140px;">治疗机</th>
-                                <th style="width: 80px;">技术</th>
-                                <th style="width: 110px;">MU</th>
-                                <th style="width: 70px;">机架[°]</th>
+                                <th style="width: 90px;">技术</th>
+                                <th style="width: 90px;">机架起始</th>
+                                <th style="width: 90px;">机架终止</th>
+                                <th style="width: 80px;">弧长</th>
+                                <th style="width: 80px;">方向</th>
                                 <th style="width: 70px;">治疗床</th>
                                 <th style="width: 90px;">靶区</th>
                                 <th style="width: 90px;">等中心</th>
@@ -506,7 +552,6 @@ class ProtonBeamListComponentPBS {
                                 <th style="width: 90px;">SNOUT[cm]</th>
                                 <th style="width: 90px;">Air MIN[cm]</th>
                                 <th style="width: 90px;">Air CAX[cm]</th>
-                                <th style="width: 90px;">碰床</th>
                                 <th style="width: 120px;">Rangeshifter</th>
                             </tr>
                         </thead>
@@ -514,21 +559,11 @@ class ProtonBeamListComponentPBS {
                     </table>
                 </div>
                 <div class="proton-beam-list-toolbar">
-                    <button class="proton-beam-toolbar-btn" data-action="add" title="添加">
-                        添加
-                    </button>
-                    <button class="proton-beam-toolbar-btn" data-action="edit" title="编辑" disabled>
-                        编辑
-                    </button>
-                    <button class="proton-beam-toolbar-btn" data-action="delete" title="删除" disabled>
-                        删除
-                    </button>
-                    <button class="proton-beam-toolbar-btn" data-action="copy" title="复制" disabled>
-                        复制
-                    </button>
-                    <button class="proton-beam-toolbar-btn" data-action="sort" title="排序">
-                        排序
-                    </button>
+                    <button class="proton-beam-toolbar-btn" data-action="add" title="添加">添加</button>
+                    <button class="proton-beam-toolbar-btn" data-action="edit" title="编辑" disabled>编辑</button>
+                    <button class="proton-beam-toolbar-btn" data-action="delete" title="删除" disabled>删除</button>
+                    <button class="proton-beam-toolbar-btn" data-action="copy" title="复制" disabled>复制</button>
+                    <button class="proton-beam-toolbar-btn" data-action="sort" title="排序">排序</button>
                 </div>
             </div>
         `;
@@ -580,9 +615,7 @@ class ProtonBeamListComponentPBS {
         if (table) {
             table.addEventListener('click', (e) => {
                 const toggleAll = e.target.closest('[data-action="toggle-all-visibility"]');
-                if (toggleAll) {
-                    this.toggleAllVisibility();
-                }
+                if (toggleAll) this.toggleAllVisibility();
             });
         }
 
@@ -601,6 +634,17 @@ class ProtonBeamListComponentPBS {
         const beam = this.beams.find(b => b.id === beamId);
         if (!beam) return;
         beam[field] = value;
+
+        if (field === 'gantryStart' || field === 'gantryEnd' || field === 'direction') {
+            this.recomputeArcLengthForBeam(beam);
+            // 需要刷新弧长列，但尽量不重渲染全表导致光标跳动
+            // 在 input 过程（silent）不重渲染；change 时重渲染
+            if (!extra.silent) {
+                this.renderRows();
+                this.updateToolbarState();
+            }
+        }
+
         if (!extra.silent) {
             this.options.onChange({ beamId, field, value, beam: { ...beam } });
         }
@@ -617,9 +661,7 @@ class ProtonBeamListComponentPBS {
     toggleAllVisibility() {
         if (!this.beams.length) return;
         const allVisible = this.beams.every(b => b.visible !== false);
-        this.beams.forEach(b => {
-            b.visible = !allVisible;
-        });
+        this.beams.forEach(b => { b.visible = !allVisible; });
         this.renderRows();
         this.options.onChange({ beamId: null, field: 'visibleAll', value: !allVisible, beams: this.beams.map(b => ({ ...b })) });
     }
@@ -658,13 +700,14 @@ class ProtonBeamListComponentPBS {
 
         // draft: array of beam ids
         const draft = this.beams.map(b => b.id);
+        const creationOrder = new Map(this.beams.map((b, idx) => [b.id, idx]));
 
         const renderTableRows = (ids) => {
             const rows = ids.map((id) => this.beams.find(b => b.id === id)).filter(Boolean);
             return rows.map(b => `
                 <tr>
                     <td style="width: 140px; padding: 8px 10px; border-bottom: 1px solid #333; color:#ddd;">${this.escapeHtml(b.name || '')}</td>
-                    <td style="width: 120px; padding: 8px 10px; border-bottom: 1px solid #333; color:#ddd; text-align:left;">${this.escapeHtml(b.gantry ?? '')}</td>
+                    <td style="width: 120px; padding: 8px 10px; border-bottom: 1px solid #333; color:#ddd; text-align:left;">${this.escapeHtml(b.gantryStart ?? '')}</td>
                 </tr>
             `).join('');
         };
@@ -682,7 +725,7 @@ class ProtonBeamListComponentPBS {
                                 <thead>
                                     <tr>
                                         <th style="width: 140px; padding: 8px 10px; text-align:left; background:#242424; border-bottom:1px solid #333; color:#cfcfcf; font-weight:500;">名称</th>
-                                        <th style="width: 120px; padding: 8px 10px; text-align:left; background:#242424; border-bottom:1px solid #333; color:#cfcfcf; font-weight:500;">机架[°]</th>
+                                        <th style="width: 120px; padding: 8px 10px; text-align:left; background:#242424; border-bottom:1px solid #333; color:#cfcfcf; font-weight:500;">机架起始</th>
                                     </tr>
                                 </thead>
                                 <tbody data-role="sort-table-body">
@@ -692,7 +735,7 @@ class ProtonBeamListComponentPBS {
                         </div>
                         <div style="width: 220px; border-left: 1px solid rgba(255,255,255,0.06); padding-left: 14px;">
                             <div style="color:#22c55e; font-size: 12px; font-weight:600; margin-top: 6px;">排序依据</div>
-                            <div style="color:#bdbdbd; font-size: 12px; margin: 8px 0 10px;">按照机架角度</div>
+                            <div style="color:#bdbdbd; font-size: 12px; margin: 8px 0 10px;">按照机架起始</div>
                             <button class="proton-beam-modal-btn" data-action="sort-cw" style="width: 160px; justify-content:center;">顺时针排序</button>
                             <button class="proton-beam-modal-btn" data-action="sort-ccw" style="width: 160px; justify-content:center; margin-top: 10px;">逆时针排序</button>
                         </div>
@@ -707,9 +750,10 @@ class ProtonBeamListComponentPBS {
 
         const close = () => overlay.remove();
 
-        const parseAngle = (v) => {
-            const n = Number.parseFloat(String(v ?? '').trim());
-            return Number.isFinite(n) ? n : Number.POSITIVE_INFINITY;
+        const angleValue = (id) => {
+            const beam = this.beams.find(b => b.id === id);
+            const n = this.parseAngle(beam?.gantryStart);
+            return n == null ? Number.POSITIVE_INFINITY : n;
         };
 
         const applyDraftOrder = (ids) => {
@@ -718,12 +762,18 @@ class ProtonBeamListComponentPBS {
             tbody.innerHTML = renderTableRows(ids);
         };
 
+        const pivot = 180;
+        const cwKey = (a) => (a - pivot + 360) % 360;
+        const ccwKey = (a) => (pivot - a + 360) % 360;
+
         const sortDraft = (dir) => {
-            const beamsById = new Map(this.beams.map(b => [b.id, b]));
-            draft.sort((a, b) => {
-                const aa = parseAngle(beamsById.get(a)?.gantry);
-                const bb = parseAngle(beamsById.get(b)?.gantry);
-                return dir === 'cw' ? (aa - bb) : (bb - aa);
+            draft.sort((ida, idb) => {
+                const aa = angleValue(ida);
+                const bb = angleValue(idb);
+                const ka = dir === 'cw' ? cwKey(aa) : ccwKey(aa);
+                const kb = dir === 'cw' ? cwKey(bb) : ccwKey(bb);
+                if (ka !== kb) return ka - kb;
+                return (creationOrder.get(ida) ?? 0) - (creationOrder.get(idb) ?? 0);
             });
             applyDraftOrder(draft);
         };
@@ -758,7 +808,6 @@ class ProtonBeamListComponentPBS {
                 if (nextBeams.length === this.beams.length) {
                     this.beams = nextBeams;
                 }
-                // 选中项保持（id 不变）
                 this.renderRows();
                 this.updateToolbarState();
                 this.options.onSort(this.beams.map(b => ({ ...b })));
@@ -773,9 +822,11 @@ class ProtonBeamListComponentPBS {
         const selected = this.getSelectedBeam();
         if (!selected) return;
 
-        const id = `beam-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        const id = `beam-arc-${Date.now()}-${Math.random().toString(16).slice(2)}`;
         const copied = { ...selected, id };
         copied.name = this.getCopiedBeamName(selected.name || '');
+        // 弧长只读：复制时沿用起止角/方向，再自动重算一次确保一致
+        this.recomputeArcLengthForBeam(copied);
 
         this.beams.push(copied);
         this.selectedBeamId = copied.id;
@@ -787,11 +838,8 @@ class ProtonBeamListComponentPBS {
 
     getCopiedBeamName(originalName) {
         const raw = String(originalName || '').trim() || 'Beam';
-        // 复制命名规则：以“原名（n）”递增，优先（1）
-        // 同时把“原名（n）”作为同一根名称，避免出现 A（1）（1）这种累积
         const root = raw.replace(/（\d+）$/u, '');
         const existing = new Set(this.beams.map(b => String(b.name || '').trim()));
-
         let n = 1;
         while (n < 10000) {
             const candidate = `${root}（${n}）`;
@@ -804,14 +852,11 @@ class ProtonBeamListComponentPBS {
     deleteSelectedBeam() {
         const selected = this.getSelectedBeam();
         if (!selected) return;
-
-        // 轻量确认：避免误删
         const ok = window.confirm(`确定要删除射束 "${selected.name || ''}" 吗？`);
         if (!ok) return;
 
         const idx = this.beams.findIndex(b => b.id === selected.id);
         if (idx < 0) return;
-
         this.beams.splice(idx, 1);
 
         const next = this.beams[idx]?.id ?? this.beams[idx - 1]?.id ?? null;
@@ -840,7 +885,9 @@ class ProtonBeamListComponentPBS {
             name: `Beam ${next}`,
             machine: this.defaultMachine,
             group: this.defaultGroupName,
-            gantry: '270.0',
+            gantryStart: '80.0',
+            gantryEnd: '270.0',
+            direction: 'CW',
             couch: '0.0',
             snout: '42.10',
             rangeShifter: 'NONE'
@@ -853,10 +900,11 @@ class ProtonBeamListComponentPBS {
         if (existed) existed.remove();
 
         const form = this.getDefaultNewBeamForm();
-
         const overlay = document.createElement('div');
         overlay.className = 'proton-beam-modal-overlay';
         overlay.id = overlayId;
+
+        const arcLength = this.formatAngle(this.computeArcLength(form.gantryStart, form.gantryEnd, form.direction));
 
         overlay.innerHTML = `
             <div class="proton-beam-modal" role="dialog" aria-modal="true" aria-label="添加射束">
@@ -888,13 +936,28 @@ class ProtonBeamListComponentPBS {
                         <div class="proton-beam-modal-section-title">几何</div>
                         <div class="proton-beam-modal-grid-2">
                             <div class="proton-beam-modal-field">
-                                <div class="proton-beam-modal-label">机架角[°]</div>
-                                <input class="proton-beam-modal-input" data-field="gantry" value="${this.escapeAttr(form.gantry)}" />
+                                <div class="proton-beam-modal-label">机架起始</div>
+                                <input class="proton-beam-modal-input" data-field="gantryStart" value="${this.escapeAttr(form.gantryStart)}" />
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">机架终止</div>
+                                <input class="proton-beam-modal-input" data-field="gantryEnd" value="${this.escapeAttr(form.gantryEnd)}" />
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">方向</div>
+                                <select class="proton-beam-modal-select" data-field="direction">
+                                    ${this.directionOptions.map(opt => `<option value="${this.escapeAttr(opt)}" ${opt === form.direction ? 'selected' : ''}>${this.escapeHtml(opt)}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">弧长</div>
+                                <div class="proton-beam-modal-static" data-field="arcLength">${this.escapeHtml(arcLength)}</div>
                             </div>
                             <div class="proton-beam-modal-field">
                                 <div class="proton-beam-modal-label">治疗床[°]</div>
                                 <input class="proton-beam-modal-input" data-field="couch" value="${this.escapeAttr(form.couch)}" />
                             </div>
+                            <div></div>
                         </div>
                     </div>
 
@@ -937,11 +1000,23 @@ class ProtonBeamListComponentPBS {
             return el.value ?? '';
         };
 
+        const updateArcLengthPreview = () => {
+            const start = getValue('gantryStart').trim();
+            const end = getValue('gantryEnd').trim();
+            const dir = getValue('direction') || 'CW';
+            const len = this.computeArcLength(start, end, dir);
+            const display = this.formatAngle(len);
+            const el = overlay.querySelector(`[data-field="arcLength"]`);
+            if (el) el.textContent = display;
+        };
+
         const readForm = () => ({
             name: getValue('name').trim() || form.name,
             machine: this.defaultMachine,
             group: getValue('group').trim() || this.defaultGroupName,
-            gantry: getValue('gantry').trim() || '0.0',
+            gantryStart: getValue('gantryStart').trim() || form.gantryStart,
+            gantryEnd: getValue('gantryEnd').trim() || form.gantryEnd,
+            direction: getValue('direction') || form.direction,
             couch: getValue('couch').trim() || '0.0',
             snout: getValue('snout').trim() || '',
             rangeShifter: getValue('rangeShifter') || 'NONE'
@@ -951,24 +1026,28 @@ class ProtonBeamListComponentPBS {
             const next = this.getDefaultNewBeamForm();
             overlay.querySelector(`[data-field="name"]`).value = next.name;
             overlay.querySelector(`[data-field="group"]`).textContent = next.group;
-            overlay.querySelector(`[data-field="gantry"]`).value = next.gantry;
+            overlay.querySelector(`[data-field="gantryStart"]`).value = next.gantryStart;
+            overlay.querySelector(`[data-field="gantryEnd"]`).value = next.gantryEnd;
+            overlay.querySelector(`[data-field="direction"]`).value = next.direction;
             overlay.querySelector(`[data-field="couch"]`).value = next.couch;
             overlay.querySelector(`[data-field="snout"]`).value = next.snout;
             overlay.querySelector(`[data-field="rangeShifter"]`).value = next.rangeShifter;
+            updateArcLengthPreview();
             overlay.querySelector(`[data-field="name"]`)?.focus();
         };
 
         const createBeamFromForm = (data) => {
-            const id = `beam-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            const id = `beam-arc-${Date.now()}-${Math.random().toString(16).slice(2)}`;
             const newBeam = {
                 id,
                 visible: true,
                 name: data.name,
                 machine: data.machine,
-                mode: 'PBS',
-                planId: '',
-                mu: '',
-                gantry: data.gantry,
+                mode: 'PBSArc',
+                gantryStart: data.gantryStart,
+                gantryEnd: data.gantryEnd,
+                direction: data.direction,
+                arcLength: '',
                 couch: data.couch,
                 target: 'CTV1',
                 iso: 'ISO1',
@@ -978,10 +1057,10 @@ class ProtonBeamListComponentPBS {
                 snout: data.snout,
                 airMin: '',
                 airCax: '',
-                collision: '',
                 rangeShifter: data.rangeShifter,
                 group: data.group
             };
+            this.recomputeArcLengthForBeam(newBeam);
             this.beams.push(newBeam);
             this.selectedBeamId = newBeam.id;
             this.renderRows();
@@ -992,6 +1071,16 @@ class ProtonBeamListComponentPBS {
 
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) close();
+        });
+
+        overlay.addEventListener('input', (e) => {
+            const field = e.target?.getAttribute?.('data-field');
+            if (field === 'gantryStart' || field === 'gantryEnd') updateArcLengthPreview();
+        });
+
+        overlay.addEventListener('change', (e) => {
+            const field = e.target?.getAttribute?.('data-field');
+            if (field === 'direction') updateArcLengthPreview();
         });
 
         overlay.addEventListener('click', (e) => {
@@ -1026,7 +1115,9 @@ class ProtonBeamListComponentPBS {
             name: beam?.name ?? '',
             machine: beam?.machine ?? this.defaultMachine,
             group: beam?.group ?? this.defaultGroupName,
-            gantry: beam?.gantry ?? '0.0',
+            gantryStart: beam?.gantryStart ?? '0.0',
+            gantryEnd: beam?.gantryEnd ?? '0.0',
+            direction: beam?.direction ?? 'CW',
             couch: beam?.couch ?? '0.0',
             snout: beam?.snout ?? '',
             rangeShifter: beam?.rangeShifter ?? 'NONE'
@@ -1035,6 +1126,8 @@ class ProtonBeamListComponentPBS {
         const overlay = document.createElement('div');
         overlay.className = 'proton-beam-modal-overlay';
         overlay.id = overlayId;
+
+        const arcLength = this.formatAngle(this.computeArcLength(form.gantryStart, form.gantryEnd, form.direction));
 
         overlay.innerHTML = `
             <div class="proton-beam-modal" role="dialog" aria-modal="true" aria-label="编辑射束">
@@ -1066,13 +1159,28 @@ class ProtonBeamListComponentPBS {
                         <div class="proton-beam-modal-section-title">几何</div>
                         <div class="proton-beam-modal-grid-2">
                             <div class="proton-beam-modal-field">
-                                <div class="proton-beam-modal-label">机架角[°]</div>
-                                <input class="proton-beam-modal-input" data-field="gantry" value="${this.escapeAttr(form.gantry)}" />
+                                <div class="proton-beam-modal-label">机架起始</div>
+                                <input class="proton-beam-modal-input" data-field="gantryStart" value="${this.escapeAttr(form.gantryStart)}" />
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">机架终止</div>
+                                <input class="proton-beam-modal-input" data-field="gantryEnd" value="${this.escapeAttr(form.gantryEnd)}" />
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">方向</div>
+                                <select class="proton-beam-modal-select" data-field="direction">
+                                    ${this.directionOptions.map(opt => `<option value="${this.escapeAttr(opt)}" ${opt === form.direction ? 'selected' : ''}>${this.escapeHtml(opt)}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="proton-beam-modal-field">
+                                <div class="proton-beam-modal-label">弧长</div>
+                                <div class="proton-beam-modal-static" data-field="arcLength">${this.escapeHtml(arcLength)}</div>
                             </div>
                             <div class="proton-beam-modal-field">
                                 <div class="proton-beam-modal-label">治疗床[°]</div>
                                 <input class="proton-beam-modal-input" data-field="couch" value="${this.escapeAttr(form.couch)}" />
                             </div>
+                            <div></div>
                         </div>
                     </div>
 
@@ -1114,11 +1222,23 @@ class ProtonBeamListComponentPBS {
             return el.value ?? '';
         };
 
+        const updateArcLengthPreview = () => {
+            const start = getValue('gantryStart').trim();
+            const end = getValue('gantryEnd').trim();
+            const dir = getValue('direction') || 'CW';
+            const len = this.computeArcLength(start, end, dir);
+            const display = this.formatAngle(len);
+            const el = overlay.querySelector(`[data-field="arcLength"]`);
+            if (el) el.textContent = display;
+        };
+
         const readForm = () => ({
             name: getValue('name').trim() || form.name,
             machine: form.machine,
             group: form.group,
-            gantry: getValue('gantry').trim() || form.gantry,
+            gantryStart: getValue('gantryStart').trim() || form.gantryStart,
+            gantryEnd: getValue('gantryEnd').trim() || form.gantryEnd,
+            direction: getValue('direction') || form.direction,
             couch: getValue('couch').trim() || form.couch,
             snout: getValue('snout').trim() || form.snout,
             rangeShifter: getValue('rangeShifter') || form.rangeShifter
@@ -1128,11 +1248,14 @@ class ProtonBeamListComponentPBS {
             const target = this.beams.find(b => b.id === beam.id);
             if (!target) return;
             target.name = data.name;
-            target.gantry = data.gantry;
+            target.gantryStart = data.gantryStart;
+            target.gantryEnd = data.gantryEnd;
+            target.direction = data.direction;
             target.couch = data.couch;
             target.snout = data.snout;
             target.rangeShifter = data.rangeShifter;
-            // machine/group 维持只读展示
+            this.recomputeArcLengthForBeam(target);
+
             this.renderRows();
             this.updateToolbarState();
             this.options.onEdit({ ...target });
@@ -1140,6 +1263,16 @@ class ProtonBeamListComponentPBS {
 
         overlay.addEventListener('click', (e) => {
             if (e.target === overlay) close();
+        });
+
+        overlay.addEventListener('input', (e) => {
+            const field = e.target?.getAttribute?.('data-field');
+            if (field === 'gantryStart' || field === 'gantryEnd') updateArcLengthPreview();
+        });
+
+        overlay.addEventListener('change', (e) => {
+            const field = e.target?.getAttribute?.('data-field');
+            if (field === 'direction') updateArcLengthPreview();
         });
 
         overlay.addEventListener('click', (e) => {
@@ -1160,15 +1293,6 @@ class ProtonBeamListComponentPBS {
         setTimeout(() => overlay.querySelector('[data-field="name"]')?.focus(), 0);
     }
 
-    sortBeamsByName() {
-        this.beams.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'en'));
-        if (this.selectedBeamId && !this.beams.some(b => b.id === this.selectedBeamId)) {
-            this.selectedBeamId = this.beams[0]?.id ?? null;
-        }
-        this.renderRows();
-        this.updateToolbarState();
-    }
-
     getSelectedBeam() {
         return this.beams.find(b => b.id === this.selectedBeamId) || null;
     }
@@ -1184,6 +1308,7 @@ class ProtonBeamListComponentPBS {
 
     setBeams(beams) {
         this.beams = Array.isArray(beams) ? beams : [];
+        this.beams.forEach(b => this.ensureArcFields(b));
         this.selectedBeamId = this.beams[0]?.id ?? null;
         this.renderRows();
         this.updateToolbarState();
@@ -1196,7 +1321,7 @@ class ProtonBeamListComponentPBS {
         if (!this.beams.length) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="18" style="padding: 36px 10px; text-align: center; color: #888;">
+                    <td colspan="19" style="padding: 36px 10px; text-align: center; color: #888;">
                         暂无射束数据
                     </td>
                 </tr>
@@ -1205,6 +1330,7 @@ class ProtonBeamListComponentPBS {
         }
 
         tbody.innerHTML = this.beams.map((b, idx) => {
+            this.ensureArcFields(b);
             const selectedClass = b.id === this.selectedBeamId ? 'is-selected' : '';
             const isVisible = b.visible !== false;
             const eyeClass = isVisible ? '' : 'is-off';
@@ -1218,8 +1344,10 @@ class ProtonBeamListComponentPBS {
                     <td>${this.renderInputCell('name', b.name)}</td>
                     <td>${this.renderReadonlyCell('machine', b.machine)}</td>
                     <td>${this.renderTextCell(b.mode)}</td>
-                    <td>${this.renderTextCell(b.mu, { align: 'right' })}</td>
-                    <td>${this.renderInputCell('gantry', b.gantry, { align: 'right' })}</td>
+                    <td>${this.renderInputCell('gantryStart', b.gantryStart, { align: 'right' })}</td>
+                    <td>${this.renderInputCell('gantryEnd', b.gantryEnd, { align: 'right' })}</td>
+                    <td>${this.renderTextCell(b.arcLength, { align: 'right' })}</td>
+                    <td>${this.renderSelectCell('direction', b.direction, this.directionOptions)}</td>
                     <td>${this.renderInputCell('couch', b.couch, { align: 'right' })}</td>
                     <td>${this.renderSelectCell('target', b.target, this.targetOptions)}</td>
                     <td>${this.renderSelectCell('iso', b.iso, this.isoOptions)}</td>
@@ -1229,7 +1357,6 @@ class ProtonBeamListComponentPBS {
                     <td>${this.renderInputCell('snout', b.snout, { align: 'right' })}</td>
                     <td>${this.renderTextCell(b.airMin, { align: 'right' })}</td>
                     <td>${this.renderTextCell(b.airCax, { align: 'right' })}</td>
-                    <td>${this.renderReadonlyCell('collision', b.collision ?? '')}</td>
                     <td>${this.renderSelectCell('rangeShifter', b.rangeShifter, this.rangeShifterOptions)}</td>
                 </tr>
             `;
@@ -1287,6 +1414,6 @@ class ProtonBeamListComponentPBS {
 }
 
 if (typeof window !== 'undefined') {
-    window.ProtonBeamListComponentPBS = ProtonBeamListComponentPBS;
+    window.ProtonBeamListComponentPBSArc = ProtonBeamListComponentPBSArc;
 }
 
