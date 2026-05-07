@@ -541,6 +541,7 @@
     <script src="../../shared/scripts/components/PromptSimpleConfirmCancelModalComponent.js"></script>
     <script src="../../shared/scripts/components/PlanLibraryGeneratedModalComponent.js"></script>
     <script src="../../shared/scripts/components/PlanLibraryComponent.js"></script>
+    <script src="../scripts/ProtonRobustnessSettingsComponent.js"></script>
     <script src="../scripts/LETComponent.js"></script>
     <script src="../scripts/LETdStatisticsComponent.js"></script>
 
@@ -557,6 +558,7 @@
         let letdStatisticsComponent = null;
         let arcSettingsComponent = null;
         let planLibraryModal = null;
+        let protonRobustnessSettingsModal = null;
 
         let leftAxialViewComponent = null;
         let leftSagittalViewComponent = null;
@@ -876,6 +878,26 @@
                     moduleId: 'plan-optimization-v2',
                     onToolClick: (toolId) => {
                         console.log('计划优化工具点击:', toolId);
+                        if (toolId === 'robust-settings') {
+                            if (typeof ProtonRobustnessSettingsComponent === 'undefined') {
+                                console.error('ProtonRobustnessSettingsComponent 未加载，无法打开“鲁棒性设置”弹窗');
+                                return;
+                            }
+                            if (!protonRobustnessSettingsModal) {
+                                protonRobustnessSettingsModal = new ProtonRobustnessSettingsComponent({
+                                    mountContainer: document.body,
+                                    onConfirm: (data) => console.log('Proton robustness settings:', data),
+                                    onCancel: () => console.log('Cancel proton robustness settings')
+                                });
+                            }
+                            if (
+                                protonRobustnessSettingsModal &&
+                                typeof protonRobustnessSettingsModal.show === 'function'
+                            ) {
+                                protonRobustnessSettingsModal.show();
+                            }
+                            return;
+                        }
                         if (toolId === 'plan-library') {
                             if (typeof PlanLibraryComponent === 'undefined') {
                                 console.error('PlanLibraryComponent 未加载，无法打开“计划库”弹窗');

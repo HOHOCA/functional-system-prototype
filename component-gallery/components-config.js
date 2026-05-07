@@ -401,6 +401,14 @@ const COMPONENTS_CONFIG = {
             description: '创建鲁棒性评估弹窗：组名、场景生成、场景列表编辑与开始评估',
             className: 'CreateRobustnessEvaluationComponent',
             filePath: '../proton-client/scripts/CreateRobustnessEvaluationComponent.js'
+        },
+        {
+            id: 'proton-robustness-settings',
+            name: 'ProtonRobustnessSettings',
+            displayName: '鲁棒性设置',
+            description: '质子版鲁棒性设置弹窗（基于 CreateRobustnessEvaluationComponent 复制）：组名、场景生成、场景列表编辑与确认',
+            className: 'ProtonRobustnessSettingsComponent',
+            filePath: '../proton-client/scripts/ProtonRobustnessSettingsComponent.js'
         }
     ],
 

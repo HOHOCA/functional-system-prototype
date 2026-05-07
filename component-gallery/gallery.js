@@ -881,6 +881,21 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'ProtonRobustnessSettingsComponent':
+                    if (typeof ProtonRobustnessSettingsComponent !== 'undefined') {
+                        componentContainer.style.height = '800px';
+                        componentContainer.style.minHeight = '800px';
+                        instance = new ProtonRobustnessSettingsComponent({
+                            mountContainer: componentContainer,
+                            onConfirm: (data) => console.log('Proton robustness settings:', data),
+                            onCancel: () => console.log('Cancel proton robustness settings')
+                        });
+                        if (instance && typeof instance.show === 'function') {
+                            setTimeout(() => instance.show(), 60);
+                        }
+                    }
+                    break;
+
                 case 'ProtonCreatePlanComponent':
                     if (typeof ProtonCreatePlanComponent !== 'undefined') {
                         componentContainer.style.height = '760px';

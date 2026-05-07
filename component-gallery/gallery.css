@@ -372,7 +372,7 @@ body {
     min-height: 400px;
     /* 让预览区拥有稳定高度，避免外层滚动把组件底部工具条一起卷走。
        侧边栏类组件有单独的 sidebar-layout 高度覆盖。 */
-    height: 600px;
+    height: 800px;
     position: relative;
     overflow: auto; /* 让预览内容可滚动，避免被裁剪 */
 }
