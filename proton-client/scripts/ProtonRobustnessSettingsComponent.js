@@ -552,6 +552,11 @@ class ProtonRobustnessSettingsComponent {
                                 <div class="cre-radio-group">
                                     <label class="cre-radio"><input type="radio" name="cre-scenario-mode" value="12" checked />12</label>
                                     <label class="cre-radio"><input type="radio" name="cre-scenario-mode" value="21" />21</label>
+                                    <label class="cre-radio">
+                                        <input type="radio" name="cre-scenario-mode" value="custom" />自定义
+                                        <input class="cre-custom-count" id="creCustomCount" type="number" min="1" max="81" value="12" disabled />
+                                        <span class="cre-unit">[1 ~ 81]</span>
+                                    </label>
                                 </div>
                             </div>
                             <div class="cre-row">
@@ -715,6 +720,7 @@ class ProtonRobustnessSettingsComponent {
         const addRowBtn = this.modalEl.querySelector('[data-role="add-row"]');
         const deleteLastRowBtn = this.modalEl.querySelector('[data-role="delete-last-row"]');
         const modeRadios = this.modalEl.querySelectorAll('input[name="cre-scenario-mode"]');
+        const customCount = this.modalEl.querySelector('#creCustomCount');
         const positionInput = this.modalEl.querySelector('#crePositionUncertainty');
         const densityInput = this.modalEl.querySelector('#creDensityUncertainty');
         const phaseGroup = this.modalEl.querySelector('#crePhaseGroup4dct');
@@ -745,8 +751,17 @@ class ProtonRobustnessSettingsComponent {
         });
 
         modeRadios.forEach((radio) => {
-            radio.addEventListener('change', () => {});
+            radio.addEventListener('change', () => {
+                const mode = this.getScenarioMode();
+                if (customCount) customCount.disabled = mode !== 'custom';
+            });
         });
+
+        if (customCount) {
+            customCount.addEventListener('input', () => {
+                if (this.getScenarioMode() !== 'custom') return;
+            });
+        }
 
         positionInput.addEventListener('input', () => {
             this.refreshAxisTagValues();
@@ -921,7 +936,9 @@ class ProtonRobustnessSettingsComponent {
         const mode = this.getScenarioMode();
         if (mode === '12') return 12;
         if (mode === '21') return 21;
-        return 12;
+        const custom = this.modalEl.querySelector('#creCustomCount');
+        const value = custom ? parseInt(custom.value, 10) : NaN;
+        return Number.isFinite(value) ? Math.max(1, Math.min(81, value)) : 12;
     }
 
     normalizeNumber(value, fallback) {
@@ -1230,6 +1247,9 @@ class ProtonRobustnessSettingsComponent {
     getFormData() {
         if (!this.modalEl) return null;
         const scenarioMode = this.getScenarioMode();
+        const customCount = this.modalEl.querySelector('#creCustomCount')
+            ? this.modalEl.querySelector('#creCustomCount').value
+            : null;
         const positionUncertainty = this.normalizeNumber(this.modalEl.querySelector('#crePositionUncertainty').value, 0.5);
         const densityUncertainty = this.normalizeNumber(this.modalEl.querySelector('#creDensityUncertainty').value, 3.5);
         const selectedPhaseUncertainties = Array.from(this.modalEl.querySelectorAll('.cre-phase-child:checked'))
@@ -1237,6 +1257,7 @@ class ProtonRobustnessSettingsComponent {
             .filter(Boolean);
         return {
             scenarioMode,
+            customCount: customCount === null ? null : parseInt(customCount, 10),
             positionUncertainty,
             densityUncertainty,
             selectedPhaseUncertainties,
