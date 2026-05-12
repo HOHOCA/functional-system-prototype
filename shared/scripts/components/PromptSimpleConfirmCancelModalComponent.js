@@ -20,19 +20,15 @@ class PromptSimpleConfirmCancelModalComponent {
         style.id = 'prompt-simple-confirm-cancel-modal-styles';
         style.textContent = `
             .psccm-wrap {
-                position: fixed;
-                inset: 0;
-                z-index: 2147483647;
                 width: 100%;
                 height: 100%;
-                min-height: 0;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(0,0,0,0.55);
                 padding: 16px;
                 box-sizing: border-box;
             }
+            .psccm-wrap.psccm-embed { min-height: 0; }
             .psccm-modal { width: min(600px, 100%); height: 250px; max-height: min(360px, 90vh); background: linear-gradient(180deg, #333333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
             .psccm-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
             .psccm-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
@@ -46,6 +42,23 @@ class PromptSimpleConfirmCancelModalComponent {
             .psccm-btn.primary:hover { background: #33addf; }
         `;
         document.head.appendChild(style);
+    }
+
+    _applyMountLayout() {
+        const mc = this.options.mountContainer || document.body;
+        if (mc !== document.body) {
+            const pos = window.getComputedStyle(mc).position;
+            if (pos === 'static') mc.style.position = 'relative';
+        }
+        if (!this.root) return;
+        if (mc === document.body) {
+            this.root.style.cssText =
+                'position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);padding:16px;box-sizing:border-box;';
+        } else {
+            this.root.style.cssText =
+                'position:absolute;inset:0;z-index:10080;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);padding:16px;box-sizing:border-box;';
+            this.root.classList.add('psccm-embed');
+        }
     }
 
     show() {
@@ -79,6 +92,7 @@ class PromptSimpleConfirmCancelModalComponent {
         this.root.querySelector('[data-psccm-confirm]').textContent = confirmText;
 
         (this.options.mountContainer || document.body).appendChild(this.root);
+        this._applyMountLayout();
 
         const dismiss = (fn) => {
             try {

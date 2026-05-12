@@ -189,9 +189,44 @@ class ComponentGallery {
                 item.dataset.project === foundProject
             );
         });
+
+        // 让左侧滚动容器滚动到选中项（刷新恢复/手动点击都生效）
+        this.scrollTreeToComponent(componentId, foundProject);
         
         // 渲染组件详情
         this.renderComponentDetail(component, foundProject);
+    }
+
+    // 左侧树：滚动到指定组件项
+    scrollTreeToComponent(componentId, projectKey) {
+        const treeContainer = document.getElementById('componentTree');
+        if (!treeContainer) return;
+
+        const escapeAttr = (v) => {
+            const str = String(v ?? '');
+            if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(str);
+            // 简易兜底：用于 attribute selector，覆盖常见引号/反斜杠场景
+            return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        };
+
+        const selector = `.tree-component-item[data-component-id="${escapeAttr(componentId)}"][data-project="${escapeAttr(projectKey)}"]`;
+
+        // 等待 DOM 更新 & 布局完成，避免刚 render 后取不到/计算不准
+        requestAnimationFrame(() => {
+            const item = treeContainer.querySelector(selector) || treeContainer.querySelector('.tree-component-item.active');
+            if (!item) return;
+
+            try {
+                item.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'auto' });
+            } catch (_) {
+                // 兜底：旧浏览器不支持 options 时退化调用
+                try {
+                    item.scrollIntoView(true);
+                } catch (_) {
+                    // ignore
+                }
+            }
+        });
     }
     
     // 渲染组件详情
