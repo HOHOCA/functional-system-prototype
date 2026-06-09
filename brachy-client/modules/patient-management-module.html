@@ -556,7 +556,7 @@
         <!-- 统一的底部操作栏 -->
         <div class="bottom-action-bar">
             <div class="left-actions">
-                <button class="btn btn-primary">导入</button>
+                <button class="btn btn-primary" id="importPatientBtn">导入</button>
                 <button class="btn btn-secondary">导出</button>
                 <button class="btn btn-danger">删除</button>
                 <button class="btn btn-secondary">编辑</button>
@@ -610,6 +610,7 @@
     <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
     <script src="../../shared/scripts/components/RegistrationPanel.js"></script>
     <script src="../../shared/scripts/components/PatientManagementComponent.js"></script>
+    <script src="../../shared/scripts/components/ImportLegacyModalComponent.js"></script>
     
     <script>
         // 模拟患者数据
@@ -677,6 +678,7 @@
         ];
         
         let patientOverviewComponent = null;
+        let importLegacyModal = null;
 
         function toPatientOverviewData(patient) {
             if (!patient) return { name: '--', id: '--', birthDate: '', gender: '' };
@@ -872,6 +874,26 @@
             }
         }
         
+        function initializeImportButton() {
+            const importBtn = document.getElementById('importPatientBtn');
+            if (!importBtn) return;
+
+            importBtn.addEventListener('click', function() {
+                if (typeof ImportLegacyModalComponent === 'undefined') {
+                    console.warn('ImportLegacyModalComponent 未加载');
+                    return;
+                }
+                if (!importLegacyModal) {
+                    importLegacyModal = new ImportLegacyModalComponent({
+                        mountContainer: document.body,
+                        defaultTab: 'remote'
+                    });
+                }
+                if (importLegacyModal.root) return;
+                importLegacyModal.show();
+            });
+        }
+
         // 弹窗相关功能
         function initializeModal() {
             const modal = document.getElementById('imagePropertiesModal');
@@ -989,6 +1011,7 @@
             loadPatientData();
             initializeSequenceTree();
             initializeModal();
+            initializeImportButton();
         });
     </script>
 </body>

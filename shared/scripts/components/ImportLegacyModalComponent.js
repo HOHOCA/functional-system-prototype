@@ -30,6 +30,7 @@ class ImportLegacyModalComponent {
         style.id = 'import-legacy-modal-component-styles';
         style.textContent = `
             .ilmc-wrap { width: 100%; height: 100%; min-height: 620px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
+            .ilmc-wrap.overlay { background: rgba(0, 0, 0, 0.55); }
             .ilmc-modal { width: min(1100px, 100%); height: min(680px, 100%); background: #2a2a2a; border: 1px solid #404040; border-radius: 8px; color: #ddd; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; overflow: hidden; }
             .ilmc-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; }
             .ilmc-title { margin: 0; font-size: 16px; font-weight: 500; color: #fff; }
@@ -358,8 +359,8 @@ class ImportLegacyModalComponent {
     }
 
     buildFallbackExternalResults(keyword) {
-        const fallbackPatients = [
-            {
+        return [{
+            patient: {
                 id: keyword,
                 name: 'Zhu^Yongbai',
                 studyId: '34972',
@@ -368,30 +369,8 @@ class ImportLegacyModalComponent {
                 rtstructUid: '1.2.246.352.71.4.957382915.220211.20180723082035',
                 rtplanUid: '1.2.840.113704.1.111.4732.1531709870.1',
                 rtdoseUid: '1.2.840.113704.1.111.4732.1531709871.1'
-            },
-            {
-                id: `${keyword}01`,
-                name: 'Zhang^San',
-                studyId: '35001',
-                ctUid: '1.2.840.113704.1.111.4732.1531709800.1',
-                ctFiles: 120,
-                rtstructUid: '1.2.246.352.71.4.957382915.220211.20180723082036',
-                rtplanUid: '1.2.840.113704.1.111.4732.1531709872.1',
-                rtdoseUid: '1.2.840.113704.1.111.4732.1531709873.1'
-            },
-            {
-                id: `${keyword}02`,
-                name: 'Wang^Wu',
-                studyId: '35888',
-                ctUid: '1.2.840.113704.1.111.4732.1531709900.1',
-                ctFiles: 98,
-                rtstructUid: '1.2.246.352.71.4.957382915.220211.20180723082037',
-                rtplanUid: '1.2.840.113704.1.111.4732.1531709874.1',
-                rtdoseUid: '1.2.840.113704.1.111.4732.1531709875.1'
             }
-        ];
-
-        return fallbackPatients.map((patient) => ({ patient }));
+        }];
     }
 
     searchExternalDicom(query) {
@@ -400,10 +379,7 @@ class ImportLegacyModalComponent {
             return { patients: [], patientTrees: {} };
         }
 
-        let matched = this.getExternalDicomMockCatalog().filter((item) => {
-            const { id, name } = item.patient;
-            return id.includes(keyword) || name.toLowerCase().includes(keyword.toLowerCase());
-        });
+        let matched = this.getExternalDicomMockCatalog().filter((item) => item.patient.id === keyword);
 
         if (!matched.length) {
             matched = this.buildFallbackExternalResults(keyword);
@@ -620,7 +596,7 @@ class ImportLegacyModalComponent {
                         ${this.renderRemoteNodeSelect()}
                     </div>
                     <div class="ilmc-search-box">
-                        <input type="text" class="ilmc-external-search-input" value="${externalSearchValue}" placeholder="请输入患者姓名或ID，点击搜索图标或按下回车键开始搜索" ${externalSearchDisabled}>
+                        <input type="text" class="ilmc-external-search-input" value="${externalSearchValue}" placeholder="请输入患者ID，点击搜索图标或按下回车键开始搜索" ${externalSearchDisabled}>
                     </div>
                     ${this.renderRefreshButton(!externalSearchEnabled)}
                 </div>
@@ -887,8 +863,13 @@ class ImportLegacyModalComponent {
         if (this.root) return;
 
         this.root = document.createElement('div');
-        this.root.className = 'ilmc-wrap';
-        this.root.style.position = 'relative';
+        const mountContainer = this.options.mountContainer || document.body;
+        this.root.className = mountContainer === document.body ? 'ilmc-wrap overlay' : 'ilmc-wrap';
+        if (mountContainer === document.body) {
+            this.root.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.55);';
+        } else {
+            this.root.style.position = 'relative';
+        }
         this.root.innerHTML = `
             <div class="ilmc-modal" role="dialog" aria-modal="false" aria-label="导入（旧版）">
                 <div class="ilmc-header">
@@ -906,7 +887,7 @@ class ImportLegacyModalComponent {
             </div>
         `;
 
-        (this.options.mountContainer || document.body).appendChild(this.root);
+        mountContainer.appendChild(this.root);
         this.bindEvents();
     }
 
