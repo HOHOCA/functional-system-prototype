@@ -16,12 +16,38 @@ class ImportLegacyModalComponent {
             patientTrees: {}
         };
         this.existsModalRoot = null;
+        this.summaryModalRoot = null;
         this.pendingExistsPatient = null;
         this.ensureStyles();
     }
 
-    getSystemExistingPatients() {
-        return [{ id: '24112002', name: 'demo' }];
+    getSystemExistingImages() {
+        return [{
+            patientId: '24112002',
+            patientName: 'demo',
+            ctUid: '2.16.840.1.113662.2.2.3.8.1.3081232920250331163904.3'
+        }];
+    }
+
+    getSystemExistingPatientIds() {
+        return this.getSystemExistingImages().map((image) => image.patientId);
+    }
+
+    extractCtUid(label) {
+        const match = String(label || '').match(/^CT:\s*(.+?)(?:\(files:|$)/);
+        return match ? match[1].trim() : '';
+    }
+
+    parsePatientRoot(label) {
+        const match = String(label || '').match(/Patient name:\s*(.+?)\(Patient ID:\s*([^)]+)\)/);
+        if (!match) return null;
+        return { patientName: match[1].trim(), patientId: match[2].trim() };
+    }
+
+    isDuplicateCtImage(patientId, ctUid) {
+        return this.getSystemExistingImages().some(
+            (image) => image.patientId === patientId && image.ctUid === ctUid
+        );
     }
 
     ensureStyles() {
@@ -106,6 +132,14 @@ class ImportLegacyModalComponent {
             .ilmc-exists-divider { height: 1px; background: #3b3b3b; }
             .ilmc-exists-footer { padding: 14px 20px 18px; display: flex; justify-content: flex-end; gap: 16px; }
             .ilmc-success-toast { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30; padding: 10px 20px; background: rgba(42, 63, 79, 0.95); border: 1px solid #3AACDE; border-radius: 4px; color: #fff; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.35); pointer-events: none; }
+            .ilmc-summary-modal { width: min(560px, 100%); max-height: min(520px, 90vh); background: linear-gradient(180deg, #333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
+            .ilmc-summary-body { padding: 8px 20px 16px; overflow-y: auto; flex: 1; min-height: 0; }
+            .ilmc-summary-section { margin-bottom: 16px; }
+            .ilmc-summary-section-title { color: #fff; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+            .ilmc-summary-list { margin: 0; padding: 0; list-style: none; }
+            .ilmc-summary-list li { color: #d0d0d0; font-size: 12px; line-height: 1.6; padding: 4px 0; border-bottom: 1px solid #333; word-break: break-all; }
+            .ilmc-summary-tip { color: #9ca3af; font-size: 12px; line-height: 1.6; margin-top: 8px; }
+            .ilmc-info-msg { color: #d0d0d0; font-size: 13px; line-height: 1.7; }
         `;
         document.head.appendChild(style);
     }
@@ -146,40 +180,40 @@ class ImportLegacyModalComponent {
         ];
     }
 
-    buildLocalPatientTree(patient) {
-        return [
-            {
-                label: `Patient name: ${patient.name}(Patient ID: ${patient.id})`,
+    getCtSeries(patient) {
+        if (patient.ctSeries?.length) return patient.ctSeries;
+        return [{ uid: patient.ctUid, files: patient.ctFiles }];
+    }
+
+    buildRtChildren(patient) {
+        if (!patient.rtstructUid) return [];
+        return [{
+            label: `RTSTRUCT: ${patient.rtstructUid}(fil...`,
+            checked: true,
+            children: [{
+                label: `RTPLAN: ${patient.rtplanUid}...`,
                 checked: true,
-                children: [
-                    {
-                        label: `Study ID: ${patient.studyId}`,
-                        checked: true,
-                        children: [
-                            {
-                                label: `CT: ${patient.ctUid}(files: ${patient.ctFiles})`,
-                                checked: true,
-                                children: [
-                                    {
-                                        label: `RTSTRUCT: ${patient.rtstructUid}(fil...`,
-                                        checked: true,
-                                        children: [
-                                            {
-                                                label: `RTPLAN: ${patient.rtplanUid}...`,
-                                                checked: true,
-                                                children: [
-                                                    { label: `RTDOSE: ${patient.rtdoseUid}...`, checked: true }
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
+                children: [{ label: `RTDOSE: ${patient.rtdoseUid}...`, checked: true }]
+            }]
+        }];
+    }
+
+    buildLocalPatientTree(patient) {
+        const ctSeries = this.getCtSeries(patient);
+        const ctNodes = ctSeries.map((ct, index) => ({
+            label: `CT: ${ct.uid}(files: ${ct.files})`,
+            checked: true,
+            children: index === 0 ? this.buildRtChildren(patient) : []
+        }));
+        return [{
+            label: `Patient name: ${patient.name}(Patient ID: ${patient.id})`,
+            checked: true,
+            children: [{
+                label: `Study ID: ${patient.studyId}`,
+                checked: true,
+                children: ctNodes
+            }]
+        }];
     }
 
     getRemotePatientCatalog() {
@@ -212,8 +246,20 @@ class ImportLegacyModalComponent {
                 id: '24112002',
                 name: 'demo',
                 studyId: '88201',
-                ctUid: '2.16.840.1.113662.2.2.3.8.1.3081232920250331163904.3',
-                ctFiles: 64,
+                ctSeries: [
+                    {
+                        uid: '2.16.840.1.113662.2.2.3.8.1.3081232920250331163904.3',
+                        files: 64
+                    },
+                    {
+                        uid: '2.16.840.1.113662.2.2.3.8.1.3081232920250331163904.4',
+                        files: 72
+                    },
+                    {
+                        uid: '2.16.840.1.113662.2.2.3.8.1.3081232920250331163904.5',
+                        files: 56
+                    }
+                ],
                 rtstructUid: '2.16.840.1.113662.2.2.3.5.1.3081232920250331163904.2',
                 rtplanUid: '1.2.276.0.7230010.3.1.4.2661423673.8480.1777342383.93',
                 rtdoseUid: '1.2.276.0.7230010.3.1.4.2661423673.8480.177734453.94'
@@ -546,15 +592,22 @@ class ImportLegacyModalComponent {
         }).join('');
     }
 
-    renderTree(nodes, depth = 0) {
+    renderTree(nodes, depth = 0, context = { patientId: '', patientName: '' }) {
         if (!nodes || !nodes.length) return '';
         const indent = depth * 24;
         return nodes.map((node) => {
-            const row = `<div class="ilmc-tree-item" style="padding-left:${indent}px">
-                ${this.renderCheckbox(node.checked)}
+            const patientRoot = this.parsePatientRoot(node.label);
+            const nextContext = patientRoot || context;
+            const isCt = /^CT:\s*/.test(node.label);
+            const ctUid = isCt ? this.extractCtUid(node.label) : '';
+            const dataAttrs = isCt
+                ? ` data-tree-type="ct" data-patient-id="${nextContext.patientId}" data-patient-name="${nextContext.patientName}" data-ct-uid="${ctUid}"`
+                : ' data-tree-type="other"';
+            const row = `<div class="ilmc-tree-item"${dataAttrs} style="padding-left:${indent}px">
+                ${this.renderCheckbox(node.checked, 'ilmc-tree-checkbox')}
                 <span class="ilmc-tree-text" title="${node.label}">${node.label}</span>
             </div>`;
-            const children = node.children ? this.renderTree(node.children, depth + 1) : '';
+            const children = node.children ? this.renderTree(node.children, depth + 1, nextContext) : '';
             return row + children;
         }).join('');
     }
@@ -643,17 +696,47 @@ class ImportLegacyModalComponent {
         return state.patients.filter((patient) => patient.checked);
     }
 
-    findExistingConflict(checkedPatients) {
-        const existingPatients = this.getSystemExistingPatients();
-        return checkedPatients.find((patient) =>
-            existingPatients.some((existing) => existing.id === patient.id)
-        );
+    getCheckedTreeItemsFromDom() {
+        if (!this.root) return [];
+        return Array.from(this.root.querySelectorAll('.ilmc-data-tree .ilmc-tree-checkbox:checked'))
+            .map((checkbox) => {
+                const row = checkbox.closest('.ilmc-tree-item');
+                if (!row || row.dataset.treeType !== 'ct') return null;
+                return {
+                    type: 'ct',
+                    patientId: row.dataset.patientId || '',
+                    patientName: row.dataset.patientName || '',
+                    ctUid: row.dataset.ctUid || '',
+                    label: row.querySelector('.ilmc-tree-text')?.textContent?.trim() || ''
+                };
+            })
+            .filter(Boolean);
+    }
+
+    classifyImportItems(ctItems) {
+        const importable = [];
+        const skipped = [];
+        ctItems.forEach((item) => {
+            if (this.isDuplicateCtImage(item.patientId, item.ctUid)) {
+                skipped.push(item);
+            } else {
+                importable.push(item);
+            }
+        });
+        return { importable, skipped };
+    }
+
+    formatImportItemLine(item) {
+        const patientLabel = item.patientName
+            ? `${item.patientName}（${item.patientId}）`
+            : item.patientId;
+        return `${patientLabel} / ${item.label}`;
     }
 
     isExistingPatientId(patientId) {
         const normalizedId = String(patientId || '').trim();
         if (!normalizedId) return false;
-        return this.getSystemExistingPatients().some((patient) => patient.id === normalizedId);
+        return this.getSystemExistingPatientIds().includes(normalizedId);
     }
 
     showImportSuccessToast(message) {
@@ -667,12 +750,83 @@ class ImportLegacyModalComponent {
 
     finishImportSuccess(message) {
         this.hideExistsModal();
+        this.hideSummaryModal();
         this.hide();
         this.showImportSuccessToast(message);
     }
 
-    handleDirectImport() {
-        this.finishImportSuccess('导入成功');
+    handleDirectImport(message = '导入成功') {
+        this.finishImportSuccess(message);
+    }
+
+    hideSummaryModal() {
+        if (!this.summaryModalRoot) return;
+        this.summaryModalRoot.remove();
+        this.summaryModalRoot = null;
+    }
+
+    showInfoModal(title, message, confirmText = '确定') {
+        this.hideSummaryModal();
+        this.summaryModalRoot = document.createElement('div');
+        this.summaryModalRoot.className = 'ilmc-exists-mask';
+        this.summaryModalRoot.innerHTML = `
+            <div class="ilmc-summary-modal" role="dialog" aria-modal="true">
+                <div class="ilmc-exists-header">
+                    <h3 class="ilmc-exists-title">${title}</h3>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                </div>
+                <div class="ilmc-exists-body">
+                    <div class="ilmc-info-msg">${message}</div>
+                </div>
+                <div class="ilmc-exists-divider"></div>
+                <div class="ilmc-exists-footer">
+                    <button type="button" class="ilmc-btn primary ilmc-info-confirm-btn">${confirmText}</button>
+                </div>
+            </div>
+        `;
+        this.root.appendChild(this.summaryModalRoot);
+        const close = () => this.hideSummaryModal();
+        this.summaryModalRoot.querySelector('.ilmc-exists-close')?.addEventListener('click', close);
+        this.summaryModalRoot.querySelector('.ilmc-info-confirm-btn')?.addEventListener('click', close);
+    }
+
+    showSummaryConfirmModal(importable, skipped) {
+        this.hideSummaryModal();
+        const importList = importable.map((item) => `<li>${this.formatImportItemLine(item)}</li>`).join('');
+        const skipList = skipped.map((item) => `<li>${this.formatImportItemLine(item)}</li>`).join('');
+        this.summaryModalRoot = document.createElement('div');
+        this.summaryModalRoot.className = 'ilmc-exists-mask';
+        this.summaryModalRoot.innerHTML = `
+            <div class="ilmc-summary-modal" role="dialog" aria-modal="true" aria-label="导入确认">
+                <div class="ilmc-exists-header">
+                    <h3 class="ilmc-exists-title">导入确认</h3>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                </div>
+                <div class="ilmc-summary-body">
+                    <div class="ilmc-summary-section">
+                        <div class="ilmc-summary-section-title">将导入以下图像（${importable.length} 条）</div>
+                        <ul class="ilmc-summary-list">${importList}</ul>
+                    </div>
+                    <div class="ilmc-summary-section">
+                        <div class="ilmc-summary-section-title">以下图像已存在，将跳过导入（${skipped.length} 条）</div>
+                        <ul class="ilmc-summary-list">${skipList}</ul>
+                        <div class="ilmc-summary-tip">跳过的图像请稍后单独选择导入，系统将提示合并到已有患者或新建患者。</div>
+                    </div>
+                </div>
+                <div class="ilmc-exists-divider"></div>
+                <div class="ilmc-exists-footer">
+                    <button type="button" class="ilmc-btn ilmc-summary-cancel-btn">取消</button>
+                    <button type="button" class="ilmc-btn primary ilmc-summary-confirm-btn">确定导入</button>
+                </div>
+            </div>
+        `;
+        this.root.appendChild(this.summaryModalRoot);
+        this.summaryModalRoot.querySelector('.ilmc-exists-close')?.addEventListener('click', () => this.hideSummaryModal());
+        this.summaryModalRoot.querySelector('.ilmc-summary-cancel-btn')?.addEventListener('click', () => this.hideSummaryModal());
+        this.summaryModalRoot.querySelector('.ilmc-summary-confirm-btn')?.addEventListener('click', () => {
+            const skipTip = skipped.length ? `，已跳过 ${skipped.length} 条重复图像` : '';
+            this.handleDirectImport(`导入成功${skipTip}`);
+        });
     }
 
     handleImportClick() {
@@ -682,9 +836,33 @@ class ImportLegacyModalComponent {
             return;
         }
 
-        const conflictPatient = this.findExistingConflict(checkedPatients);
-        if (conflictPatient) {
-            this.showExistsModal(conflictPatient);
+        const checkedItems = this.getCheckedTreeItemsFromDom();
+        if (!checkedItems.length) {
+            window.alert('请至少选择一条图像数据');
+            return;
+        }
+
+        const { importable, skipped } = this.classifyImportItems(checkedItems);
+
+        if (!importable.length && !skipped.length) {
+            window.alert('请至少选择一条图像数据');
+            return;
+        }
+
+        if (!importable.length && skipped.length) {
+            if (skipped.length === 1 && checkedItems.length === 1) {
+                this.showExistsModal(skipped[0]);
+                return;
+            }
+            this.showInfoModal(
+                '提示',
+                '所选图像均已存在，无法导入。请取消勾选重复图像，或单独导入以选择合并/新建患者。'
+            );
+            return;
+        }
+
+        if (importable.length && skipped.length) {
+            this.showSummaryConfirmModal(importable, skipped);
             return;
         }
 
@@ -713,8 +891,8 @@ class ImportLegacyModalComponent {
         const errorEl = this.existsModalRoot.querySelector('.ilmc-exists-error');
 
         if (mode === 'merge') {
-            const { id, name } = this.pendingExistsPatient;
-            this.finishImportSuccess(`已将导入数据合并到患者 ${id} ${name}`);
+            const { patientId, patientName } = this.pendingExistsPatient;
+            this.finishImportSuccess(`已将导入数据合并到患者 ${patientId} ${patientName}`);
             return;
         }
 
@@ -738,19 +916,26 @@ class ImportLegacyModalComponent {
         this.finishImportSuccess(`已新建患者 ${newId} 并导入`);
     }
 
-    showExistsModal(patient) {
+    formatExistsMessage(item) {
+        const patientLabel = item.patientName
+            ? `${item.patientName}（${item.patientId}）`
+            : item.patientId;
+        return `所选图像与患者 ${patientLabel} 中已有图像重复，请选择导入方式。`;
+    }
+
+    showExistsModal(item) {
         this.hideExistsModal();
-        this.pendingExistsPatient = patient;
+        this.pendingExistsPatient = item;
         this.existsModalRoot = document.createElement('div');
         this.existsModalRoot.className = 'ilmc-exists-mask';
         this.existsModalRoot.innerHTML = `
-            <div class="ilmc-exists-modal" role="dialog" aria-modal="true" aria-label="患者已存在提示">
+            <div class="ilmc-exists-modal" role="dialog" aria-modal="true" aria-label="图像重复提示">
                 <div class="ilmc-exists-header">
-                    <h3 class="ilmc-exists-title">提示</h3>
+                    <h3 class="ilmc-exists-title">图像重复</h3>
                     <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
                 </div>
                 <div class="ilmc-exists-body">
-                    <div class="ilmc-exists-msg">图像已存在患者${patient.name}（${patient.id} ${patient.name}）中</div>
+                    <div class="ilmc-exists-msg">${this.formatExistsMessage(item)}</div>
                     <label class="ilmc-exists-option">
                         <input type="radio" name="ilmc-import-mode" value="merge" checked>
                         <span>合并到已存在的患者中</span>
@@ -893,6 +1078,7 @@ class ImportLegacyModalComponent {
 
     hide() {
         this.hideExistsModal();
+        this.hideSummaryModal();
         if (!this.root) return;
         this.root.remove();
         this.root = null;
