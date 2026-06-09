@@ -16,7 +16,7 @@ class ImportLegacyModalComponent {
             patientTrees: {}
         };
         this.existsModalRoot = null;
-        this.summaryModalRoot = null;
+        this.resultModalRoot = null;
         this.pendingExistsPatient = null;
         this.ensureStyles();
     }
@@ -132,14 +132,29 @@ class ImportLegacyModalComponent {
             .ilmc-exists-divider { height: 1px; background: #3b3b3b; }
             .ilmc-exists-footer { padding: 14px 20px 18px; display: flex; justify-content: flex-end; gap: 16px; }
             .ilmc-success-toast { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30; padding: 10px 20px; background: rgba(42, 63, 79, 0.95); border: 1px solid #3AACDE; border-radius: 4px; color: #fff; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.35); pointer-events: none; }
-            .ilmc-summary-modal { width: min(560px, 100%); max-height: min(520px, 90vh); background: linear-gradient(180deg, #333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
-            .ilmc-summary-body { padding: 8px 20px 16px; overflow-y: auto; flex: 1; min-height: 0; }
-            .ilmc-summary-section { margin-bottom: 16px; }
-            .ilmc-summary-section-title { color: #fff; font-size: 13px; font-weight: 500; margin-bottom: 8px; }
-            .ilmc-summary-list { margin: 0; padding: 0; list-style: none; }
-            .ilmc-summary-list li { color: #d0d0d0; font-size: 12px; line-height: 1.6; padding: 4px 0; border-bottom: 1px solid #333; word-break: break-all; }
-            .ilmc-summary-tip { color: #9ca3af; font-size: 12px; line-height: 1.6; margin-top: 8px; }
-            .ilmc-info-msg { color: #d0d0d0; font-size: 13px; line-height: 1.7; }
+            .ilmc-result-modal { width: min(720px, 100%); height: min(560px, 90vh); max-height: min(560px, 90vh); overflow: hidden; }
+            .ilmc-result-modal > .ilmc-exists-header,
+            .ilmc-result-modal > .ilmc-result-stats,
+            .ilmc-result-modal > .ilmc-exists-divider,
+            .ilmc-result-modal > .ilmc-exists-footer { flex-shrink: 0; }
+            .ilmc-result-stats { display: flex; align-items: center; gap: 24px; padding: 10px 20px; background: #1e1e1e; border-bottom: 1px solid #3b3b3b; flex-shrink: 0; font-size: 13px; color: #d0d0d0; }
+            .ilmc-result-stat { display: flex; align-items: center; gap: 6px; }
+            .ilmc-result-stat-icon { width: 16px; height: 16px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+            .ilmc-result-stat-icon.success { background: #52c41a; }
+            .ilmc-result-stat-icon.fail { background: #E74C3C; }
+            .ilmc-result-body { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 8px 0; min-height: 0; }
+            .ilmc-result-row { display: flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 20px 4px 0; box-sizing: border-box; }
+            .ilmc-result-row:hover { background: #2a2a2a; }
+            .ilmc-result-toggle { width: 16px; height: 16px; border: none; background: none; cursor: pointer; flex-shrink: 0; position: relative; padding: 0; }
+            .ilmc-result-toggle::before { content: ''; position: absolute; left: 4px; top: 5px; border: 5px solid transparent; border-left-color: #888; border-right-width: 0; transition: transform 0.15s ease; }
+            .ilmc-result-toggle.expanded::before { transform: rotate(90deg); top: 3px; left: 3px; }
+            .ilmc-result-toggle-spacer { width: 16px; flex-shrink: 0; }
+            .ilmc-result-label { flex: 1; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+            .ilmc-result-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; max-width: 55%; }
+            .ilmc-result-error { color: #E74C3C; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+            .ilmc-result-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+            .ilmc-result-icon.success { background: #52c41a; }
+            .ilmc-result-icon.fail { background: #E74C3C; }
         `;
         document.head.appendChild(style);
     }
@@ -726,13 +741,6 @@ class ImportLegacyModalComponent {
         return { importable, skipped };
     }
 
-    formatImportItemLine(item) {
-        const patientLabel = item.patientName
-            ? `${item.patientName}（${item.patientId}）`
-            : item.patientId;
-        return `${patientLabel} / ${item.label}`;
-    }
-
     isExistingPatientId(patientId) {
         const normalizedId = String(patientId || '').trim();
         if (!normalizedId) return false;
@@ -750,83 +758,207 @@ class ImportLegacyModalComponent {
 
     finishImportSuccess(message) {
         this.hideExistsModal();
-        this.hideSummaryModal();
+        this.hideResultModal();
         this.hide();
         this.showImportSuccessToast(message);
     }
 
-    handleDirectImport(message = '导入成功') {
-        this.finishImportSuccess(message);
+    getResultNodeType(label) {
+        if (/^CT:\s*/.test(label)) return 'ct';
+        if (/^RTSTRUCT:/.test(label)) return 'rtstruct';
+        if (/^RTPLAN:/.test(label)) return 'rtplan';
+        if (/^RTDOSE:/.test(label)) return 'rtdose';
+        if (/^Study ID:/.test(label)) return 'study';
+        if (/^Patient name:/.test(label)) return 'patient';
+        return 'other';
     }
 
-    hideSummaryModal() {
-        if (!this.summaryModalRoot) return;
-        this.summaryModalRoot.remove();
-        this.summaryModalRoot = null;
+    isResultStatusNode(nodeType) {
+        return nodeType === 'ct' || nodeType === 'rtstruct' || nodeType === 'rtplan' || nodeType === 'rtdose';
     }
 
-    showInfoModal(title, message, confirmText = '确定') {
-        this.hideSummaryModal();
-        this.summaryModalRoot = document.createElement('div');
-        this.summaryModalRoot.className = 'ilmc-exists-mask';
-        this.summaryModalRoot.innerHTML = `
-            <div class="ilmc-summary-modal" role="dialog" aria-modal="true">
-                <div class="ilmc-exists-header">
-                    <h3 class="ilmc-exists-title">${title}</h3>
-                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
-                </div>
-                <div class="ilmc-exists-body">
-                    <div class="ilmc-info-msg">${message}</div>
-                </div>
-                <div class="ilmc-exists-divider"></div>
-                <div class="ilmc-exists-footer">
-                    <button type="button" class="ilmc-btn primary ilmc-info-confirm-btn">${confirmText}</button>
-                </div>
-            </div>
-        `;
-        this.root.appendChild(this.summaryModalRoot);
-        const close = () => this.hideSummaryModal();
-        this.summaryModalRoot.querySelector('.ilmc-exists-close')?.addEventListener('click', close);
-        this.summaryModalRoot.querySelector('.ilmc-info-confirm-btn')?.addEventListener('click', close);
-    }
-
-    showSummaryConfirmModal(importable, skipped) {
-        this.hideSummaryModal();
-        const importList = importable.map((item) => `<li>${this.formatImportItemLine(item)}</li>`).join('');
-        const skipList = skipped.map((item) => `<li>${this.formatImportItemLine(item)}</li>`).join('');
-        this.summaryModalRoot = document.createElement('div');
-        this.summaryModalRoot.className = 'ilmc-exists-mask';
-        this.summaryModalRoot.innerHTML = `
-            <div class="ilmc-summary-modal" role="dialog" aria-modal="true" aria-label="导入确认">
-                <div class="ilmc-exists-header">
-                    <h3 class="ilmc-exists-title">导入确认</h3>
-                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
-                </div>
-                <div class="ilmc-summary-body">
-                    <div class="ilmc-summary-section">
-                        <div class="ilmc-summary-section-title">将导入以下图像（${importable.length} 条）</div>
-                        <ul class="ilmc-summary-list">${importList}</ul>
-                    </div>
-                    <div class="ilmc-summary-section">
-                        <div class="ilmc-summary-section-title">以下图像已存在，将跳过导入（${skipped.length} 条）</div>
-                        <ul class="ilmc-summary-list">${skipList}</ul>
-                        <div class="ilmc-summary-tip">跳过的图像请稍后单独选择导入，系统将提示合并到已有患者或新建患者。</div>
-                    </div>
-                </div>
-                <div class="ilmc-exists-divider"></div>
-                <div class="ilmc-exists-footer">
-                    <button type="button" class="ilmc-btn ilmc-summary-cancel-btn">取消</button>
-                    <button type="button" class="ilmc-btn primary ilmc-summary-confirm-btn">确定导入</button>
-                </div>
-            </div>
-        `;
-        this.root.appendChild(this.summaryModalRoot);
-        this.summaryModalRoot.querySelector('.ilmc-exists-close')?.addEventListener('click', () => this.hideSummaryModal());
-        this.summaryModalRoot.querySelector('.ilmc-summary-cancel-btn')?.addEventListener('click', () => this.hideSummaryModal());
-        this.summaryModalRoot.querySelector('.ilmc-summary-confirm-btn')?.addEventListener('click', () => {
-            const skipTip = skipped.length ? `，已跳过 ${skipped.length} 条重复图像` : '';
-            this.handleDirectImport(`导入成功${skipTip}`);
+    buildResultChildNodes(nodes, parentImported) {
+        if (!nodes?.length) return [];
+        return nodes.map((node) => {
+            const nodeType = this.getResultNodeType(node.label);
+            const showStatus = this.isResultStatusNode(nodeType);
+            const imported = parentImported;
+            return {
+                label: node.label,
+                nodeType,
+                showStatus,
+                status: showStatus ? (imported ? 'success' : 'fail') : null,
+                error: '',
+                expanded: true,
+                children: this.buildResultChildNodes(node.children, imported)
+            };
         });
+    }
+
+    buildResultNodeFromSource(node, context, checkedCtUids) {
+        const patientRoot = this.parsePatientRoot(node.label);
+        const nextContext = patientRoot || context;
+        const nodeType = this.getResultNodeType(node.label);
+
+        if (nodeType === 'ct') {
+            const ctUid = this.extractCtUid(node.label);
+            if (!checkedCtUids.has(ctUid)) return null;
+
+            const isDuplicate = this.isDuplicateCtImage(nextContext.patientId, ctUid);
+            const imported = !isDuplicate;
+
+            return {
+                label: node.label,
+                nodeType: 'ct',
+                showStatus: true,
+                status: imported ? 'success' : 'fail',
+                error: isDuplicate ? '图像重复' : '',
+                expanded: true,
+                children: this.buildResultChildNodes(node.children, imported)
+            };
+        }
+
+        const children = (node.children || [])
+            .map((child) => this.buildResultNodeFromSource(child, nextContext, checkedCtUids))
+            .filter(Boolean);
+        if (!children.length) return null;
+
+        return {
+            label: node.label,
+            nodeType,
+            showStatus: false,
+            status: null,
+            expanded: true,
+            children
+        };
+    }
+
+    buildImportResultTree(checkedCtUids) {
+        const data = this.getTabData();
+        return (data.tree || [])
+            .map((node) => this.buildResultNodeFromSource(node, { patientId: '', patientName: '' }, checkedCtUids))
+            .filter(Boolean);
+    }
+
+    countResultItems(nodes) {
+        let success = 0;
+        let fail = 0;
+        const walk = (list) => {
+            list.forEach((node) => {
+                if (node.showStatus) {
+                    if (node.status === 'success') success += 1;
+                    else fail += 1;
+                }
+                if (node.children?.length) walk(node.children);
+            });
+        };
+        walk(nodes);
+        return { success, fail };
+    }
+
+    renderResultStatusIcon(status) {
+        return status === 'success'
+            ? '<span class="ilmc-result-icon success" aria-label="成功">✓</span>'
+            : '<span class="ilmc-result-icon fail" aria-label="失败">✕</span>';
+    }
+
+    renderResultTree(nodes, depth = 0) {
+        if (!nodes?.length) return '';
+        return nodes.map((node) => {
+            const hasChildren = !!node.children?.length;
+            const expanded = node.expanded !== false;
+            const indent = depth * 20;
+            const toggle = hasChildren
+                ? `<button type="button" class="ilmc-result-toggle${expanded ? ' expanded' : ''}" aria-label="展开/收起"></button>`
+                : '<span class="ilmc-result-toggle-spacer"></span>';
+            const errorHtml = node.showStatus && node.error
+                ? `<span class="ilmc-result-error" title="${node.error}">${node.error}</span>`
+                : '';
+            const statusHtml = node.showStatus
+                ? this.renderResultStatusIcon(node.status)
+                : '';
+            const childrenHtml = hasChildren && expanded
+                ? `<div class="ilmc-result-children">${this.renderResultTree(node.children, depth + 1)}</div>`
+                : '';
+
+            return `<div class="ilmc-result-node">
+                <div class="ilmc-result-row" style="padding-left:${indent}px">
+                    ${toggle}
+                    <span class="ilmc-result-label" title="${node.label}">${node.label}</span>
+                    <div class="ilmc-result-meta">
+                        ${errorHtml}
+                        ${statusHtml}
+                    </div>
+                </div>
+                ${childrenHtml}
+            </div>`;
+        }).join('');
+    }
+
+    hideResultModal() {
+        if (!this.resultModalRoot) return;
+        this.resultModalRoot.remove();
+        this.resultModalRoot = null;
+    }
+
+    bindResultModalEvents() {
+        if (!this.resultModalRoot) return;
+        const close = () => this.hideResultModal();
+        this.resultModalRoot.querySelector('.ilmc-exists-close')?.addEventListener('click', close);
+        this.resultModalRoot.querySelector('.ilmc-result-confirm-btn')?.addEventListener('click', close);
+        this.resultModalRoot.addEventListener('click', (e) => {
+            const toggle = e.target.closest('.ilmc-result-toggle');
+            if (!toggle) return;
+            toggle.classList.toggle('expanded');
+            const children = toggle.closest('.ilmc-result-node')?.querySelector(':scope > .ilmc-result-children');
+            if (children) children.classList.toggle('ilmc-hidden');
+        });
+    }
+
+    showImportResultModal(resultTree) {
+        this.hideResultModal();
+        const { success, fail } = this.countResultItems(resultTree);
+        const mountContainer = this.options.mountContainer || document.body;
+        this.resultModalRoot = document.createElement('div');
+        this.resultModalRoot.className = 'ilmc-exists-mask';
+        if (mountContainer === document.body) {
+            this.resultModalRoot.style.cssText = 'position:fixed;inset:0;z-index:10001;';
+        }
+        this.resultModalRoot.innerHTML = `
+            <div class="ilmc-exists-modal ilmc-result-modal" role="dialog" aria-modal="true" aria-label="导入结果">
+                <div class="ilmc-exists-header">
+                    <h3 class="ilmc-exists-title">导入结果</h3>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                </div>
+                <div class="ilmc-result-stats">
+                    <div class="ilmc-result-stat">
+                        <span class="ilmc-result-stat-icon success">✓</span>
+                        <span>导入成功：${success}</span>
+                    </div>
+                    <div class="ilmc-result-stat">
+                        <span class="ilmc-result-stat-icon fail">✕</span>
+                        <span>导入失败：${fail}</span>
+                    </div>
+                </div>
+                <div class="ilmc-result-body">
+                    ${this.renderResultTree(resultTree)}
+                </div>
+                <div class="ilmc-exists-divider"></div>
+                <div class="ilmc-exists-footer">
+                    <button type="button" class="ilmc-btn primary ilmc-result-confirm-btn">确定</button>
+                </div>
+            </div>
+        `;
+        mountContainer.appendChild(this.resultModalRoot);
+        this.bindResultModalEvents();
+    }
+
+    finishBatchImport(checkedItems) {
+        this.hideExistsModal();
+        const checkedCtUids = new Set(checkedItems.map((item) => item.ctUid));
+        const resultTree = this.buildImportResultTree(checkedCtUids);
+        this.hide();
+        this.showImportResultModal(resultTree);
     }
 
     handleImportClick() {
@@ -854,19 +986,9 @@ class ImportLegacyModalComponent {
                 this.showExistsModal(skipped[0]);
                 return;
             }
-            this.showInfoModal(
-                '提示',
-                '所选图像均已存在，无法导入。请取消勾选重复图像，或单独导入以选择合并/新建患者。'
-            );
-            return;
         }
 
-        if (importable.length && skipped.length) {
-            this.showSummaryConfirmModal(importable, skipped);
-            return;
-        }
-
-        this.handleDirectImport();
+        this.finishBatchImport(checkedItems);
     }
 
     updateExistsModalMode() {
@@ -1078,7 +1200,7 @@ class ImportLegacyModalComponent {
 
     hide() {
         this.hideExistsModal();
-        this.hideSummaryModal();
+        this.hideResultModal();
         if (!this.root) return;
         this.root.remove();
         this.root = null;
