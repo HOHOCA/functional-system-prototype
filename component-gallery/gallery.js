@@ -960,6 +960,20 @@ class ComponentGallery {
                         }
                     }
                     break;
+
+                case 'ImportLegacyModalComponent':
+                    if (typeof ImportLegacyModalComponent !== 'undefined') {
+                        componentContainer.style.height = '760px';
+                        componentContainer.style.minHeight = '760px';
+                        instance = new ImportLegacyModalComponent({
+                            mountContainer: componentContainer,
+                            defaultTab: 'remote'
+                        });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
                     
                 case 'PlanComparisonDoseStatisticsComponent':
                     if (typeof PlanComparisonDoseStatisticsComponent !== 'undefined') {

@@ -247,6 +247,14 @@ const COMPONENTS_CONFIG = {
             description: '生成计划库弹窗：侧栏计划/射束表单；主区 #planLibraryCenterRoot 为空容器，待接入布局',
             className: 'PlanLibraryComponent',
             filePath: '../shared/scripts/components/PlanLibraryComponent.js'
+        },
+        {
+            id: 'import-legacy-modal',
+            name: 'ImportLegacyModal',
+            displayName: '导入（旧版）',
+            description: '患者数据导入弹窗（旧版）：支持远程节点导入与本地导入，含患者列表与数据树选择',
+            className: 'ImportLegacyModalComponent',
+            filePath: '../shared/scripts/components/ImportLegacyModalComponent.js'
         }
     ],
     
