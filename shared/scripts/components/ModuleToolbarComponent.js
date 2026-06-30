@@ -597,6 +597,7 @@ class ModuleToolbarComponent {
         
         this.elements.header.addEventListener('mousedown', (e) => {
             if (this.state.mode !== 'floating') return;
+            if (e.target.closest('.module-toolbar-header-btn')) return;
             
             isDragging = true;
             startX = e.clientX;
@@ -655,22 +656,29 @@ class ModuleToolbarComponent {
      * 绑定"其他工具"按钮事件
      */
     bindMoreToolsEvents() {
-        // 固定模式的"其他工具"按钮（在控制按钮区域）
+        if (!this._onFixedMoreClick) {
+            this._onFixedMoreClick = (e) => {
+                e.stopPropagation();
+                this.showMoreToolsMenu(e.currentTarget);
+            };
+        }
+        if (!this._onFloatingMoreClick) {
+            this._onFloatingMoreClick = (e) => {
+                e.stopPropagation();
+                this.showMoreToolsMenu(e.currentTarget);
+            };
+        }
+
         const fixedMoreBtn = document.getElementById(`${this.containerId}-more-btn`);
         if (fixedMoreBtn) {
-            fixedMoreBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.showMoreToolsMenu(fixedMoreBtn);
-            });
+            fixedMoreBtn.removeEventListener('click', this._onFixedMoreClick);
+            fixedMoreBtn.addEventListener('click', this._onFixedMoreClick);
         }
-        
-        // 悬浮模式的"其他工具"按钮（在标题栏）
+
         const floatingMoreBtn = document.getElementById(`${this.containerId}-floating-more-btn`);
         if (floatingMoreBtn) {
-            floatingMoreBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.showMoreToolsMenu(floatingMoreBtn);
-            });
+            floatingMoreBtn.removeEventListener('click', this._onFloatingMoreClick);
+            floatingMoreBtn.addEventListener('click', this._onFloatingMoreClick);
         }
     }
 
@@ -742,7 +750,7 @@ class ModuleToolbarComponent {
         
         // 点击外部关闭菜单
         const closeMenu = (e) => {
-            if (!menu.contains(e.target) && e.target !== triggerBtn) {
+            if (!menu.contains(e.target) && !triggerBtn.contains(e.target)) {
                 menu.remove();
                 document.removeEventListener('click', closeMenu);
             }

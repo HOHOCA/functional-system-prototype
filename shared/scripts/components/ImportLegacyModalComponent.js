@@ -1,4 +1,6 @@
 class ImportLegacyModalComponent {
+    static PULL_DATA_MAX_CT = 10;
+
     constructor(options = {}) {
         this.options = {
             mountContainer: document.body,
@@ -6,17 +8,19 @@ class ImportLegacyModalComponent {
             ...options
         };
         this.root = null;
-        this.activeTab = this.options.defaultTab;
+        this.activeTab = this.options.defaultTab === 'external' ? 'remote' : this.options.defaultTab;
         this.remoteState = null;
         this.localState = null;
-        this.externalState = {
+        this.existsModalRoot = null;
+        this.resultModalRoot = null;
+        this.pullDataModalRoot = null;
+        this.pullProgressModal = null;
+        this.pullDataState = {
             selectedNode: '',
             searchValue: '',
             patients: [],
             patientTrees: {}
         };
-        this.existsModalRoot = null;
-        this.resultModalRoot = null;
         this.pendingExistsPatient = null;
         this.ensureStyles();
     }
@@ -77,6 +81,10 @@ class ImportLegacyModalComponent {
             .ilmc-refresh-btn:hover:not(:disabled) { background: #333; border-color: #3AACDE; }
             .ilmc-refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #666; }
             .ilmc-refresh-btn svg { width: 16px; height: 16px; }
+            .ilmc-pull-data-btn { width: 32px; height: 32px; background: #2f2f2f; border: 1px solid #444; border-radius: 4px; color: #e6e6e6; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color 0.2s ease, border-color 0.2s ease; }
+            .ilmc-pull-data-btn:hover:not(:disabled) { background: #333; border-color: #3AACDE; }
+            .ilmc-pull-data-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #666; }
+            .ilmc-pull-data-btn svg { width: 16px; height: 16px; }
             .ilmc-folder-row { display: flex; align-items: center; gap: 10px; }
             .ilmc-folder-label { color: #ddd; font-size: 14px; white-space: nowrap; }
             .ilmc-folder-input-wrap { flex: 1; display: flex; align-items: stretch; }
@@ -110,8 +118,10 @@ class ImportLegacyModalComponent {
             .ilmc-auto-delete { display: flex; align-items: center; cursor: pointer; color: #ddd; font-size: 13px; }
             .ilmc-btn { min-width: 80px; height: 32px; border-radius: 4px; border: 1px solid #575757; background: #3f3f3f; color: #d2d2d2; cursor: pointer; font-size: 13px; }
             .ilmc-btn.primary { border-color: #3AACDE; background: #3AACDE; color: #fff; }
-            .ilmc-btn.primary:hover { background: #218FBF; border-color: #218FBF; }
-            .ilmc-btn:hover { background: #4a4a4a; }
+            .ilmc-btn.primary:hover:not(:disabled) { background: #218FBF; border-color: #218FBF; }
+            .ilmc-btn:hover:not(:disabled) { background: #4a4a4a; }
+            .ilmc-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #888; }
+            .ilmc-btn.primary:disabled { background: #3a5a6a; border-color: #3a5a6a; color: #aaa; }
             .ilmc-hidden { display: none !important; }
             .ilmc-exists-mask { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); padding: 16px; box-sizing: border-box; }
             .ilmc-exists-modal { width: min(480px, 100%); background: linear-gradient(180deg, #333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
@@ -155,6 +165,18 @@ class ImportLegacyModalComponent {
             .ilmc-result-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
             .ilmc-result-icon.success { background: #52c41a; }
             .ilmc-result-icon.fail { background: #E74C3C; }
+            .ilmc-pull-modal { width: min(720px, 100%); height: min(560px, 90vh); max-height: min(560px, 90vh); overflow: hidden; }
+            .ilmc-pull-modal > .ilmc-exists-header,
+            .ilmc-pull-modal > .ilmc-exists-divider,
+            .ilmc-pull-modal > .ilmc-exists-footer { flex-shrink: 0; }
+            .ilmc-pull-modal > .ilmc-exists-body { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 20px 16px; overflow: hidden; }
+            .ilmc-pull-toolbar { flex-shrink: 0; margin-bottom: 12px; }
+            .ilmc-pull-data-panel { flex: 1; min-height: 0; background: #1e1e1e; border: 1px solid #404040; border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; }
+            .ilmc-pull-data-panel .ilmc-panel-header { justify-content: space-between; }
+            .ilmc-pull-data-hint { color: #888; font-size: 12px; font-weight: 400; flex-shrink: 0; }
+            .ilmc-pull-data-panel .ilmc-panel-content { flex: 1; overflow-y: auto; padding: 8px 10px; }
+            .ilmc-checkbox.ilmc-checkbox-disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+            .ilmc-checkbox input:disabled + .ilmc-checkmark { background: #252525; border-color: #353535; }
         `;
         document.head.appendChild(style);
     }
@@ -434,9 +456,9 @@ class ImportLegacyModalComponent {
         }];
     }
 
-    searchExternalDicom(query) {
+    searchDicomByNode(selectedNode, query) {
         const keyword = String(query || '').trim();
-        if (!this.externalState.selectedNode || !keyword || !/\d/.test(keyword)) {
+        if (!selectedNode || !keyword || !/\d/.test(keyword)) {
             return { patients: [], patientTrees: {} };
         }
 
@@ -460,45 +482,341 @@ class ImportLegacyModalComponent {
         return { patients, patientTrees };
     }
 
-    getExternalDicomData() {
-        return {
-            searchValue: this.externalState.searchValue,
-            selectedNode: this.externalState.selectedNode,
-            patients: this.externalState.patients,
-            tree: this.buildTreeForCheckedPatients(this.externalState.patients, this.externalState.patientTrees)
+    searchPullDataDicom(query) {
+        return this.searchDicomByNode(this.pullDataState.selectedNode, query);
+    }
+
+    handlePullData() {
+        this.showPullDataModal();
+    }
+
+    resetPullDataState() {
+        this.pullDataState = {
+            selectedNode: '',
+            searchValue: '',
+            patients: [],
+            patientTrees: {}
         };
     }
 
-    handleExternalSearch(value) {
-        this.externalState.searchValue = String(value || '').trim();
-        const result = this.searchExternalDicom(this.externalState.searchValue);
-        this.externalState.patients = result.patients;
-        this.externalState.patientTrees = result.patientTrees;
-        this.updatePanels();
+    getPullDataDisplayTree() {
+        return Object.values(this.pullDataState.patientTrees).flat();
     }
 
-    clearExternalResults() {
-        this.externalState.patients = [];
-        this.externalState.patientTrees = {};
-        this.updatePanels();
+    handlePullDataSearch(value) {
+        this.pullDataState.searchValue = String(value || '').trim();
+        const result = this.searchPullDataDicom(this.pullDataState.searchValue);
+        this.pullDataState.patients = result.patients;
+        this.pullDataState.patientTrees = result.patientTrees;
+        this.updatePullDataModalTree();
     }
 
-    resetExternalSearch() {
-        this.externalState.searchValue = '';
-        this.clearExternalResults();
-        this.updateExternalSearchInput();
+    clearPullDataResults() {
+        this.pullDataState.patients = [];
+        this.pullDataState.patientTrees = {};
+        this.updatePullDataModalTree();
     }
 
-    updateExternalSearchInput() {
-        if (!this.root || this.activeTab !== 'external') return;
-        const enabled = !!this.externalState.selectedNode;
-        const input = this.root.querySelector('.ilmc-external-search-input');
-        const refreshBtn = this.root.querySelector('.ilmc-external-toolbar .ilmc-refresh-btn');
+    resetPullDataSearch() {
+        this.pullDataState.searchValue = '';
+        this.clearPullDataResults();
+        this.updatePullDataSearchInput();
+    }
+
+    updatePullDataSearchInput() {
+        if (!this.pullDataModalRoot) return;
+        const enabled = !!this.pullDataState.selectedNode;
+        const input = this.pullDataModalRoot.querySelector('.ilmc-pull-search-input');
         if (input) {
             input.disabled = !enabled;
-            input.value = enabled ? this.externalState.searchValue : '';
+            input.value = enabled ? this.pullDataState.searchValue : '';
         }
-        if (refreshBtn) refreshBtn.disabled = !enabled;
+    }
+
+    updatePullDataModalTree() {
+        if (!this.pullDataModalRoot) return;
+        const dataTree = this.pullDataModalRoot.querySelector('.ilmc-pull-data-tree');
+        if (dataTree) {
+            dataTree.innerHTML = this.renderTree(this.getPullDataDisplayTree());
+        }
+        this.enforcePullDataMaxCtSelection();
+        this.updatePullDataCtCheckboxLimits();
+        this.updatePullDataConfirmButton();
+    }
+
+    getCheckedPullCtCount() {
+        if (!this.pullDataModalRoot) return 0;
+        return this.pullDataModalRoot.querySelectorAll(
+            '.ilmc-pull-data-tree .ilmc-tree-item[data-tree-type="ct"] .ilmc-tree-checkbox:checked'
+        ).length;
+    }
+
+    enforcePullDataMaxCtSelection() {
+        if (!this.pullDataModalRoot) return;
+        const max = ImportLegacyModalComponent.PULL_DATA_MAX_CT;
+        let checkedCount = 0;
+        this.pullDataModalRoot.querySelectorAll(
+            '.ilmc-pull-data-tree .ilmc-tree-item[data-tree-type="ct"] .ilmc-tree-checkbox'
+        ).forEach((checkbox) => {
+            if (!checkbox.checked) return;
+            checkedCount += 1;
+            if (checkedCount > max) checkbox.checked = false;
+        });
+    }
+
+    updatePullDataCtCheckboxLimits() {
+        if (!this.pullDataModalRoot) return;
+        const atLimit = this.getCheckedPullCtCount() >= ImportLegacyModalComponent.PULL_DATA_MAX_CT;
+
+        this.pullDataModalRoot.querySelectorAll('.ilmc-pull-data-tree .ilmc-tree-checkbox').forEach((checkbox) => {
+            const label = checkbox.closest('.ilmc-checkbox');
+            const shouldDisable = atLimit && !checkbox.checked;
+
+            checkbox.disabled = shouldDisable;
+            if (label) {
+                label.classList.toggle('ilmc-checkbox-disabled', shouldDisable);
+            }
+        });
+    }
+
+    handlePullDataTreeCheckboxChange(checkbox) {
+        const row = checkbox.closest('.ilmc-tree-item');
+        if (row?.dataset.treeType === 'ct' && checkbox.checked) {
+            if (this.getCheckedPullCtCount() > ImportLegacyModalComponent.PULL_DATA_MAX_CT) {
+                checkbox.checked = false;
+            }
+        }
+        this.updatePullDataCtCheckboxLimits();
+        this.updatePullDataConfirmButton();
+    }
+
+    hasAnyCheckedPullDataTreeItem() {
+        if (!this.pullDataModalRoot) return false;
+        return !!this.pullDataModalRoot.querySelector('.ilmc-pull-data-tree .ilmc-tree-checkbox:checked');
+    }
+
+    isPullDataConfirmEnabled() {
+        return this.getPullDataDisplayTree().length > 0
+            && this.hasAnyCheckedPullDataTreeItem();
+    }
+
+    updatePullDataConfirmButton() {
+        if (!this.pullDataModalRoot) return;
+        const confirmBtn = this.pullDataModalRoot.querySelector('.ilmc-pull-confirm-btn');
+        if (confirmBtn) {
+            confirmBtn.disabled = !this.isPullDataConfirmEnabled();
+        }
+    }
+
+    syncPullDataTreeChecksFromDom() {
+        if (!this.pullDataModalRoot) return;
+        const checkboxByLabel = new Map();
+        this.pullDataModalRoot.querySelectorAll('.ilmc-pull-data-tree .ilmc-tree-item').forEach((row) => {
+            const label = row.querySelector('.ilmc-tree-text')?.textContent?.trim();
+            const checkbox = row.querySelector('.ilmc-tree-checkbox');
+            if (label && checkbox) checkboxByLabel.set(label, checkbox.checked);
+        });
+
+        const applyChecks = (nodes) => {
+            nodes.forEach((node) => {
+                if (checkboxByLabel.has(node.label)) {
+                    node.checked = checkboxByLabel.get(node.label);
+                }
+                if (node.children) applyChecks(node.children);
+            });
+        };
+
+        Object.values(this.pullDataState.patientTrees).forEach((tree) => applyChecks(tree));
+    }
+
+    treeHasCheckedNode(nodes) {
+        if (!nodes?.length) return false;
+        return nodes.some((node) => {
+            if (node.checked) return true;
+            return node.children ? this.treeHasCheckedNode(node.children) : false;
+        });
+    }
+
+    mergePullDataToRemote() {
+        this.ensureRemoteState();
+
+        const patientIdsToMerge = Object.keys(this.pullDataState.patientTrees).filter((patientId) => {
+            return this.treeHasCheckedNode(this.pullDataState.patientTrees[patientId]);
+        });
+
+        if (!patientIdsToMerge.length) return false;
+
+        patientIdsToMerge.forEach((patientId) => {
+            const pullPatient = this.pullDataState.patients.find((p) => p.id === patientId);
+            let remotePatient = this.remoteState.patients.find((p) => p.id === patientId);
+
+            if (!remotePatient && pullPatient) {
+                remotePatient = {
+                    id: pullPatient.id,
+                    name: pullPatient.name,
+                    checked: true,
+                    selected: false
+                };
+                this.remoteState.patients.push(remotePatient);
+            } else if (remotePatient) {
+                remotePatient.checked = true;
+            }
+
+            if (this.pullDataState.patientTrees[patientId]) {
+                this.remoteState.patientTrees[patientId] = JSON.parse(
+                    JSON.stringify(this.pullDataState.patientTrees[patientId])
+                );
+            }
+        });
+
+        if (this.activeTab === 'remote') {
+            this.updatePanels();
+        }
+        return true;
+    }
+
+    hidePullProgressModal() {
+        if (!this.pullProgressModal) return;
+        this.pullProgressModal.destroy();
+        this.pullProgressModal = null;
+    }
+
+    handlePullDataConfirm() {
+        if (!this.isPullDataConfirmEnabled()) return;
+
+        this.syncPullDataTreeChecksFromDom();
+        this.hidePullDataModal();
+
+        const mountContainer = document.body;
+        const PPM = typeof window !== 'undefined' ? window.PromptProgressModalComponent : null;
+
+        const finishPull = () => {
+            this.mergePullDataToRemote();
+        };
+
+        if (typeof PPM !== 'function') {
+            finishPull();
+            return;
+        }
+
+        this.hidePullProgressModal();
+        this.pullProgressModal = new PPM({
+            mountContainer,
+            message: '正在拉取外部DICOM Query数据...',
+            autoCompleteMs: 2600,
+            showCancelButton: false,
+            onComplete: () => {
+                this.hidePullProgressModal();
+                finishPull();
+            }
+        });
+        this.pullProgressModal.show();
+    }
+
+    hidePullDataModal() {
+        if (!this.pullDataModalRoot) return;
+        this.pullDataModalRoot.remove();
+        this.pullDataModalRoot = null;
+    }
+
+    renderPullDataRemoteNodeSelect() {
+        return this.renderRemoteNodeSelect(this.pullDataState.selectedNode, 'ilmc-pull-node-select');
+    }
+
+    renderPullDataModalContent() {
+        const searchEnabled = !!this.pullDataState.selectedNode;
+        const searchValue = searchEnabled ? (this.pullDataState.searchValue || '') : '';
+        const searchDisabled = searchEnabled ? '' : 'disabled';
+
+        return `
+            <div class="ilmc-pull-toolbar">
+                <div class="ilmc-external-row">
+                    <div class="ilmc-node-select">
+                        ${this.renderPullDataRemoteNodeSelect()}
+                    </div>
+                    <div class="ilmc-search-box">
+                        <input type="text" class="ilmc-pull-search-input" value="${searchValue}" placeholder="请输入患者ID，点击搜索图标或按下回车键开始搜索" ${searchDisabled}>
+                    </div>
+                </div>
+            </div>
+            <div class="ilmc-pull-data-panel">
+                ${this.renderPullDataPanelHeader()}
+                <div class="ilmc-panel-content ilmc-pull-data-tree">
+                    ${this.renderTree(this.getPullDataDisplayTree())}
+                </div>
+            </div>`;
+    }
+
+    bindPullDataModalEvents() {
+        if (!this.pullDataModalRoot) return;
+
+        this.pullDataModalRoot.addEventListener('click', (e) => {
+            if (e.target.closest('.ilmc-exists-close') || e.target.closest('.ilmc-pull-cancel-btn')) {
+                this.hidePullDataModal();
+                return;
+            }
+            if (e.target.closest('.ilmc-pull-confirm-btn:not(:disabled)')) {
+                this.handlePullDataConfirm();
+            }
+        });
+
+        this.pullDataModalRoot.addEventListener('input', (e) => {
+            if (!e.target.matches('.ilmc-pull-search-input')) return;
+            this.pullDataState.searchValue = e.target.value;
+        });
+
+        this.pullDataModalRoot.addEventListener('change', (e) => {
+            if (e.target.matches('.ilmc-pull-data-tree .ilmc-tree-checkbox')) {
+                this.handlePullDataTreeCheckboxChange(e.target);
+                return;
+            }
+            if (!e.target.matches('.ilmc-pull-node-select')) return;
+            const input = this.pullDataModalRoot.querySelector('.ilmc-pull-search-input');
+            if (input) this.pullDataState.searchValue = input.value;
+            this.pullDataState.selectedNode = e.target.value;
+            if (!this.pullDataState.selectedNode) {
+                this.resetPullDataSearch();
+                return;
+            }
+            this.clearPullDataResults();
+            this.updatePullDataSearchInput();
+        });
+
+        this.pullDataModalRoot.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter' || !e.target.matches('.ilmc-pull-search-input:not(:disabled)')) return;
+            e.preventDefault();
+            this.handlePullDataSearch(e.target.value);
+        });
+    }
+
+    showPullDataModal() {
+        if (!this.root) return;
+
+        this.hidePullDataModal();
+        this.resetPullDataState();
+
+        this.pullDataModalRoot = document.createElement('div');
+        this.pullDataModalRoot.className = 'ilmc-exists-mask';
+        this.pullDataModalRoot.innerHTML = `
+            <div class="ilmc-exists-modal ilmc-pull-modal" role="dialog" aria-modal="true" aria-label="拉取外部DICOM Query">
+                <div class="ilmc-exists-header">
+                    <h3 class="ilmc-exists-title">拉取外部DICOM Query</h3>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                </div>
+                <div class="ilmc-exists-body">
+                    ${this.renderPullDataModalContent()}
+                </div>
+                <div class="ilmc-exists-divider"></div>
+                <div class="ilmc-exists-footer">
+                    <button type="button" class="ilmc-btn ilmc-pull-cancel-btn">取消</button>
+                    <button type="button" class="ilmc-btn primary ilmc-pull-confirm-btn" disabled>确定</button>
+                </div>
+            </div>
+        `;
+
+        this.root.appendChild(this.pullDataModalRoot);
+        this.bindPullDataModalEvents();
+        this.updatePullDataConfirmButton();
     }
 
     getActivePatientState() {
@@ -506,8 +824,6 @@ class ImportLegacyModalComponent {
             case 'local':
                 this.ensureLocalState();
                 return this.localState;
-            case 'external':
-                return this.externalState;
             default:
                 this.ensureRemoteState();
                 return this.remoteState;
@@ -547,8 +863,6 @@ class ImportLegacyModalComponent {
         switch (this.activeTab) {
             case 'local':
                 return this.getLocalData();
-            case 'external':
-                return this.getExternalDicomData();
             default:
                 return this.getRemoteData();
         }
@@ -562,8 +876,7 @@ class ImportLegacyModalComponent {
         ];
     }
 
-    renderRemoteNodeSelect() {
-        const selectedNode = this.externalState.selectedNode || '';
+    renderRemoteNodeSelect(selectedNode = '', className = 'ilmc-remote-node-select') {
         const placeholderSelected = selectedNode ? '' : 'selected';
         const options = this.getRemoteNodeOptions()
             .map((node) => {
@@ -571,7 +884,7 @@ class ImportLegacyModalComponent {
                 return `<option value="${node.value}" ${selected}>${node.label}</option>`;
             })
             .join('');
-        return `<select class="ilmc-remote-node-select"><option value="" ${placeholderSelected}>请选择远程节点</option>${options}</select>`;
+        return `<select class="${className}"><option value="" ${placeholderSelected}>请选择远程节点</option>${options}</select>`;
     }
 
     renderRefreshButton(disabled = false) {
@@ -586,9 +899,27 @@ class ImportLegacyModalComponent {
         </button>`;
     }
 
+    renderPullDataButton(disabled = false) {
+        const disabledAttr = disabled ? 'disabled' : '';
+        return `<button type="button" class="ilmc-pull-data-btn" title="拉取数据" ${disabledAttr}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3v12"></path>
+                <path d="m7 10 5 5 5-5"></path>
+                <path d="M5 21h14"></path>
+            </svg>
+        </button>`;
+    }
+
     renderPanelHeader(label, required = false) {
         const prefix = required ? '<span class="ilmc-required">*</span>' : '';
         return `<div class="ilmc-panel-header">${prefix}${label}</div>`;
+    }
+
+    renderPullDataPanelHeader() {
+        return `<div class="ilmc-panel-header">
+            <span><span class="ilmc-required">*</span>数据列表</span>
+            <span class="ilmc-pull-data-hint">最多拉取10条数据</span>
+        </div>`;
     }
 
     renderCheckbox(checked, extraClass = '') {
@@ -630,7 +961,6 @@ class ImportLegacyModalComponent {
     renderContent() {
         const isRemote = this.activeTab === 'remote';
         const isLocal = this.activeTab === 'local';
-        const isExternal = this.activeTab === 'external';
         const data = this.getTabData();
 
         const remoteToolbar = `
@@ -639,6 +969,7 @@ class ImportLegacyModalComponent {
                     <div class="ilmc-search-box">
                         <input type="text" placeholder="请输入患者姓名或ID，点击搜索图标或按下回车键开始搜索">
                     </div>
+                    ${this.renderPullDataButton()}
                     ${this.renderRefreshButton()}
                 </div>
             </div>`;
@@ -651,22 +982,6 @@ class ImportLegacyModalComponent {
                         <input type="text" value="${data.folderPath || ''}" readonly>
                         <button type="button" class="ilmc-folder-browse">...</button>
                     </div>
-                </div>
-            </div>`;
-
-        const externalSearchEnabled = !!data.selectedNode;
-        const externalSearchValue = externalSearchEnabled ? (data.searchValue || '') : '';
-        const externalSearchDisabled = externalSearchEnabled ? '' : 'disabled';
-        const externalToolbar = `
-            <div class="ilmc-toolbar ilmc-external-toolbar">
-                <div class="ilmc-external-row">
-                    <div class="ilmc-node-select">
-                        ${this.renderRemoteNodeSelect()}
-                    </div>
-                    <div class="ilmc-search-box">
-                        <input type="text" class="ilmc-external-search-input" value="${externalSearchValue}" placeholder="请输入患者ID，点击搜索图标或按下回车键开始搜索" ${externalSearchDisabled}>
-                    </div>
-                    ${this.renderRefreshButton(!externalSearchEnabled)}
                 </div>
             </div>`;
 
@@ -683,16 +998,15 @@ class ImportLegacyModalComponent {
         return `
             <div class="ilmc-remote-toolbar-wrap${isRemote ? '' : ' ilmc-hidden'}">${remoteToolbar}</div>
             <div class="ilmc-local-toolbar-wrap${isLocal ? '' : ' ilmc-hidden'}">${localToolbar}</div>
-            <div class="ilmc-external-toolbar-wrap${isExternal ? '' : ' ilmc-hidden'}">${externalToolbar}</div>
             <div class="ilmc-panels">
                 <div class="ilmc-panel">
-                    ${this.renderPanelHeader('患者列表', isExternal)}
+                    ${this.renderPanelHeader('患者列表')}
                     <div class="ilmc-panel-content ilmc-patient-list">
                         ${this.renderPatients(data.patients)}
                     </div>
                 </div>
                 <div class="ilmc-panel">
-                    ${this.renderPanelHeader('数据列表', isExternal)}
+                    ${this.renderPanelHeader('数据列表')}
                     <div class="ilmc-panel-content ilmc-data-tree">
                         ${this.renderTree(data.tree)}
                     </div>
@@ -1118,38 +1432,15 @@ class ImportLegacyModalComponent {
                 }
                 return;
             }
-            if (this.activeTab === 'external' && e.target.closest('.ilmc-external-toolbar .ilmc-refresh-btn:not(:disabled)')) {
-                const input = this.root.querySelector('.ilmc-external-search-input');
-                if (input) this.handleExternalSearch(input.value);
+            if (this.activeTab === 'remote' && e.target.closest('.ilmc-remote-toolbar .ilmc-pull-data-btn:not(:disabled)')) {
+                this.handlePullData();
             }
-        });
-
-        this.root.addEventListener('input', (e) => {
-            if (!e.target.matches('.ilmc-external-search-input')) return;
-            this.externalState.searchValue = e.target.value;
         });
 
         this.root.addEventListener('change', (e) => {
             if (e.target.matches('.ilmc-patient-checkbox')) {
                 this.handlePatientCheckboxChange(e.target);
-                return;
             }
-            if (!e.target.matches('.ilmc-remote-node-select')) return;
-            const input = this.root.querySelector('.ilmc-external-search-input');
-            if (input) this.externalState.searchValue = input.value;
-            this.externalState.selectedNode = e.target.value;
-            if (!this.externalState.selectedNode) {
-                this.resetExternalSearch();
-                return;
-            }
-            this.clearExternalResults();
-            this.updateExternalSearchInput();
-        });
-
-        this.root.addEventListener('keydown', (e) => {
-            if (e.key !== 'Enter' || !e.target.matches('.ilmc-external-search-input:not(:disabled)')) return;
-            e.preventDefault();
-            this.handleExternalSearch(e.target.value);
         });
     }
 
@@ -1186,7 +1477,6 @@ class ImportLegacyModalComponent {
                 <div class="ilmc-tabs">
                     <div class="ilmc-tab${this.activeTab === 'remote' ? ' active' : ''}" data-tab="remote">远程节点导入</div>
                     <div class="ilmc-tab${this.activeTab === 'local' ? ' active' : ''}" data-tab="local">本地导入</div>
-                    <div class="ilmc-tab${this.activeTab === 'external' ? ' active' : ''}" data-tab="external">外部DICOM Query</div>
                 </div>
                 <div class="ilmc-body">
                     ${this.renderContent()}
@@ -1201,6 +1491,8 @@ class ImportLegacyModalComponent {
     hide() {
         this.hideExistsModal();
         this.hideResultModal();
+        this.hidePullDataModal();
+        this.hidePullProgressModal();
         if (!this.root) return;
         this.root.remove();
         this.root = null;
