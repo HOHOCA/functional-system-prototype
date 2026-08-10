@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理 1.0.0.1 - MOZI Proton</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            height: 100vh;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        .pm-titlebar {
+            height: 40px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #3c3c3c;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px 0 16px;
+        }
+        .pm-title { font-size: 14px; }
+        .pm-titlebar-right { display: flex; align-items: center; gap: 14px; }
+        .pm-user { font-size: 13px; color: #cfcfcf; }
+        .pm-win-btn {
+            width: 32px; height: 28px; background: transparent; border: none;
+            color: #ddd; cursor: pointer; border-radius: 4px;
+        }
+        .pm-win-btn:hover { background: #404040; color: #fff; }
+        .pm-win-btn.close:hover { background: #e53935; }
+        .pm-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            color: #999;
+        }
+        .pm-body h1 { font-size: 22px; color: #e0e0e0; font-weight: 600; }
+        .pm-body p { font-size: 14px; }
+    </style>
+</head>
+<body>
+    <header class="pm-titlebar">
+        <div class="pm-title">物理 1.0.0.1 · 质子</div>
+        <div class="pm-titlebar-right">
+            <span class="pm-user">manteia</span>
+            <button type="button" class="pm-win-btn close" id="pmCloseBtn" title="关闭">&times;</button>
+        </div>
+    </header>
+    <main class="pm-body">
+        <h1>质子物理模块</h1>
+        <p>内容与后装不同，待后续按质子规格补充</p>
+    </main>
+    <script>
+        document.getElementById('pmCloseBtn').addEventListener('click', function () {
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = '../index.html';
+        });
+    </script>
+</body>
+</html>

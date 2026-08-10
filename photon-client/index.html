@@ -115,6 +115,30 @@
             gap: 15px;
         }
 
+        .physics-module-btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            color: #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .physics-module-btn:hover {
+            background: #404040;
+            color: #ffffff;
+        }
+
+        .physics-module-btn svg {
+            display: block;
+        }
+
         .user-profile {
             display: flex;
             align-items: center;
@@ -214,6 +238,14 @@
             </div>
             
             <div class="nav-right">
+                <button type="button" class="physics-module-btn" id="physicsModuleBtn" title="物理模块" aria-label="物理模块">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4"/>
+                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4" transform="rotate(60 8 8)"/>
+                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4" transform="rotate(120 8 8)"/>
+                        <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
+                    </svg>
+                </button>
                 <i class="fas fa-cog" style="cursor: pointer;"></i>
                 <div class="user-profile">
                     张三 <i class="fas fa-chevron-down"></i>
@@ -286,6 +318,14 @@
             if (settingsIcon) {
                 settingsIcon.addEventListener('click', function() {
                     window.location.href = '../shared/modules/system-settings.html';
+                });
+            }
+
+            // 物理模块：各项目内容不同，光子进入光子专属页
+            const physicsModuleBtn = document.getElementById('physicsModuleBtn');
+            if (physicsModuleBtn) {
+                physicsModuleBtn.addEventListener('click', function() {
+                    window.location.href = './modules/physics-module.html';
                 });
             }
             

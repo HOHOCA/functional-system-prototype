@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>物理 1.0.0.1 - MOZI Brachy</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/physics-module.css">
+</head>
+<body class="physics-module-page">
+    <header class="pm-titlebar">
+        <div class="pm-title">物理 1.0.0.1</div>
+        <div class="pm-titlebar-right">
+            <span class="pm-user">manteia</span>
+            <div class="pm-window-controls">
+                <button type="button" class="pm-win-btn" title="最小化" id="pmMinimizeBtn">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button type="button" class="pm-win-btn" title="最大化" id="pmMaximizeBtn">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <rect x="3.5" y="3.5" width="9" height="9" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </button>
+                <button type="button" class="pm-win-btn close" title="关闭" id="pmCloseBtn">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="pm-tabbar" id="pmTabbar">
+        <button type="button" class="pm-tab active" data-tab="machine">后装机</button>
+        <button type="button" class="pm-tab" data-tab="applicator">施源器</button>
+        <button type="button" class="pm-tab" data-tab="locator">定位器</button>
+        <button type="button" class="pm-tab" data-tab="ct">CT配置</button>
+        <button type="button" class="pm-tab" data-tab="qa">QA模体</button>
+    </nav>
+
+    <main class="pm-body">
+        <!-- 后装机 -->
+        <section class="pm-panel active" id="panel-machine">
+            <div class="pm-machine-layout">
+                <aside class="pm-tree" id="machineTree">
+                    <div class="pm-tree-group" data-group="commissioned">
+                        <div class="pm-tree-group-title">
+                            <i class="fas fa-desktop"></i>
+                            <span>Commissioned machines</span>
+                        </div>
+                        <div class="pm-tree-children">
+                            <div class="pm-tree-item active" data-machine="XHDR30">
+                                <i class="far fa-circle"></i>
+                                <span>XHDR30 [2025-04-27 09:38:37]</span>
+                            </div>
+                            <div class="pm-tree-item child" data-source="XHS-Ir192-1">
+                                <i class="far fa-dot-circle"></i>
+                                <span>XHS-Ir192-1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pm-tree-group" data-group="uncommissioned">
+                        <div class="pm-tree-group-title">
+                            <i class="fas fa-desktop"></i>
+                            <span>Uncommissioned machines</span>
+                        </div>
+                        <div class="pm-tree-children">
+                            <div class="pm-tree-item" data-machine="XHDR18">
+                                <i class="far fa-circle"></i>
+                                <span>XHDR18</span>
+                            </div>
+                            <div class="pm-tree-item child" data-source="XHS-Ir192-1-u">
+                                <i class="far fa-dot-circle"></i>
+                                <span>XHS-Ir192-1</span>
+                            </div>
+                            <div class="pm-tree-item child" data-source="Rexisource">
+                                <i class="far fa-dot-circle"></i>
+                                <span>Rexisource Ir192</span>
+                            </div>
+                            <div class="pm-tree-item child disabled" data-source="XHS-Ir192-1-1">
+                                <i class="far fa-dot-circle"></i>
+                                <span>XHS-Ir192-1-1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pm-tree-group" data-group="deprecated">
+                        <div class="pm-tree-group-title">
+                            <i class="fas fa-desktop"></i>
+                            <span>Deprecated machines</span>
+                        </div>
+                        <div class="pm-tree-children"></div>
+                    </div>
+                </aside>
+
+                <div class="pm-machine-form" id="machineForm">
+                    <h2 class="pm-section-title">机器属性</h2>
+
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">编号</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="mfCode" type="text" value="00000002" readonly>
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">名称</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="mfName" type="text" value="XHDR30" readonly>
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">备注</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="mfRemark" type="text" value="shandongshengzhong" readonly>
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">保存人</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="mfSaver" type="text" value="manteia" readonly>
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">保存日期</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="mfSaveDate" type="text" value="2025-06-17 10:25:14" readonly>
+                        </div>
+                    </div>
+
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">通道数</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input sm" id="mfChannels" type="text" value="12">
+                            <label class="pm-check">
+                                <input type="checkbox" id="mfChannelContinuous" checked>
+                                <span>多条施源器下，执行计划时通道号需要连续</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">驻留步长[mm]</label>
+                        <div class="pm-form-field">
+                            <div class="pm-step-list" id="mfStepList">
+                                <input class="pm-input sm" type="text" value="2.5">
+                                <input class="pm-input sm" type="text" value="3.0">
+                                <input class="pm-input sm" type="text" value="5.0">
+                            </div>
+                            <button type="button" class="pm-step-add" id="mfStepAdd" title="添加步长">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">最大驻留点数</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input sm" id="mfMaxPoints" type="text" value="48">
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">最小驻留时间[s]</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input sm" id="mfMinTime" type="text" value="0.1">
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">最大驻留时间[s]</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input sm" id="mfMaxTime" type="text" value="999.9">
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">出源长度[mm]</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input sm" id="mfSourceLength" type="text" value="850.0">
+                        </div>
+                    </div>
+
+                    <div class="pm-sub-section">
+                        <div class="pm-sub-section-title">导出DICOM设置</div>
+                        <div class="pm-indent">
+                            <label class="pm-check">
+                                <input type="checkbox" id="mfGenPassword" checked>
+                                <span>生成后装机治疗确认密码</span>
+                            </label>
+                            <div class="pm-indent-row">
+                                <label class="pm-check">
+                                    <input type="checkbox" id="mfPwdDigit" checked>
+                                    <span>包含数字</span>
+                                </label>
+                            </div>
+                            <div class="pm-indent-row">
+                                <label class="pm-check">
+                                    <input type="checkbox" id="mfPwdLetter" checked>
+                                    <span>包含字母</span>
+                                </label>
+                            </div>
+                            <div class="pm-indent-row">
+                                <span style="font-size:13px;color:#b0b0b0;">密码位数</span>
+                                <input class="pm-input xs" id="mfPwdLen" type="text" value="5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 施源器 -->
+        <section class="pm-panel" id="panel-applicator">
+            <div class="pm-split-layout">
+                <div class="pm-list-pane">
+                    <div class="pm-list-title">施源器</div>
+                    <div class="pm-table-wrap">
+                        <table class="pm-table" id="applicatorTable">
+                            <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>备注</th>
+                                    <th>执行人</th>
+                                    <th>保存时间</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="pm-list-actions">
+                        <button type="button" class="pm-btn" data-action="app-add">添加</button>
+                        <button type="button" class="pm-btn" data-action="app-edit">编辑</button>
+                        <button type="button" class="pm-btn" data-action="app-delete">删除</button>
+                        <button type="button" class="pm-btn" data-action="app-copy">复制</button>
+                    </div>
+                </div>
+                <div class="pm-detail-pane" id="applicatorDetail">
+                    <div class="pm-detail-header">
+                        <div class="pm-detail-name" id="appDetailName">宫颈穹窿管11AT</div>
+                        <div class="pm-detail-meta">
+                            <span id="appDetailUsed">是否被计划使用：是</span>
+                            <button type="button" class="pm-link-btn" id="appViewPlansBtn">查看详情</button>
+                        </div>
+                    </div>
+                    <div class="pm-params" id="appParams"></div>
+                    <div class="pm-view3d">
+                        <div class="pm-view3d-title">3D</div>
+                        <div class="pm-view3d-tools">
+                            <button type="button" title="复位"><i class="fas fa-crosshairs"></i></button>
+                            <button type="button" title="放大"><i class="fas fa-search-plus"></i></button>
+                            <button type="button" title="缩小"><i class="fas fa-search-minus"></i></button>
+                            <button type="button" title="全屏"><i class="fas fa-expand"></i></button>
+                        </div>
+                        <div class="pm-view3d-stage">
+                            <canvas id="appCanvas" width="480" height="280"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 定位器 -->
+        <section class="pm-panel" id="panel-locator">
+            <div class="pm-split-layout">
+                <div class="pm-list-pane">
+                    <div class="pm-list-title">定位器</div>
+                    <div class="pm-table-wrap">
+                        <table class="pm-table" id="locatorTable">
+                            <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>备注</th>
+                                    <th>执行人</th>
+                                    <th>保存时间</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="pm-list-actions">
+                        <button type="button" class="pm-btn" data-action="loc-add">添加</button>
+                        <button type="button" class="pm-btn" data-action="loc-edit">编辑</button>
+                        <button type="button" class="pm-btn" data-action="loc-delete">删除</button>
+                        <button type="button" class="pm-btn" data-action="loc-copy">复制</button>
+                    </div>
+                </div>
+                <div class="pm-detail-pane" id="locatorDetail">
+                    <div class="pm-detail-header">
+                        <div class="pm-detail-name" id="locDetailName">B-I-1型定位器</div>
+                        <div class="pm-detail-meta">
+                            <span id="locDetailUsed">是否被计划使用：否</span>
+                            <button type="button" class="pm-link-btn" id="locViewPlansBtn">查看详情</button>
+                        </div>
+                    </div>
+                    <div class="pm-info-lines" id="locInfoLines"></div>
+                    <div class="pm-view3d">
+                        <div class="pm-view3d-title">3D</div>
+                        <div class="pm-view3d-tools">
+                            <button type="button" title="复位"><i class="fas fa-crosshairs"></i></button>
+                            <button type="button" title="放大"><i class="fas fa-search-plus"></i></button>
+                            <button type="button" title="缩小"><i class="fas fa-search-minus"></i></button>
+                        </div>
+                        <div class="pm-view3d-stage">
+                            <canvas id="locCanvas" width="420" height="320"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CT配置 / QA模体 占位 -->
+        <section class="pm-panel" id="panel-ct">
+            <div class="pm-placeholder-panel">CT配置内容待补充</div>
+        </section>
+        <section class="pm-panel" id="panel-qa">
+            <div class="pm-placeholder-panel">QA模体内容待补充</div>
+        </section>
+    </main>
+
+    <!-- 使用该施源器的计划列表 -->
+    <div class="pm-modal-mask" id="planListModal">
+        <div class="pm-modal plan-list">
+            <div class="pm-modal-header">
+                <h3 id="planListModalTitle">使用该施源器的计划列表</h3>
+                <button type="button" class="pm-modal-close" data-close="planListModal">&times;</button>
+            </div>
+            <div class="pm-modal-body">
+                <div class="pm-table-wrap">
+                    <table class="pm-table" id="planListTable">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>患者名称</th>
+                                <th>患者ID</th>
+                                <th>图像序号</th>
+                                <th>RT序号</th>
+                                <th>Plan名称</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>test</td>
+                                <td>24112001</td>
+                                <td>CT 1</td>
+                                <td>RTSTRUCT 1</td>
+                                <td>Plan_1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn primary" data-close="planListModal">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加定位器 -->
+    <div class="pm-modal-mask" id="addLocatorModal">
+        <div class="pm-modal sm add-locator">
+            <div class="pm-modal-header">
+                <h3>添加定位器</h3>
+                <button type="button" class="pm-modal-close" data-close="addLocatorModal">&times;</button>
+            </div>
+            <div class="pm-modal-body">
+                <div class="pm-form-grid">
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">定位器类型</label>
+                        <div class="pm-form-field">
+                            <select class="pm-input" id="addLocType">
+                                <option value="A1">A1</option>
+                                <option value="A2">A2</option>
+                                <option value="A3">A3</option>
+                                <option value="A4">A4</option>
+                                <option value="B-I-1">B-I-1</option>
+                                <option value="B-II-2">B-II-2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">定位器名称</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="addLocName" type="text" value="A1型定位器">
+                        </div>
+                    </div>
+                    <div class="pm-form-row">
+                        <label class="pm-form-label">备注</label>
+                        <div class="pm-form-field">
+                            <input class="pm-input" id="addLocRemark" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="pm-loc-size-block" id="addLocSizeBlock"></div>
+                    <div class="pm-form-row pm-loc-extra-field" hidden>
+                        <label class="pm-form-label">可用插植针</label>
+                        <div class="pm-form-field">
+                            <select class="pm-input" id="addLocNeedle">
+                                <option value="">请选择</option>
+                                <option value="插植针测试">插植针测试</option>
+                                <option value="高源直腔管55">高源直腔管55</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="pm-form-row pm-loc-extra-field" hidden>
+                        <label class="pm-form-label">可用管状施源器</label>
+                        <div class="pm-form-field">
+                            <select class="pm-input" id="addLocTube">
+                                <option value="">请选择</option>
+                                <option value="直路通道0座（直径20）">直路通道0座（直径20）</option>
+                                <option value="直路通道1座（直径18）">直路通道1座（直径18）</option>
+                                <option value="直路通道2座（直径16）">直路通道2座（直径16）</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn ghost" data-close="addLocatorModal">取消</button>
+                <button type="button" class="pm-btn primary" id="addLocConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/physics-module.js"></script>
+</body>
+</html>
