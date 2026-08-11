@@ -13,6 +13,30 @@
     box-sizing: border-box;
 }
 
+/* 与 shared/styles 深色滚动条一致 */
+.physics-module-page ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.physics-module-page ::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.physics-module-page ::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 4px;
+}
+
+.physics-module-page ::-webkit-scrollbar-thumb:hover {
+    background: #777777;
+}
+
+.physics-module-page {
+    scrollbar-width: thin;
+    scrollbar-color: #555555 #2d2d2d;
+}
+
 .pm-titlebar {
     height: 40px;
     background: #2a2a2a;
@@ -125,6 +149,14 @@
     height: 100%;
 }
 
+.pm-machine-right {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
 .pm-tree {
     width: 280px;
     border-right: 1px solid #3c3c3c;
@@ -186,9 +218,12 @@
     color: #a8a8a8;
 }
 
-.pm-tree-item.child.disabled {
-    color: #666;
-    cursor: default;
+.pm-tree-item.child.deprecated {
+    color: #888;
+}
+
+.pm-tree-item.child.deprecated i {
+    color: #c07070;
 }
 
 .pm-tree-item i {
@@ -198,10 +233,35 @@
     font-size: 12px;
 }
 
-.pm-machine-form {
-    flex: 1;
+.pm-machine-form,
+.pm-source-form {
+    height: 100%;
     overflow: auto;
-    padding: 20px 28px 32px;
+    padding: 16px 24px 32px;
+}
+
+.pm-source-form[hidden],
+.pm-machine-form[hidden] {
+    display: none !important;
+}
+
+.pm-form-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.pm-form-top .pm-section-title {
+    margin-bottom: 0;
+}
+
+.pm-source-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .pm-section-title {
@@ -209,6 +269,157 @@
     font-weight: 600;
     color: #f0f0f0;
     margin-bottom: 18px;
+}
+
+.pm-source-block {
+    margin-bottom: 18px;
+}
+
+.pm-source-block-title {
+    font-size: 14px;
+    color: #d8d8d8;
+    background: #2a2a2a;
+    border: 1px solid #3c3c3c;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+}
+
+.pm-source-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap: 10px 16px;
+}
+
+.pm-source-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.pm-source-field label {
+    font-size: 12px;
+    color: #9a9a9a;
+}
+
+.pm-source-field .pm-input,
+.pm-source-field .pm-source-text {
+    height: 28px;
+    font-size: 12px;
+}
+
+.pm-source-field .pm-source-text {
+    display: flex;
+    align-items: center;
+    color: #e0e0e0;
+    padding: 0 8px;
+    border: 1px solid #4a4a4a;
+    border-radius: 3px;
+    background: #262626;
+    min-height: 28px;
+}
+
+.pm-source-field .unit {
+    margin-left: 4px;
+    color: #9a9a9a;
+}
+
+.pm-warn {
+    color: #e6b35a;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.pm-tg-pair {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0 16px;
+    align-items: stretch;
+}
+
+.pm-tg-table-wrap {
+    width: 140px;
+    max-height: 180px;
+    overflow: auto;
+    border: 1px solid #3c3c3c;
+    flex-shrink: 0;
+}
+
+.pm-tg-table-wrap.wide {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    max-height: 220px;
+}
+
+.pm-tg-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.pm-tg-table th,
+.pm-tg-table td {
+    border: 1px solid #333;
+    padding: 4px 6px;
+    text-align: center;
+    white-space: nowrap;
+    color: #d8d8d8;
+}
+
+.pm-tg-table th {
+    background: #2a2a2a;
+    color: #b8b8b8;
+    position: sticky;
+    top: 0;
+}
+
+.pm-tg-chart {
+    flex: 1;
+    min-width: 180px;
+    border: 1px solid #3c3c3c;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.pm-tg-chart canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.pm-context-menu {
+    position: fixed;
+    z-index: 3000;
+    min-width: 140px;
+    background: #2b2b2b;
+    border: 1px solid #555;
+    border-radius: 3px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    padding: 4px 0;
+}
+
+.pm-context-menu[hidden] {
+    display: none !important;
+}
+
+.pm-context-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    color: #e8e8e8;
+    font-size: 13px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.pm-context-menu button:hover {
+    background: #3AACDE;
+    color: #fff;
 }
 
 .pm-form-row {
@@ -284,28 +495,77 @@
     height: 14px;
 }
 
+.pm-step-row {
+    align-items: center;
+}
+
+.pm-step-box {
+    width: 220px;
+    min-height: 120px;
+    border: 1px solid #6a6a6a;
+    border-radius: 2px;
+    background: #1a1a1a;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .pm-step-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    flex: 1;
 }
 
-.pm-step-add {
-    width: 28px;
-    height: 28px;
-    border: 1px solid #4a4a4a;
-    background: #2a2a2a;
-    color: #3AACDE;
-    border-radius: 3px;
-    cursor: pointer;
+.pm-step-item {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
 }
 
-.pm-step-add:hover {
-    border-color: #3AACDE;
+.pm-step-item .pm-input {
+    width: 88px;
+    min-width: 88px;
+    height: 28px;
+    background: #111;
+    border-color: #7a7a7a;
+}
+
+.pm-step-item .pm-input::placeholder {
+    color: #777;
+    font-size: 11px;
+}
+
+.pm-step-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #7a7a7a;
+    background: #2a2a2a;
+    color: #ddd;
+    border-radius: 2px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 0;
+}
+
+.pm-step-btn:hover:not(:disabled) {
+    border-color: #aaa;
+    color: #fff;
     background: #333;
+}
+
+.pm-step-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pm-step-btn.add {
+    align-self: flex-start;
 }
 
 .pm-sub-section {
@@ -331,6 +591,39 @@
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.pm-dicom-section .pm-sub-section-title {
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.pm-dicom-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 8px;
+}
+
+.pm-dicom-options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.pm-dicom-pwd-label {
+    font-size: 13px;
+    color: #c8c8c8;
+}
+
+.pm-dicom-options .pm-input.xs {
+    margin-left: -8px;
+}
+
+.pm-dicom-options.is-disabled {
+    opacity: 0.45;
+    pointer-events: none;
 }
 
 /* ---------- 列表 + 详情双栏（施源器 / 定位器） ---------- */
@@ -761,4 +1054,193 @@
     background-size: 5px 5px, 5px 5px;
     background-repeat: no-repeat;
     padding-right: 28px;
+}
+
+/* ---------- CT配置 ---------- */
+.pm-ct-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.pm-ct-main {
+    flex: 1;
+    min-width: 0;
+    overflow: auto;
+    padding: 12px 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pm-ct-toolbar {
+    min-height: 28px;
+}
+
+.pm-ct-meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 16px;
+}
+
+.pm-ct-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.pm-ct-meta-item label {
+    font-size: 12px;
+    color: #9a9a9a;
+}
+
+.pm-ct-meta-item .pm-input {
+    width: 100%;
+    min-width: 0;
+    height: 28px;
+    font-size: 12px;
+}
+
+.pm-ct-block {
+    border: 1px solid #333;
+    background: #1a1a1a;
+}
+
+.pm-ct-split {
+    display: flex;
+    min-height: 240px;
+}
+
+.pm-ct-table-panel {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+}
+
+.pm-ct-table-panel.material {
+    width: 360px;
+    border-right: none;
+}
+
+.pm-ct-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    flex: 1;
+}
+
+.pm-ct-table th,
+.pm-ct-table td {
+    border-bottom: 1px solid #333;
+    padding: 5px 8px;
+    text-align: left;
+    color: #d8d8d8;
+    white-space: nowrap;
+}
+
+.pm-ct-table th {
+    background: #252525;
+    color: #b0b0b0;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+}
+
+.pm-ct-table tbody {
+    display: block;
+    max-height: 180px;
+    overflow: auto;
+}
+
+.pm-ct-table thead,
+.pm-ct-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.pm-ct-table tbody tr {
+    cursor: pointer;
+}
+
+.pm-ct-table tbody tr:hover {
+    background: #2a2a2a;
+}
+
+.pm-ct-table tbody tr.active {
+    background: rgba(58, 172, 222, 0.25);
+}
+
+.pm-ct-table-actions {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    border-top: 1px solid #333;
+}
+
+.pm-ct-table-actions.is-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.pm-ct-chart-panel {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    padding: 8px 12px 20px 28px;
+    background: #0d0d0d;
+}
+
+.pm-ct-chart-title {
+    text-align: center;
+    font-size: 13px;
+    color: #d0d0d0;
+    margin-bottom: 4px;
+}
+
+.pm-ct-chart-panel canvas {
+    width: 100%;
+    height: 200px;
+    display: block;
+}
+
+.pm-ct-axis-y {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center;
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+}
+
+.pm-ct-axis-x {
+    position: absolute;
+    right: 16px;
+    bottom: 4px;
+    font-size: 11px;
+    color: #888;
+}
+
+.pm-ct-hu-range {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pm-ct-hu-range .pm-input {
+    width: 88px;
+    min-width: 0;
+    height: 24px;
+    font-size: 11px;
+    padding: 0 6px;
+}
+
+.pm-ct-material-block {
+    width: fit-content;
+    max-width: 100%;
 }

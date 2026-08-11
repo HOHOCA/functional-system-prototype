@@ -52,12 +52,12 @@
                             <span>Commissioned machines</span>
                         </div>
                         <div class="pm-tree-children">
-                            <div class="pm-tree-item active" data-machine="XHDR30">
+                            <div class="pm-tree-item active" data-machine="XHDR30" data-status="commissioned">
                                 <i class="far fa-circle"></i>
                                 <span>XHDR30 [2025-04-27 09:38:37]</span>
                             </div>
-                            <div class="pm-tree-item child" data-source="XHS-Ir192-1">
-                                <i class="far fa-dot-circle"></i>
+                            <div class="pm-tree-item child" data-source="src-xhs-c" data-machine-parent="XHDR30" data-status="commissioned">
+                                <i class="fas fa-list-ul"></i>
                                 <span>XHS-Ir192-1</span>
                             </div>
                         </div>
@@ -68,20 +68,20 @@
                             <span>Uncommissioned machines</span>
                         </div>
                         <div class="pm-tree-children">
-                            <div class="pm-tree-item" data-machine="XHDR18">
+                            <div class="pm-tree-item" data-machine="XHDR18" data-status="uncommissioned">
                                 <i class="far fa-circle"></i>
                                 <span>XHDR18</span>
                             </div>
-                            <div class="pm-tree-item child" data-source="XHS-Ir192-1-u">
-                                <i class="far fa-dot-circle"></i>
+                            <div class="pm-tree-item child" data-source="src-xhs-u" data-machine-parent="XHDR18" data-status="uncommissioned">
+                                <i class="fas fa-list-ul"></i>
                                 <span>XHS-Ir192-1</span>
                             </div>
-                            <div class="pm-tree-item child" data-source="Rexisource">
-                                <i class="far fa-dot-circle"></i>
+                            <div class="pm-tree-item child" data-source="src-rexi" data-machine-parent="XHDR18" data-status="uncommissioned">
+                                <i class="fas fa-list-ul"></i>
                                 <span>Rexisource Ir192</span>
                             </div>
-                            <div class="pm-tree-item child disabled" data-source="XHS-Ir192-1-1">
-                                <i class="far fa-dot-circle"></i>
+                            <div class="pm-tree-item child deprecated" data-source="src-xhs-d" data-machine-parent="XHDR18" data-status="deprecated">
+                                <i class="fas fa-ban"></i>
                                 <span>XHS-Ir192-1-1</span>
                             </div>
                         </div>
@@ -95,8 +95,12 @@
                     </div>
                 </aside>
 
+                <div class="pm-machine-right">
                 <div class="pm-machine-form" id="machineForm">
-                    <h2 class="pm-section-title">机器属性</h2>
+                    <div class="pm-form-top">
+                        <h2 class="pm-section-title">机器属性</h2>
+                        <button type="button" class="pm-btn primary" id="mfSaveBtn" hidden>保存</button>
+                    </div>
 
                     <div class="pm-form-row">
                         <label class="pm-form-label">编号</label>
@@ -140,17 +144,15 @@
                         </div>
                     </div>
 
-                    <div class="pm-form-row">
+                    <div class="pm-form-row pm-step-row">
                         <label class="pm-form-label">驻留步长[mm]</label>
                         <div class="pm-form-field">
-                            <div class="pm-step-list" id="mfStepList">
-                                <input class="pm-input sm" type="text" value="2.5">
-                                <input class="pm-input sm" type="text" value="3.0">
-                                <input class="pm-input sm" type="text" value="5.0">
+                            <div class="pm-step-box" id="mfStepBox">
+                                <div class="pm-step-list" id="mfStepList"></div>
+                                <button type="button" class="pm-step-btn add" id="mfStepAdd" title="添加步长">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
-                            <button type="button" class="pm-step-add" id="mfStepAdd" title="添加步长">
-                                <i class="fas fa-plus"></i>
-                            </button>
                         </div>
                     </div>
 
@@ -179,34 +181,90 @@
                         </div>
                     </div>
 
-                    <div class="pm-sub-section">
-                        <div class="pm-sub-section-title">导出DICOM设置</div>
-                        <div class="pm-indent">
+                    <div class="pm-sub-section pm-dicom-section">
+                        <div class="pm-sub-section-title">导出DICOM设置：</div>
+                        <div class="pm-dicom-body">
                             <label class="pm-check">
                                 <input type="checkbox" id="mfGenPassword" checked>
                                 <span>生成后装机治疗确认密码</span>
                             </label>
-                            <div class="pm-indent-row">
+                            <div class="pm-dicom-options" id="mfPwdOptions">
                                 <label class="pm-check">
                                     <input type="checkbox" id="mfPwdDigit" checked>
                                     <span>包含数字</span>
                                 </label>
-                            </div>
-                            <div class="pm-indent-row">
                                 <label class="pm-check">
                                     <input type="checkbox" id="mfPwdLetter" checked>
                                     <span>包含字母</span>
                                 </label>
-                            </div>
-                            <div class="pm-indent-row">
-                                <span style="font-size:13px;color:#b0b0b0;">密码位数</span>
-                                <input class="pm-input xs" id="mfPwdLen" type="text" value="5">
+                                <span class="pm-dicom-pwd-label">密码位数</span>
+                                <input class="pm-input xs" id="mfPwdLen" type="text" value="6">
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="pm-source-form" id="sourceForm" hidden>
+                    <div class="pm-form-top">
+                        <h2 class="pm-section-title">机器-放射源</h2>
+                        <div class="pm-source-actions">
+                            <button type="button" class="pm-link-btn" id="srcEditBtn" hidden>编辑</button>
+                            <button type="button" class="pm-link-btn" id="srcUpdateModelBtn" hidden disabled>更新建模数据</button>
+                            <button type="button" class="pm-link-btn" id="srcExportBtn">导出放射源衰减报告</button>
+                        </div>
+                    </div>
+
+                    <div class="pm-source-block">
+                        <div class="pm-source-block-title">放射源属性</div>
+                        <div class="pm-source-grid" id="srcAttrGrid"></div>
+                    </div>
+
+                    <div class="pm-source-block">
+                        <div class="pm-source-block-title">TG43数据</div>
+                        <div class="pm-warn" id="srcTg43Warn">当前TG43数据为系统默认值，建议根据实际情况更新</div>
+                        <div class="pm-form-row">
+                            <label class="pm-form-label">剂量率常数</label>
+                            <div class="pm-form-field">
+                                <input class="pm-input sm" id="srcDoseRate" type="text" value="1.109" readonly>
+                            </div>
+                        </div>
+                        <div class="pm-tg-pair">
+                            <div class="pm-tg-table-wrap">
+                                <table class="pm-tg-table" id="srcGrTable">
+                                    <thead><tr><th>r(cm)</th><th>g(r)</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="pm-tg-chart">
+                                <canvas id="srcGrCanvas" width="420" height="180"></canvas>
+                            </div>
+                        </div>
+                        <div class="pm-tg-pair pm-tg-f">
+                            <div class="pm-tg-table-wrap wide">
+                                <table class="pm-tg-table" id="srcFTable">
+                                    <thead></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="pm-tg-chart">
+                                <canvas id="srcFCanvas" width="280" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pm-source-block">
+                        <div class="pm-warn" id="srcTg186Warn">当前TG186数据为系统默认值，建议根据实际情况更新</div>
+                        <label class="pm-check">
+                            <input type="checkbox" id="srcTg186" disabled>
+                            <span>支持TG186</span>
+                        </label>
+                    </div>
+                </div>
+                </div>
             </div>
         </section>
+
+        <div class="pm-context-menu" id="pmContextMenu" hidden></div>
 
         <!-- 施源器 -->
         <section class="pm-panel" id="panel-applicator">
@@ -307,13 +365,140 @@
             </div>
         </section>
 
-        <!-- CT配置 / QA模体 占位 -->
+        <!-- CT配置 -->
         <section class="pm-panel" id="panel-ct">
-            <div class="pm-placeholder-panel">CT配置内容待补充</div>
+            <div class="pm-ct-layout">
+                <aside class="pm-tree" id="ctTree">
+                    <div class="pm-tree-group" data-group="commissioned">
+                        <div class="pm-tree-group-title"><i class="fas fa-desktop"></i><span>Commissioned 机器</span></div>
+                        <div class="pm-tree-children">
+                            <div class="pm-tree-item active" data-ct="ct-ge" data-status="commissioned">
+                                <i class="fas fa-list-ul"></i><span>GE MEDICAL SYSTEMS [2021-03-29 09:50:28]</span>
+                            </div>
+                            <div class="pm-tree-item" data-ct="ct-default" data-status="commissioned">
+                                <i class="fas fa-list-ul"></i><span>Default template [2021-03-29 09:50:28]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pm-tree-group" data-group="uncommissioned">
+                        <div class="pm-tree-group-title" data-ct-group="uncommissioned"><i class="fas fa-desktop"></i><span>Uncommissioned 机器</span></div>
+                        <div class="pm-tree-children">
+                            <div class="pm-tree-item" data-ct="ct-new" data-status="uncommissioned">
+                                <i class="fas fa-list-ul"></i><span>new Machine</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pm-tree-group" data-group="deprecated">
+                        <div class="pm-tree-group-title"><i class="fas fa-desktop"></i><span>弃用机器</span></div>
+                        <div class="pm-tree-children" id="ctDeprecatedChildren"></div>
+                    </div>
+                </aside>
+
+                <div class="pm-ct-main" id="ctMain">
+                    <div class="pm-ct-toolbar">
+                        <button type="button" class="pm-link-btn" id="ctEditBtn" hidden>编辑</button>
+                    </div>
+                    <div class="pm-ct-meta">
+                        <div class="pm-ct-meta-item">
+                            <label>名称</label>
+                            <input class="pm-input" id="ctName" type="text" readonly>
+                        </div>
+                        <div class="pm-ct-meta-item">
+                            <label>生产商</label>
+                            <input class="pm-input" id="ctManufacturer" type="text" readonly>
+                        </div>
+                        <div class="pm-ct-meta-item">
+                            <label>执行人</label>
+                            <input class="pm-input" id="ctExecutor" type="text" readonly>
+                        </div>
+                        <div class="pm-ct-meta-item">
+                            <label>Commission 数据</label>
+                            <input class="pm-input" id="ctCommissionData" type="text" readonly>
+                        </div>
+                    </div>
+
+                    <div class="pm-ct-block">
+                        <div class="pm-ct-split">
+                            <div class="pm-ct-table-panel">
+                                <table class="pm-ct-table" id="ctElectronTable">
+                                    <thead><tr><th>HU</th><th>电子密度</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div class="pm-ct-table-actions" data-table="electron">
+                                    <button type="button" class="pm-step-btn" data-ct-act="add" title="添加"><i class="fas fa-plus"></i></button>
+                                    <button type="button" class="pm-step-btn" data-ct-act="delete" title="删除"><i class="fas fa-minus"></i></button>
+                                    <button type="button" class="pm-step-btn" data-ct-act="edit" title="编辑"><i class="fas fa-pen"></i></button>
+                                </div>
+                            </div>
+                            <div class="pm-ct-chart-panel">
+                                <div class="pm-ct-chart-title">CT转电子密度</div>
+                                <canvas id="ctElectronCanvas" width="640" height="220"></canvas>
+                                <div class="pm-ct-axis-y">相对电子密度</div>
+                                <div class="pm-ct-axis-x">HU</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pm-ct-block">
+                        <div class="pm-ct-split">
+                            <div class="pm-ct-table-panel">
+                                <table class="pm-ct-table" id="ctMassTable">
+                                    <thead><tr><th>HU</th><th>质量密度</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                                <div class="pm-ct-table-actions" data-table="mass">
+                                    <button type="button" class="pm-step-btn" data-ct-act="add" title="添加"><i class="fas fa-plus"></i></button>
+                                    <button type="button" class="pm-step-btn" data-ct-act="delete" title="删除"><i class="fas fa-minus"></i></button>
+                                    <button type="button" class="pm-step-btn" data-ct-act="edit" title="编辑"><i class="fas fa-pen"></i></button>
+                                </div>
+                            </div>
+                            <div class="pm-ct-chart-panel">
+                                <div class="pm-ct-chart-title">CT转质量密度</div>
+                                <canvas id="ctMassCanvas" width="640" height="220"></canvas>
+                                <div class="pm-ct-axis-y">质量密度 [g/cm³]</div>
+                                <div class="pm-ct-axis-x">HU</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pm-ct-block pm-ct-material-block">
+                        <div class="pm-ct-table-panel material">
+                            <table class="pm-ct-table" id="ctMaterialTable">
+                                <thead><tr><th>材料</th><th>HU</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="pm-ct-table-actions" data-table="material">
+                                <button type="button" class="pm-step-btn" data-ct-act="add" title="添加"><i class="fas fa-plus"></i></button>
+                                <button type="button" class="pm-step-btn" data-ct-act="delete" title="删除"><i class="fas fa-minus"></i></button>
+                                <button type="button" class="pm-step-btn" data-ct-act="edit" title="编辑"><i class="fas fa-pen"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
+
+        <!-- QA模体 占位 -->
         <section class="pm-panel" id="panel-qa">
             <div class="pm-placeholder-panel">QA模体内容待补充</div>
         </section>
+
+        <!-- CT 添加/编辑行弹窗 -->
+        <div class="pm-modal-mask" id="ctRowModal">
+            <div class="pm-modal sm">
+                <div class="pm-modal-header">
+                    <h3 id="ctRowModalTitle">添加</h3>
+                    <button type="button" class="pm-modal-close" data-close="ctRowModal">&times;</button>
+                </div>
+                <div class="pm-modal-body">
+                    <div class="pm-form-grid" id="ctRowModalBody"></div>
+                </div>
+                <div class="pm-modal-footer">
+                    <button type="button" class="pm-btn ghost" data-close="ctRowModal">取消</button>
+                    <button type="button" class="pm-btn primary" id="ctRowConfirmBtn">确定</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- 使用该施源器的计划列表 -->
