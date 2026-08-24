@@ -4418,7 +4418,7 @@ class ChannelListBII2Component {
                 </button>
             </div>
             <div class="select-holes-modal-body">
-                <!-- 上方控制面板 -->
+                <!-- 左侧控制面板 -->
                 <div class="select-holes-controls">
                     ${this.getPeripheralHolesHTML(prefix)}
                     ${this.getMiddleHoleHTML(prefix)}
@@ -4427,18 +4427,20 @@ class ChannelListBII2Component {
                         ${this.getObliqueHolesRightHTML(prefix)}
                     </div>
                 </div>
-                <!-- 下方图像区域 -->
+                <!-- 右侧图像区域：上排尖端/尾端，下方 3D -->
                 <div class="select-holes-images">
-                    <div class="select-holes-image-container">
-                        <div class="select-holes-image-label">尖端</div>
-                        <div class="select-holes-image-content" id="${prefix}tipImage">
-                            ${this.getTipImageSVG()}
+                    <div class="select-holes-images-top">
+                        <div class="select-holes-image-container">
+                            <div class="select-holes-image-label">尖端</div>
+                            <div class="select-holes-image-content" id="${prefix}tipImage">
+                                ${this.getTipImageSVG()}
+                            </div>
                         </div>
-                    </div>
-                    <div class="select-holes-image-container">
-                        <div class="select-holes-image-label">尾端</div>
-                        <div class="select-holes-image-content" id="${prefix}tailImage">
-                            ${this.getTailImageSVG()}
+                        <div class="select-holes-image-container">
+                            <div class="select-holes-image-label">尾端</div>
+                            <div class="select-holes-image-content" id="${prefix}tailImage">
+                                ${this.getTailImageSVG()}
+                            </div>
                         </div>
                     </div>
                     <div class="select-holes-image-container select-holes-3d-container" aria-label="3D 预览（占位）">
@@ -4788,12 +4790,13 @@ class ChannelListBII2Component {
     // 注入弹窗样式
     injectSelectHolesModalStyles() {
         const styleId = `${this.options.prefix}selectHolesModalStyles`;
-        if (document.getElementById(styleId)) return;
-
-        const style = document.createElement('style');
-        style.id = styleId;
+        let style = document.getElementById(styleId);
+        if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            document.head.appendChild(style);
+        }
         style.textContent = this.getSelectHolesModalStyles();
-        document.head.appendChild(style);
     }
 
     // 获取弹窗样式
@@ -4805,9 +4808,10 @@ class ChannelListBII2Component {
                 left: 50%;
                 transform: translate(-50%, -50%);
                 width: 90vw;
-                max-width: 1200px;
-                height: 80vh;
-                max-height: 800px;
+                max-width: 1100px;
+                height: 82vh;
+                max-height: 860px;
+                min-height: 620px;
                 background: #1e1e1e;
                 border: 1px solid #404040;
                 border-radius: 8px;
@@ -4850,29 +4854,54 @@ class ChannelListBII2Component {
 
             .select-holes-modal-body {
                 flex: 1;
-                display: flex;
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: 300px 1fr;
+                grid-template-rows: 1fr auto;
                 overflow: hidden;
                 padding: 16px;
                 gap: 16px;
+                min-height: 0;
             }
 
             .select-holes-controls {
-                flex: 0 0 auto;
+                grid-column: 1;
+                grid-row: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 14px;
-                overflow: hidden;
+                gap: 16px;
+                overflow-y: auto;
+                overflow-x: hidden;
                 padding-right: 8px;
-                margin-bottom: 0;
+                min-height: 0;
+            }
+
+            .select-holes-controls::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .select-holes-controls::-webkit-scrollbar-thumb {
+                background: #4a4a4a;
+                border-radius: 3px;
+            }
+
+            .select-holes-controls::-webkit-scrollbar-track {
+                background: transparent;
             }
 
             .select-holes-images {
-                flex: 1;
+                grid-column: 2;
+                grid-row: 1;
                 display: flex;
-                flex-direction: row;
-                gap: 16px;
+                flex-direction: column;
+                gap: 12px;
                 overflow: hidden;
+                min-height: 0;
+            }
+
+            .select-holes-images-top {
+                flex: 1 1 42%;
+                display: flex;
+                gap: 12px;
                 min-height: 0;
             }
 
@@ -4885,10 +4914,11 @@ class ChannelListBII2Component {
                 display: flex;
                 flex-direction: column;
                 min-height: 0;
+                min-width: 0;
             }
 
-            .select-holes-3d-container{
-                flex: 1;
+            .select-holes-3d-container {
+                flex: 1.35 1 58%;
                 min-width: 0;
                 max-width: none;
             }
@@ -4897,7 +4927,7 @@ class ChannelListBII2Component {
                 font-size: 13px;
                 color: #aaa;
                 margin-bottom: 6px;
-                text-align: center;
+                text-align: left;
                 flex-shrink: 0;
             }
 
@@ -4956,8 +4986,9 @@ class ChannelListBII2Component {
 
             .select-holes-control-header {
                 display: flex;
-                align-items: center;
-                gap: 12px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
             }
 
             .select-holes-control-label {
@@ -4969,6 +5000,7 @@ class ChannelListBII2Component {
 
             .select-holes-select {
                 flex: 1;
+                width: 100%;
                 padding: 6px 10px;
                 background: #111;
                 border: 1px solid #404040;
@@ -4988,8 +5020,8 @@ class ChannelListBII2Component {
 
             .select-holes-checkbox-group {
                 display: grid;
-                grid-template-columns: repeat(6, 1fr);
-                gap: 6px;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px 6px;
             }
 
             .select-holes-checkbox-label {
@@ -5020,24 +5052,17 @@ class ChannelListBII2Component {
 
             .select-holes-oblique-container {
                 display: flex;
-                gap: 0;
-                position: relative;
+                flex-direction: column;
+                gap: 16px;
             }
 
             .select-holes-oblique-container > .select-holes-control-group {
-                flex: 1;
-            }
-
-            .select-holes-oblique-container > .select-holes-control-group:first-child {
-                padding-right: 16px;
-                border-right: 1px solid #404040;
-                margin-right: 16px;
+                flex: 0 0 auto;
             }
 
             .select-holes-oblique-group {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(2, 1fr);
+                display: flex;
+                flex-direction: column;
                 gap: 8px;
             }
 
@@ -5072,6 +5097,8 @@ class ChannelListBII2Component {
             }
 
             .select-holes-modal-footer {
+                grid-column: 1 / -1;
+                grid-row: 2;
                 display: flex;
                 justify-content: flex-end;
                 gap: 10px;
