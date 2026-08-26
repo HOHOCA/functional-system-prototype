@@ -440,6 +440,17 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'View3DFailedComponent':
+                    if (typeof View3DFailedComponent !== 'undefined') {
+                        instance = new View3DFailedComponent(componentContainer.id);
+                    }
+                    break;
+                case 'SelectComponent':
+                    if (typeof SelectComponent !== 'undefined') {
+                        instance = SelectComponent.mountPreview(componentContainer);
+                    }
+                    break;
+
                 case 'ProtonView3DComponent':
                     if (typeof ProtonView3DComponent !== 'undefined') {
                         instance = new ProtonView3DComponent(componentContainer.id, {
@@ -1112,6 +1123,15 @@ class ComponentGallery {
                 case 'PromptSimpleConfirmModalComponent':
                     if (typeof PromptSimpleConfirmModalComponent !== 'undefined') {
                         instance = new PromptSimpleConfirmModalComponent({ mountContainer: componentContainer });
+                        if (typeof instance.show === 'function') {
+                            instance.show();
+                        }
+                    }
+                    break;
+
+                case 'PromptBatchResultModalComponent':
+                    if (typeof PromptBatchResultModalComponent !== 'undefined') {
+                        instance = new PromptBatchResultModalComponent({ mountContainer: componentContainer });
                         if (typeof instance.show === 'function') {
                             instance.show();
                         }

@@ -27,6 +27,14 @@ const COMPONENTS_CONFIG = {
             filePath: '../shared/scripts/components/SagittalView2DComponent.js'
         },
         {
+            id: 'view-3d-failed',
+            name: 'View3DFailed',
+            displayName: '3D重建视图失败',
+            description: '3D 重建失败空态：提示未生成3D图像，请检查是否存在ROI轮廓',
+            className: 'View3DFailedComponent',
+            filePath: '../shared/scripts/components/View3DFailedComponent.js'
+        },
+        {
             id: 'dvh',
             name: 'DVH',
             displayName: 'DVH',
@@ -185,6 +193,14 @@ const COMPONENTS_CONFIG = {
             filePath: '../shared/scripts/components/OptimizationConstraintsComponent.js'
         },
         {
+            id: 'select',
+            name: 'Select',
+            displayName: '下拉选择',
+            description: '自定义下拉：无选项时栏不锁死，可点开查看灰色配置说明；必选空态显示占位「未配置」',
+            className: 'SelectComponent',
+            filePath: '../shared/scripts/components/SelectComponent.js'
+        },
+        {
             id: 'prompt-rich-text-modal',
             name: 'PromptRichTextModal',
             displayName: '提示-富文本类',
@@ -215,6 +231,14 @@ const COMPONENTS_CONFIG = {
             description: '提示弹窗：简单文本，仅单个确定按钮',
             className: 'PromptSimpleConfirmModalComponent',
             filePath: '../shared/scripts/components/PromptSimpleConfirmModalComponent.js'
+        },
+        {
+            id: 'prompt-batch-result-modal',
+            name: 'PromptBatchResultModal',
+            displayName: '提示-批量结果类',
+            description: '提示弹窗：展示自动勾画的成功/失败数量与器官结果列表',
+            className: 'PromptBatchResultModalComponent',
+            filePath: '../shared/scripts/components/PromptBatchResultModalComponent.js'
         },
         {
             id: 'error-modal',

@@ -23,6 +23,8 @@ class ProtonView3DComponent {
             showROIs: true,
             showIsocenter: true,
             backgroundColor: 0x000000,
+            emptyState: false,
+            emptyMessage: '未生成3D图像，请检查是否存在ROI轮廓',
             // 布局/标题栏控制（对齐 BrachyView3DComponent）
             showToolbar: true,
             showHeader: true,
@@ -57,14 +59,16 @@ class ProtonView3DComponent {
     }
 
     init() {
-        // Check if Three.js is available
+        this.render();
+        if (this.options.emptyState) {
+            this.showEmptyState(this.options.emptyMessage);
+            return;
+        }
         if (typeof THREE === 'undefined') {
             console.error('Three.js library not loaded. Please include Three.js before using ProtonView3DComponent.');
             this.renderFallback();
             return;
         }
-
-        this.render();
         this.initThreeJS();
         this.setupLighting();
         this.loadDefaultScene();
@@ -82,6 +86,9 @@ class ProtonView3DComponent {
                 ${internalToolbar}
                 <div class="view3d-canvas-container">
                     <canvas class="view3d-canvas"></canvas>
+                    <div class="view3d-empty-overlay" data-view3d-empty hidden>
+                        <p class="view3d-empty-message">未生成3D图像，请检查是否存在ROI轮廓</p>
+                    </div>
                 </div>
                 ${this.renderContextMenu()}
             </div>
@@ -934,6 +941,19 @@ class ProtonView3DComponent {
     setBeamList(beamList) {
         // Update beam visibility based on list
         console.log('setBeamList:', beamList);
+    }
+
+    showEmptyState(message) {
+        const overlay = this.container && this.container.querySelector('[data-view3d-empty]');
+        if (!overlay) return;
+        const textEl = overlay.querySelector('.view3d-empty-message');
+        if (textEl && message) textEl.textContent = message;
+        overlay.hidden = false;
+    }
+
+    hideEmptyState() {
+        const overlay = this.container && this.container.querySelector('[data-view3d-empty]');
+        if (overlay) overlay.hidden = true;
     }
 
     destroy() {
