@@ -130,7 +130,7 @@ class CreateRobustnessEvaluationComponent {
                 outline: none;
             }
             .cre-input:focus{
-                border-color: #3aacde;
+                border-color: #249BD9;
             }
             .create-robustness-evaluation-dialog input[type="number"]::-webkit-outer-spin-button,
             .create-robustness-evaluation-dialog input[type="number"]::-webkit-inner-spin-button{
@@ -163,7 +163,7 @@ class CreateRobustnessEvaluationComponent {
                 color: #d7d7d7;
             }
             .cre-radio input{
-                accent-color: #3aacde;
+                accent-color: #249BD9;
             }
             .cre-custom-count{
                 width: 96px;
@@ -357,7 +357,7 @@ class CreateRobustnessEvaluationComponent {
                 background: rgba(255,255,255,0.04);
             }
             .cre-row-phase-dropdown .cre-phase-item.active{
-                color: #3aacde;
+                color: #249BD9;
                 font-weight: 600;
             }
             .cre-row-phase-dropdown .cre-phase-panel{
@@ -382,7 +382,7 @@ class CreateRobustnessEvaluationComponent {
             .cre-check{
                 width: 14px;
                 height: 14px;
-                accent-color: #3aacde;
+                accent-color: #249BD9;
                 cursor: pointer;
                 flex-shrink: 0;
             }
@@ -491,8 +491,8 @@ class CreateRobustnessEvaluationComponent {
                 background: #343434;
             }
             .cre-btn.primary{
-                border-color: #3aacde;
-                background: #2a9dd0;
+                border-color: #249BD9;
+                background: #249BD9;
                 color: #fff;
             }
             .cre-btn.primary:hover{
@@ -540,9 +540,7 @@ class CreateRobustnessEvaluationComponent {
             <div class="create-robustness-evaluation-dialog" role="dialog" aria-modal="true">
                 <div class="create-robustness-evaluation-header">
                     <h3>创建鲁棒性评估</h3>
-                    <button class="create-robustness-evaluation-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="create-robustness-evaluation-close" data-role="close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="create-robustness-evaluation-body">
                     <div class="cre-left">

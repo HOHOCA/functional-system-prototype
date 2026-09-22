@@ -1,3 +1,18 @@
+/* MOZI 4.0 平台色板（蓝湖真实环境） */
+:root {
+    --mozi-bg-page: #000000;
+    --mozi-bg-header: #232323;
+    --mozi-bg-panel: #232323;
+    --mozi-bg-elevated: #373737;
+    --mozi-primary: #249BD9;
+    --mozi-primary-hover: #1e8ac4;
+    --mozi-text: #EEEEEE;
+    --mozi-text-muted: #D4D4D4;
+    --mozi-border: #373737;
+    --primary-color: #249BD9;
+    --primary-hover: #1e8ac4;
+}
+
 /* 全局：隐藏 number 输入框的上下步进箭头 */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -360,8 +375,9 @@ input[type="number"] {
 }
 
 .settings-modal {
-    background: #1a1a1a;
-    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #373737;
+    border-radius: 4px;
     width: 1400px;
     max-width: 95vw;
     height: 900px;
@@ -378,7 +394,7 @@ input[type="number"] {
     padding: 16px 20px;
     border-bottom: 1px solid #333;
     background: #2a2a2a;
-    border-radius: 8px 8px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 
 .settings-modal-header h2 {
@@ -403,6 +419,12 @@ input[type="number"] {
     color: #fff;
     background: rgba(255, 255, 255, 0.1);
 }
+.settings-modal-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+
 
 .settings-modal-body {
     flex: 1;
@@ -621,7 +643,7 @@ input[type="number"] {
     padding: 16px 20px;
     border-top: 1px solid #333;
     background: #2a2a2a;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 4px 4px;
 }
 
 .settings-modal-footer .btn {
@@ -644,7 +666,7 @@ input[type="number"] {
 }
 
 .settings-modal-footer .btn-primary {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -667,8 +689,9 @@ input[type="number"] {
 }
 
 .optimization-settings-modal {
-    background: #1a1a1a;
-    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #373737;
+    border-radius: 4px;
     width: 600px;
     max-width: 90vw;
     display: flex;
@@ -683,7 +706,7 @@ input[type="number"] {
     padding: 16px 20px;
     border-bottom: 1px solid #333;
     background: #2a2a2a;
-    border-radius: 8px 8px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 
 .optimization-settings-modal-header h2 {
@@ -708,6 +731,12 @@ input[type="number"] {
     color: #fff;
     background: rgba(255, 255, 255, 0.1);
 }
+.optimization-settings-modal-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+
 
 .optimization-settings-modal-body {
     padding: 20px;
@@ -841,7 +870,7 @@ input[type="number"] {
 }
 
 .optimization-settings-modal-footer .btn-primary {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -864,8 +893,9 @@ input[type="number"] {
 }
 
 .cutting-modal {
-    background: #1a1a1a;
-    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #373737;
+    border-radius: 4px;
     width: 1600px;
     max-width: 95vw;
     height: 900px;
@@ -882,7 +912,7 @@ input[type="number"] {
     padding: 16px 20px;
     border-bottom: 1px solid #333;
     background: #2a2a2a;
-    border-radius: 8px 8px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 
 .cutting-modal-header h2 {
@@ -907,6 +937,12 @@ input[type="number"] {
     color: #fff;
     background: rgba(255, 255, 255, 0.1);
 }
+.cutting-modal-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+
 
 .cutting-modal-body {
     flex: 1;
@@ -967,9 +1003,9 @@ input[type="number"] {
 }
 
 .cutting-control-btn.active {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .cutting-control-btn:disabled {
@@ -1248,7 +1284,7 @@ input[type="number"] {
     padding: 16px 20px;
     border-top: 1px solid #333;
     background: #2a2a2a;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 4px 4px;
 }
 
 .cutting-modal-footer .btn {
@@ -1271,7 +1307,7 @@ input[type="number"] {
 }
 
 .cutting-modal-footer .btn-primary {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -1357,7 +1393,7 @@ body {
 .logo {
     font-size: 18px;
     font-weight: bold;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .nav-icons {
@@ -1421,7 +1457,7 @@ body {
 
 .nav-item.active {
     color: #ffffff;
-    background-color: #3AACDE;
+    background-color: #249BD9;
 }
 
 .nav-right {
@@ -1541,7 +1577,7 @@ body {
 
 .search-box input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .search-icon {
@@ -1565,7 +1601,7 @@ body {
 }
 
 .refresh-icon:hover, .settings-icon:hover {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 /* 表格区域 */
@@ -1603,7 +1639,7 @@ body {
 .patient-table tr.selected {
     background-color: #2a3f4f;
     color: #ffffff;
-    border-left: 3px solid #3AACDE;
+    border-left: 3px solid #249BD9;
 }
 
 .patient-table tr.selected td {
@@ -1644,7 +1680,7 @@ body {
 }
 
 .page-size-select:hover {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .page-btn {
@@ -1665,7 +1701,7 @@ body {
 
 .page-btn:hover:not(:disabled) {
     background-color: #404040;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -1677,8 +1713,8 @@ body {
 
 .page-btn.active,
 .page-btn.page-num.active {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -1701,7 +1737,7 @@ body {
 
 .jump-to-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .jump-to-input::placeholder {
@@ -1726,7 +1762,7 @@ body {
 }
 
 .btn-primary {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
 }
 
@@ -1801,7 +1837,7 @@ body {
 
 .right-search input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 /* 右侧标签页 */
@@ -1826,8 +1862,8 @@ body {
 }
 
 .tab-item.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
     background-color: #2d2d2d;
 }
 
@@ -1868,8 +1904,8 @@ body {
 }
 
 .sequence-tab.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
     background-color: #404040;
 }
 
@@ -1999,7 +2035,7 @@ body {
 }
 
 .btn-add {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
 }
 
@@ -2067,7 +2103,7 @@ body {
 }
 
 .btn-registration {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
     border: none;
     border-radius: 4px;
@@ -2140,7 +2176,7 @@ body {
 .tree-item.selected {
     background-color: #2a3f4f;
     color: #ffffff;
-    border-left: 3px solid #3AACDE;
+    border-left: 3px solid #249BD9;
 }
 
 .tree-item.selected:hover {
@@ -2185,7 +2221,7 @@ body {
 }
 
 .tree-item.visible i {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .tree-item.visible i.fa-eye {
@@ -2246,11 +2282,11 @@ body {
 }
 
 .tree-item i.fa-lungs {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .tree-item i.fa-circle-double {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .tree-item i.fa-radiation {
@@ -2410,7 +2446,7 @@ body {
 }
 
 .btn-open {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
     padding: 10px 20px;
     border: none;
@@ -2573,9 +2609,9 @@ body {
 }
 
 .toolbar-btn.active {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .toolbar-btn i {
@@ -2638,7 +2674,7 @@ body {
 }
 
 .resizer-handle:hover {
-    background-color: #3AACDE;
+    background-color: #249BD9;
 }
 
 .resizer-handle:active {
@@ -2775,6 +2811,7 @@ body {
 
 .sequence-tree-container .chevron-icon {
     width: 10px;
+    height: 10px;
     font-size: 10px;
     color: #6b7280;
 }
@@ -2828,7 +2865,7 @@ body {
 .sequence-tree-container .tree-item.selected {
     background-color: #2a3f4f;
     color: #ffffff;
-    border-left: 3px solid #3AACDE;
+    border-left: 3px solid #249BD9;
 }
 
 .sequence-tree-container .tree-item.selected:hover {
@@ -2845,11 +2882,11 @@ body {
 
 /* 序列树图标颜色样式 */
 .sequence-tree-container .tree-item .fa-lungs {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .sequence-tree-container .tree-item .fa-cube {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .sequence-tree-container .tree-item .fa-radiation {
@@ -2861,7 +2898,7 @@ body {
 }
 
 .sequence-tree-container .tree-item .fa-layer-group {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .sequence-tree-container .tree-item .fa-file-alt {
@@ -2994,7 +3031,7 @@ body {
 }
 
 .nav-btn.active {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
     border-left-color: #ffffff;
 }
@@ -3326,6 +3363,189 @@ body {
     display: flex;
 }
 
+
+/* ========== MOZI 统一弹窗规范（蓝湖对齐） ========== */
+.mozi-modal-overlay,
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.mozi-modal {
+    background: #2a2a2a;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    color: #eeeeee;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.mozi-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #373737;
+    background: #2b2b2b;
+    flex-shrink: 0;
+}
+
+.mozi-modal-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #eeeeee;
+    line-height: 20px;
+}
+
+.mozi-modal-close {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #d4d4d4;
+    cursor: pointer;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.mozi-modal-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.mozi-modal-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+
+.mozi-modal-body {
+    padding: 16px 20px;
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.mozi-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid #373737;
+    flex-shrink: 0;
+}
+
+.mozi-modal-divider {
+    height: 1px;
+    background: #373737;
+    flex-shrink: 0;
+}
+
+.mozi-modal-btn {
+    min-width: 88px;
+    height: 30px;
+    padding: 0 16px;
+    border-radius: 4px;
+    border: 1px solid #575757;
+    background: #3f3f3f;
+    color: #d2d2d2;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.mozi-modal-btn:hover {
+    background: #4a4a4a;
+    color: #fff;
+}
+
+.mozi-modal-btn-primary,
+.mozi-modal-btn.primary {
+    border-color: #249BD9;
+    background: #249BD9;
+    color: #ffffff;
+}
+
+.mozi-modal-btn-primary:hover,
+.mozi-modal-btn.primary:hover {
+    background: #1e8ac4;
+    border-color: #1e8ac4;
+}
+
+.mozi-modal-btn-danger,
+.mozi-modal-btn.danger {
+    border-color: #c62828;
+    background: #c62828;
+    color: #ffffff;
+}
+
+.mozi-modal-btn-danger:hover,
+.mozi-modal-btn.danger:hover {
+    background: #b71c1c;
+    border-color: #b71c1c;
+}
+
+/* 统一：组件内联弹窗关闭钮尺寸（挂 PNG） */
+.emc-close, .wdmc-close, .wrtmc-close, .prtm-close,
+.pscm-close, .psccm-close, .pbrm-close, .ilmc-close, .ilmc-exists-close,
+.plg-close, .crtn-close, .lrt-close, .settings-modal-close,
+.cutting-modal-close, .optimization-settings-modal-close {
+    width: 24px !important;
+    height: 24px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 0 !important;
+    line-height: 1 !important;
+    color: transparent !important;
+}
+.emc-close .mozi-ui-icon-close-x,
+.wdmc-close .mozi-ui-icon-close-x,
+.wrtmc-close .mozi-ui-icon-close-x,
+.prtm-close .mozi-ui-icon-close-x,
+.pscm-close .mozi-ui-icon-close-x,
+.psccm-close .mozi-ui-icon-close-x,
+.pbrm-close .mozi-ui-icon-close-x,
+.ilmc-close .mozi-ui-icon-close-x,
+.ilmc-exists-close .mozi-ui-icon-close-x,
+.plg-close .mozi-ui-icon-close-x,
+.crtn-close .mozi-ui-icon-close-x,
+.lrt-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+}
+
+
+/* 序列树审批锁：用 PNG，不再依赖 FA 绿色 */
+.status-icon.mozi-ui-icon-lock,
+.status-icon.mozi-ui-icon {
+    font-size: 0;
+    color: transparent;
+    margin-left: 6px;
+    width: 12px;
+    height: 12px;
+}
+
 /* 导出配准模态对话框样式 */
 .modal-overlay {
     position: fixed;
@@ -3342,13 +3562,13 @@ body {
 
 .modal-dialog {
     background-color: #2a2a2a;
-    border: 1px solid #404040;
-    border-radius: 8px;
+    border: 1px solid #373737;
+    border-radius: 4px;
     width: 500px;
     max-width: 90vw;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
 }
 
 .modal-header {
@@ -3369,17 +3589,29 @@ body {
 .modal-close {
     background: none;
     border: none;
-    color: #ddd;
+    color: #d4d4d4;
     font-size: 16px;
     cursor: pointer;
     padding: 4px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    border-radius: 2px;
+    transition: background 0.15s ease;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .modal-close:hover {
-    background-color: #404040;
+    background-color: rgba(255, 255, 255, 0.08);
     color: #ffffff;
+}
+
+.modal-close .mozi-ui-icon-close-x {
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
 }
 
 .modal-body {
@@ -3524,7 +3756,7 @@ body {
 
 .form-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .form-input::placeholder {
@@ -3543,7 +3775,7 @@ body {
 
 .form-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 /* 进度对话框 */
@@ -3568,7 +3800,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background-color: #3AACDE;
+    background-color: #249BD9;
     border-radius: 4px;
     transition: width 0.3s ease;
     width: 0%;
@@ -3588,7 +3820,7 @@ body {
     padding: 12px;
     background-color: #2A2A2A;
     border-radius: 4px;
-    border-left: 4px solid #3AACDE;
+    border-left: 4px solid #249BD9;
 }
 
 /* 删除配准记录确认对话框样式 */
@@ -3675,7 +3907,7 @@ body {
 /* 眼睛图标保持蓝色 */
 .struct-info .fa-eye,
 .struct-info .fa-eye-slash {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .struct-info .fa-eye:hover,
@@ -3788,7 +4020,7 @@ body {
 
 .roi-item.active {
     background-color: #2a3f4f;
-    border-left: 3px solid #3AACDE;
+    border-left: 3px solid #249BD9;
 }
 
 .roi-visibility {
@@ -3803,7 +4035,7 @@ body {
 }
 
 .roi-visibility.visible {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .roi-color {
@@ -3987,9 +4219,9 @@ body {
 }
 
 .roi-dropdown-confirm {
-    background: #3AACDE;
+    background: #249BD9;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .roi-dropdown-confirm:hover {
@@ -4045,7 +4277,7 @@ body {
     background-color: transparent;
     border: none;
     border-radius: 3px;
-    color: #3AACDE;
+    color: #249BD9;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -4066,8 +4298,8 @@ body {
 
 /* ROI工具栏状态样式 */
 .roi-tool-btn.active {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -4192,7 +4424,7 @@ body {
 }
 
 .robust-card.selected {
-    border-color: #3aacde;
+    border-color: #249BD9;
     box-shadow: 0 0 0 1px rgba(58, 172, 222, 0.35);
 }
 
@@ -4219,7 +4451,7 @@ body {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
-    color: #3aacde;
+    color: #249BD9;
     font-size: 16px;
 }
 
@@ -4229,7 +4461,7 @@ body {
     bottom: -1px;
     font-size: 8px;
     font-weight: 700;
-    color: #3aacde;
+    color: #249BD9;
     line-height: 1;
     text-shadow: 0 0 2px #0a0a0a;
 }
@@ -4258,7 +4490,7 @@ body {
     padding: 0;
     border: none;
     background: transparent;
-    color: #3aacde;
+    color: #249BD9;
     cursor: pointer;
     font-size: 14px;
     line-height: 1;
@@ -4288,7 +4520,7 @@ body {
 .robust-metric-value {
     font-size: 14px;
     font-weight: 600;
-    color: #3aacde;
+    color: #249BD9;
     line-height: 1.2;
 }
 
@@ -4514,7 +4746,7 @@ body {
 /* POI struct-info 图标样式 */
 .poi-struct-header .struct-info .fa-eye,
 .poi-struct-header .struct-info .fa-eye-slash {
-    color: #3AACDE;
+    color: #249BD9;
     cursor: pointer;
     transition: color 0.3s ease;
 }
@@ -4643,7 +4875,7 @@ body {
 }
 
 .poi-visibility.visible {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .poi-color {
@@ -4695,7 +4927,7 @@ body {
 
 .poi-tool-btn i {
     font-size: 14px;
-    background: linear-gradient(135deg, #3AACDE 0%, #00bcd4 100%);
+    background: linear-gradient(135deg, #249BD9 0%, #00bcd4 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -4837,7 +5069,7 @@ body {
 
 .dose-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background-color: #2d2d2d;
 }
 
@@ -4914,7 +5146,7 @@ body {
 
 .dose-template-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background-color: #2d2d2d;
 }
 
@@ -4943,8 +5175,8 @@ body {
 }
 
 .dose-template-save-btn:hover {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -4979,8 +5211,8 @@ body {
 }
 
 .dose-action-btn:hover {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -4989,8 +5221,8 @@ body {
 }
 
 .dose-action-btn.active {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -5081,7 +5313,7 @@ body {
 }
 
 .dose-visibility-header i {
-    color: #3AACDE;
+    color: #249BD9;
     font-size: 12px;
 }
 
@@ -5109,7 +5341,7 @@ body {
 }
 
 .dose-visibility-icon.visible {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .dose-visibility-icon:hover {
@@ -5157,7 +5389,7 @@ body {
 
 .dose-level-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background-color: #2d2d2d;
 }
 
@@ -5234,7 +5466,7 @@ body {
 }
 
 .poi-select:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 /* POI坐标输入 */
@@ -5276,7 +5508,7 @@ body {
 }
 
 .poi-coord-input:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .poi-coord-unit {
@@ -5418,7 +5650,7 @@ body {
 
 .form-text-input:focus,
 .form-textarea:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .form-textarea {
@@ -5492,9 +5724,9 @@ body {
 }
 
 .btn-primary {
-    background: #3AACDE;
+    background: #249BD9;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .btn-primary:hover {
@@ -5556,7 +5788,7 @@ body {
 
 .roi-hu-input:focus,
 .roi-density-input:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .roi-hu-input:disabled,
@@ -5581,7 +5813,7 @@ body {
 
 .roi-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .roi-name-input {
@@ -5658,8 +5890,8 @@ body {
 .roi-edit-btn:hover,
 .roi-copy-btn:hover {
     background-color: #3a3a3a;
-    border-color: #3AACDE;
-    color: #3AACDE;
+    border-color: #249BD9;
+    color: #249BD9;
 }
 
 .roi-edit-btn i,
@@ -5720,9 +5952,9 @@ body {
 }
 
 .left-tab.active {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
-    border-bottom-color: #3AACDE;
+    border-bottom-color: #249BD9;
 }
 
 /* 左侧标签页内容 */
@@ -5773,12 +6005,12 @@ body {
 
 .roi-item:hover, .poi-item:hover {
     background-color: #404040;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .roi-item.selected, .poi-item.selected {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
 }
 
 .roi-color {
@@ -5794,7 +6026,7 @@ body {
     height: 12px;
     margin-right: 10px;
     flex-shrink: 0;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .roi-item span, .poi-item span {
@@ -5860,7 +6092,7 @@ body {
 
 .form-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .form-actions {
@@ -5879,7 +6111,7 @@ body {
 }
 
 .btn-primary {
-    background-color: #3AACDE;
+    background-color: #249BD9;
     color: #ffffff;
 }
 
@@ -6036,12 +6268,12 @@ body {
 
 .registration-container .registration-card:hover {
     background: #3d3d3d;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     transform: translateY(-2px);
 }
 
 .registration-container .registration-card.selected {
-    background: #3AACDE;
+    background: #249BD9;
     border-color: #005a9e;
 }
 
@@ -6133,7 +6365,7 @@ body {
 }
 
 .registration-container .meta-item i {
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .registration-container .card-actions {
@@ -6288,8 +6520,8 @@ body {
 }
 
 .right-view-tab.active {
-    background: #3AACDE;
-    border-color: #3AACDE;
+    background: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -6666,8 +6898,8 @@ body {
 }
 
 .import-tabs .tab-item.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
 }
 
 .import-tabs .tab-item:hover {
@@ -6700,7 +6932,7 @@ body {
 
 .folder-input-group input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .btn-folder-select {
@@ -6747,8 +6979,8 @@ body {
 }
 
 .checkbox-label input[type="checkbox"]:checked + .checkmark {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
 }
 
 .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
@@ -6901,7 +7133,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background-color: #3AACDE;
+    background-color: #249BD9;
     width: 0%;
     transition: width 0.3s ease;
 }
@@ -7190,7 +7422,7 @@ body {
     flex: 0 0 6px;
 }
 
-.plan-design-content .split-resizer:hover { background: #3AACDE33; }
+.plan-design-content .split-resizer:hover { background: #249BD933; }
 .plan-design-content .plan-image-area.resizing { cursor: col-resize; }
 .plan-design-content .plan-image-area.resizing * { user-select: none; }
 
@@ -7208,7 +7440,7 @@ body {
     color: #ccc;
     cursor: pointer;
 }
-.plan-design-content .toggle-btn.active { background: #3AACDE; color: #fff; }
+.plan-design-content .toggle-btn.active { background: #249BD9; color: #fff; }
 
 .plan-design-content .tabs { display: flex; gap: 8px; }
 .plan-design-content .tab {
@@ -7219,7 +7451,7 @@ body {
     border-radius: 4px;
     cursor: pointer;
 }
-.plan-design-content .tab.active { background: #3AACDE; color: #fff; border-color: #3AACDE; }
+.plan-design-content .tab.active { background: #249BD9; color: #fff; border-color: #249BD9; }
 .plan-design-content .tab-panels { flex: 1; display: flex; }
 .plan-design-content .tab-panel { flex: 1; display: none; align-items: center; justify-content: center; color: #aaa; border: 1px solid #333; background: #111; }
 .plan-design-content .tab-panel.active { display: flex; }
@@ -7229,7 +7461,7 @@ body {
 .plan-design-content .plan-bottom-panel { background: #1a1a1a; border-top: 1px solid #333; flex-shrink: 0; padding: 0; width: 1820px; align-self: flex-start; }
 .plan-design-content .bottom-tabs { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #333; }
 .plan-design-content .bottom-tab { padding: 6px 10px; background: #2d2d2d; border: 1px solid #404040; color: #ccc; border-radius: 4px; cursor: pointer; }
-.plan-design-content .bottom-tab.active { background: #3AACDE; color: #fff; border-color: #3AACDE; }
+.plan-design-content .bottom-tab.active { background: #249BD9; color: #fff; border-color: #249BD9; }
 .plan-design-content .bottom-contents { height: 28vh; /* 自适应窗口高度 */ overflow: auto; }
 .plan-design-content .bottom-content { display: none; padding: 10px; color: #bbb; }
 .plan-design-content .bottom-content.active { display: block; }
@@ -7573,7 +7805,7 @@ body {
     right: 30%;
     width: 12%;
     height: 12%;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .target-delineation-content .coordinate-labels {
@@ -7858,6 +8090,129 @@ body {
     background: rgba(255, 255, 255, 0.15);
 }
 
+.mozi-view-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+.mozi-view-icon-zoom { background-image: url('../assets/icons/ui/view-zoom.png?v=ui19'); }
+.mozi-view-icon-pan { background-image: url('../assets/icons/ui/view-pan.png?v=ui19'); }
+.mozi-view-icon-wl { background-image: url('../assets/icons/ui/view-wl.png?v=ui19'); }
+.mozi-view-icon-rotate { background-image: url('../assets/icons/ui/view-rotate.png?v=ui19'); }
+.mozi-view-icon-measure { background-image: url('../assets/icons/ui/view-measure.png?v=ui19'); }
+.mozi-view-icon-grid { background-image: url('../assets/icons/ui/view-grid.png?v=ui19'); }
+.mozi-view-icon-maximize { background-image: url('../assets/icons/ui/view-maximize.png?v=ui19'); }
+
+.mozi-ui-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.roi-tool-btn .mozi-ui-icon,
+.poi-tool-btn .mozi-ui-icon,
+.view3d-tool-btn .mozi-ui-icon,
+.bev-view-tool-btn .mozi-ui-icon {
+    width: 16px;
+    height: 16px;
+}
+.mozi-ui-icon-eye { background-image: url('../assets/icons/ui/ui-eye.png?v=ui19'); }
+.mozi-ui-icon-eye-slash { background-image: url('../assets/icons/ui/ui-eye-slash.png?v=ui19'); }
+.mozi-ui-icon-eye-list { background-image: url('../assets/icons/ui/ui-eye.png?v=ui19'); } /* alias: same open-eye as slash pair */
+.mozi-ui-icon-chevron-down { background-image: url('../assets/icons/ui/ui-chevron-down.png?v=ui19'); }
+.mozi-ui-icon-chevron-right { background-image: url('../assets/icons/ui/ui-chevron-right.png?v=ui19'); }
+.mozi-ui-icon-plus { background-image: url('../assets/icons/ui/ui-plus.png?v=ui19'); }
+.mozi-ui-icon-trash { background-image: url('../assets/icons/ui/ui-trash.png?v=ui19'); }
+.mozi-ui-icon-fill { background-image: url('../assets/icons/ui/ui-fill.png?v=ui19'); }
+.mozi-ui-icon-poi-add { background-image: url('../assets/icons/ui/ui-poi-add.png?v=ui19'); }
+.mozi-ui-icon-move { background-image: url('../assets/icons/ui/ui-move.png?v=ui19'); }
+.mozi-ui-icon-user { background-image: url('../assets/icons/ui/ui-user.png?v=ui19'); }
+.mozi-ui-icon-layers { background-image: url('../assets/icons/ui/ctrl-layers.png?v=ui19'); }
+.mozi-ui-icon-copy { background-image: url('../assets/icons/ui/ctrl-copy.png?v=ui19'); }
+.mozi-ui-icon-ch-add { background-image: url('../assets/icons/ui/ch-add.png?v=ui19'); }
+.mozi-ui-icon-ch-doc-add { background-image: url('../assets/icons/ui/ch-doc-add.png?v=ui19'); }
+.mozi-ui-icon-ch-trash { background-image: url('../assets/icons/ui/ch-trash.png?v=ui19'); }
+.mozi-ui-icon-ch-trash-all { background-image: url('../assets/icons/ui/ch-trash-all.png?v=ui19'); }
+.mozi-ui-icon-ch-trash-x { background-image: url('../assets/icons/ui/ch-trash-x.png?v=ui19'); }
+.mozi-ui-icon-ch-edit { background-image: url('../assets/icons/ui/ch-edit.png?v=ui19'); }
+.mozi-ui-icon-edit-props { background-image: url('../assets/icons/ui/ui-edit-props.png?v=ui19'); }
+.mozi-ui-icon-ch-pointer { background-image: url('../assets/icons/ui/ch-pointer.png?v=ui19'); }
+.mozi-ui-icon-ch-auto { background-image: url('../assets/icons/ui/ch-auto.png?v=ui19'); }
+.mozi-ui-icon-ch-model { background-image: url('../assets/icons/ui/ch-model.png?v=ui19'); }
+.mozi-ui-icon-ch-import { background-image: url('../assets/icons/ui/ch-import.png?v=ui19'); }
+.mozi-ui-icon-ch-list-import { background-image: url('../assets/icons/ui/ch-list-import.png?v=ui19'); }
+.mozi-ui-icon-ch-bookmark { background-image: url('../assets/icons/ui/ch-bookmark.png?v=ui19'); }
+.mozi-ui-icon-ch-sort { background-image: url('../assets/icons/ui/ch-sort.png?v=ui19'); }
+.mozi-ui-icon-ch-rebuild { background-image: url('../assets/icons/ui/ch-rebuild.png?v=ui19'); }
+.mozi-ui-icon-ch-roi-add { background-image: url('../assets/icons/ui/ch-roi-add.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-eye { background-image: url('../assets/icons/ui/roi-tb-eye.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-fill { background-image: url('../assets/icons/ui/roi-tb-fill.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-bold { background-image: url('../assets/icons/ui/roi-tb-bold.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-image { background-image: url('../assets/icons/ui/roi-tb-image.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-add { background-image: url('../assets/icons/ui/roi-tb-add.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-trash { background-image: url('../assets/icons/ui/roi-tb-trash.png?v=ui19'); }
+.mozi-ui-icon-roi-tb-batch { background-image: url('../assets/icons/ui/roi-tb-batch.png?v=ui19'); }
+.mozi-ui-icon-roi-type { background-image: url('../assets/icons/ui/roi-type.png?v=ui19'); }
+.mozi-ui-icon-poi-tb-eye { background-image: url('../assets/icons/ui/poi-tb-eye.png?v=ui19'); }
+.mozi-ui-icon-poi-tb-add { background-image: url('../assets/icons/ui/poi-tb-add.png?v=ui19'); }
+.mozi-ui-icon-poi-tb-trash { background-image: url('../assets/icons/ui/poi-tb-trash.png?v=ui19'); }
+.mozi-ui-icon-poi-tb-move { background-image: url('../assets/icons/ui/poi-tb-move.png?v=ui19'); }
+.mozi-ui-icon-poi-type { background-image: url('../assets/icons/ui/ctrl-target.png?v=ui19'); }
+.roi-tool-btn .mozi-ui-icon,
+.poi-tool-btn .mozi-ui-icon,
+.roi-edit-btn .mozi-ui-icon,
+.poi-edit-btn .mozi-ui-icon,
+.roi-copy-btn .mozi-ui-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.mozi-ui-icon-close-x { background-image: url('../assets/icons/ui/ui-close-x.png?v=ui19'); }
+.mozi-ui-icon-lock { background-image: url('../assets/icons/ui/ui-lock.png?v=ui19'); }
+.mozi-ui-icon-unlock { background-image: url('../assets/icons/ui/ui-unlock.png?v=ui19'); }
+.mozi-ui-icon-gear { background-image: url('../assets/icons/ui/ui-gear.png?v=ui19'); }
+.mozi-ui-icon-check { background-image: url('../assets/icons/ui/ui-check.png?v=ui19'); }
+.proton-beam-toolbar-btn .mozi-ui-icon,
+.dose-action-btn .mozi-ui-icon,
+.dmlc-beam-eye-btn.mozi-ui-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.channel-toolbar-btn .mozi-ui-icon,
+.clinical-target-toolbar-btn .mozi-ui-icon,
+.bottom-control-fullscreen-btn .mozi-view-icon {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.seq-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    vertical-align: middle;
+}
+.seq-icon-study { background-image: url('../assets/icons/ui/tree-study.png?v=ui19'); }
+.seq-icon-ct { background-image: url('../assets/icons/ui/tree-ct.png?v=ui19'); }
+.seq-icon-lungs { background-image: url('../assets/icons/ui/tree-lungs.png?v=ui19'); }
+.seq-icon-struct { background-image: url('../assets/icons/ui/tree-struct.png?v=ui19'); }
+.seq-icon-plan { background-image: url('../assets/icons/ui/tree-plan.png?v=ui19'); }
+.seq-icon-dose { background-image: url('../assets/icons/ui/tree-dose.png?v=ui19'); }
+.seq-icon-list { background-image: url('../assets/icons/ui/tree-list.png?v=ui19'); }
+
 /* 工具栏按钮组右对齐 */
 .cross-section-view2d-toolbar .toolbar-group-right {
     margin-left: auto;
@@ -7881,7 +8236,7 @@ body {
 
 .cross-section-view2d-toolbar .toolbar-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .cross-section-view2d-main {
@@ -8240,7 +8595,7 @@ body {
     transform: translateX(-50%);
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-bottom: 12px solid #3AACDE;
+    border-bottom: 12px solid #249BD9;
 }
 
 .plane-arrow-coronal {
@@ -8295,8 +8650,8 @@ body {
 }
 
 .view-tab.active {
-    background: #3AACDE;
-    border-color: #3AACDE;
+    background: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -8324,13 +8679,13 @@ body {
 
 .view-tool-btn:hover {
     background: #404040;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
 .view-tool-btn.active {
-    background: #3AACDE;
-    border-color: #3AACDE;
+    background: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 
@@ -8364,11 +8719,11 @@ body {
     cursor: pointer;
     width: 16px;
     height: 16px;
-    accent-color: #3AACDE;
+    accent-color: #249BD9;
 }
 
 .dose-stats-radio input[type="radio"]:checked + span {
-    color: #3AACDE;
+    color: #249BD9;
     font-weight: 600;
 }
 
@@ -8431,7 +8786,7 @@ body {
 
 .dose-stats-visibility-toggle {
     cursor: pointer;
-    color: #3AACDE;
+    color: #249BD9;
     font-size: 14px;
     transition: color 0.3s;
 }
@@ -8527,13 +8882,13 @@ body {
 }
 
 .bev-view-tool-btn:hover {
-    background: #3AACDE;
+    background: #249BD9;
     border-color: #00aaff;
     color: #fff;
 }
 
 .bev-view-tool-btn.active {
-    background: #3AACDE;
+    background: #249BD9;
     border-color: #00aaff;
     color: #fff;
 }
@@ -8637,7 +8992,7 @@ body {
     position: absolute;
     top: -2px;
     left: 2px;
-    color: #3AACDE;
+    color: #249BD9;
     font-size: 12px;
 }
 
@@ -8793,7 +9148,7 @@ body {
 
 .migrate-sketch-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .migrate-sketch-footer {
@@ -8824,9 +9179,9 @@ body {
 }
 
 .migrate-sketch-confirm {
-    background: #3AACDE;
+    background: #249BD9;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .migrate-sketch-confirm:hover {
@@ -8942,7 +9297,7 @@ body {
 
 .spectral-histogram-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .spectral-histogram-chart {
@@ -8991,9 +9346,9 @@ body {
 }
 
 .spectral-histogram-export {
-    background: #3AACDE;
+    background: #249BD9;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .spectral-histogram-export:hover {
@@ -9088,7 +9443,7 @@ body {
 
 .spectral-linear-analysis-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .spectral-linear-analysis-close {
@@ -9216,11 +9571,11 @@ body {
 }
 
 .spectral-linear-analysis-visibility-toggle.visible {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .spectral-linear-analysis-visibility-toggle.visible::before {
-    background: #3AACDE;
+    background: #249BD9;
 }
 
 .spectral-linear-analysis-color-indicator {
@@ -9253,7 +9608,7 @@ body {
 .spectral-linear-analysis-add-btn {
     margin: 16px;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #3AACDE 0%, #005fa3 100%);
+    background: linear-gradient(135deg, #249BD9 0%, #005fa3 100%);
     border: none;
     border-radius: 6px;
     color: #ffffff;
@@ -9269,7 +9624,7 @@ body {
 }
 
 .spectral-linear-analysis-add-btn:hover {
-    background: linear-gradient(135deg, #0099ff 0%, #3AACDE 100%);
+    background: linear-gradient(135deg, #0099ff 0%, #249BD9 100%);
     box-shadow: 0 4px 12px rgba(0, 122, 204, 0.4);
     transform: translateY(-1px);
 }
@@ -9315,8 +9670,8 @@ body {
 }
 
 .spectral-linear-analysis-tab.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
     background: #1a1a1a;
 }
 
@@ -9468,13 +9823,13 @@ body {
 }
 
 .spectral-linear-analysis-export {
-    background: linear-gradient(135deg, #3AACDE 0%, #005fa3 100%);
+    background: linear-gradient(135deg, #249BD9 0%, #005fa3 100%);
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .spectral-linear-analysis-export:hover {
-    background: linear-gradient(135deg, #0099ff 0%, #3AACDE 100%);
+    background: linear-gradient(135deg, #0099ff 0%, #249BD9 100%);
     border-color: #0099ff;
 }
 
@@ -9579,8 +9934,8 @@ body {
 }
 
 .export-plan-tab.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
     background: #2a2a2a;
 }
 
@@ -9720,11 +10075,11 @@ body {
 
 .export-plan-select:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .export-plan-link {
-    color: #3AACDE;
+    color: #249BD9;
     text-decoration: none;
     font-size: 13px;
     transition: color 0.3s;
@@ -9753,7 +10108,7 @@ body {
 
 .export-plan-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .export-plan-browse-btn {
@@ -9769,7 +10124,7 @@ body {
 .export-plan-browse-btn:hover {
     background: #3a3a3a;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .export-plan-checkboxes {
@@ -9817,7 +10172,7 @@ body {
 .export-plan-settings-btn:hover {
     background: #3a3a3a;
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .export-plan-footer {
@@ -9850,13 +10205,13 @@ body {
 }
 
 .export-plan-confirm {
-    background: linear-gradient(135deg, #3AACDE 0%, #005fa3 100%);
+    background: linear-gradient(135deg, #249BD9 0%, #005fa3 100%);
     color: #ffffff;
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .export-plan-confirm:hover {
-    background: linear-gradient(135deg, #0099ff 0%, #3AACDE 100%);
+    background: linear-gradient(135deg, #0099ff 0%, #249BD9 100%);
     border-color: #0099ff;
 }
 
@@ -10008,14 +10363,14 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 12px 16px;
+    gap: 4px;
+    padding: 6px 10px;
     background: transparent;
     border: none;
     color: #888;
     cursor: pointer;
     transition: all 0.3s;
-    min-width: 80px;
+    min-width: 64px;
     flex-shrink: 0;
     border-radius: 4px;
     position: relative;
@@ -10031,26 +10386,39 @@ body {
 }
 
 .module-tool-btn i {
-    font-size: 20px;
-    transition: all 0.3s;
-    background: linear-gradient(135deg, #3AACDE 0%, #00bcd4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 18px;
+    line-height: 1;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #249BD9;
+    background: none;
+    -webkit-text-fill-color: #249BD9;
+    background-clip: border-box;
+    -webkit-background-clip: border-box;
+}
+
+.module-tool-lanhu-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    display: block;
+    pointer-events: none;
+    flex-shrink: 0;
 }
 
 .module-tool-btn:hover i {
-    background: linear-gradient(135deg, #5bbfe0 0%, #00d4e6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #5bbfe0;
+    -webkit-text-fill-color: #5bbfe0;
+    background: none;
 }
 
 .module-tool-btn.active i {
-    background: linear-gradient(135deg, #5bbfe0 0%, #00d4e6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #5bbfe0;
+    -webkit-text-fill-color: #5bbfe0;
+    background: none;
 }
 
 .module-tool-label {
@@ -10078,7 +10446,7 @@ body {
 }
 
 .module-tool-btn.drag-over {
-    border-left: 3px solid #3AACDE;
+    border-left: 3px solid #249BD9;
     background: rgba(58, 172, 222, 0.15);
     transform: translateX(2px);
     transition: all 0.2s ease;
@@ -10185,7 +10553,7 @@ body {
 
 .module-toolbar-control-btn:hover {
     background: #404040;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 /* ============================================
@@ -10282,7 +10650,7 @@ body {
 
 .module-toolbar-header-btn:hover {
     background: #404040;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 /* ============================================
@@ -10337,7 +10705,7 @@ body {
 
 .module-toolbar-custom-btn:hover {
     background: #555555;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .module-toolbar-more-content {
@@ -10364,7 +10732,7 @@ body {
 
 .module-toolbar-more-item:hover {
     background: #404040;
-    color: #3AACDE;
+    color: #249BD9;
 }
 
 .module-toolbar-more-item i {
@@ -10468,7 +10836,7 @@ body {
 }
 
 .module-toolbar-custom-category-title {
-    color: #3AACDE;
+    color: #249BD9;
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 12px;
@@ -10498,7 +10866,7 @@ body {
 
 .module-toolbar-custom-tool-item.checked {
     background: rgba(58, 172, 222, 0.15);
-    border-color: #3AACDE;
+    border-color: #249BD9;
     box-shadow: 0 0 8px rgba(58, 172, 222, 0.3);
 }
 
@@ -10618,11 +10986,11 @@ body {
 }
 
 .channel-list-table tbody tr.selected {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .channel-list-table tbody tr.selected:hover {
-    background-color: rgba(33, 143, 191, 0.3);
+    background-color: rgba(36, 155, 217, 0.3);
 }
 
 .channel-list-table .channel-input {
@@ -10639,7 +11007,7 @@ body {
 
 .channel-list-table .channel-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background: #1a1a1a;
 }
 
@@ -10738,11 +11106,11 @@ body {
 }
 
 .dwell-control-table tbody tr.selected {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .dwell-control-table tbody tr.selected:hover {
-    background-color: rgba(33, 143, 191, 0.3);
+    background-color: rgba(36, 155, 217, 0.3);
 }
 
 .dwell-control-table .dwell-group-row {
@@ -10772,7 +11140,7 @@ body {
 
 .dwell-control-table .dwell-input:focus {
     outline: none;
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background: #1a1a1a;
 }
 
@@ -10896,11 +11264,11 @@ body {
 }
 
 .clinical-target-table tbody tr.selected {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .clinical-target-table tbody tr.selected:hover {
-    background-color: rgba(33, 143, 191, 0.3);
+    background-color: rgba(36, 155, 217, 0.3);
 }
 
 .clinical-target-toolbar {
@@ -11102,7 +11470,7 @@ body {
 
 .module-toolbar-custom-tool-item label i {
     font-size: 18px;
-    color: #3AACDE;
+    color: #249BD9;
     width: 20px;
 }
 
@@ -11159,7 +11527,7 @@ body {
 }
 
 .module-toolbar-custom-confirm {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -11192,4 +11560,28 @@ body {
 .module-toolbar-more-content::-webkit-scrollbar-thumb:hover,
 .module-toolbar-custom-dialog-body::-webkit-scrollbar-thumb:hover {
     background: #555555;
+}
+
+
+/* Instant hover tip (replaces native title delay) */
+.mozi-instant-tip {
+    position: fixed;
+    z-index: 10050;
+    max-width: 320px;
+    overflow-y: auto;
+    padding: 6px 10px;
+    background: #1e1e1e;
+    color: #e8e8e8;
+    font-size: 12px;
+    line-height: 1.45;
+    border-radius: 4px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    white-space: pre-wrap;
+    word-break: break-word;
+    pointer-events: auto;
+}
+
+.mozi-instant-tip[hidden] {
+    display: none !important;
 }

@@ -59,72 +59,74 @@ class ImportLegacyModalComponent {
         const style = document.createElement('style');
         style.id = 'import-legacy-modal-component-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .ilmc-wrap { width: 100%; height: 100%; min-height: 620px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
             .ilmc-wrap.overlay { background: rgba(0, 0, 0, 0.55); }
-            .ilmc-modal { width: min(1100px, 100%); height: min(680px, 100%); background: #2a2a2a; border: 1px solid #404040; border-radius: 8px; color: #ddd; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; overflow: hidden; }
+            .ilmc-modal { width: min(1100px, 100%); height: min(680px, 100%); background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #ddd; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; overflow: hidden; }
             .ilmc-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 12px; flex-shrink: 0; }
             .ilmc-title { margin: 0; font-size: 16px; font-weight: 500; color: #fff; }
             .ilmc-close { background: none; border: none; color: #aaa; font-size: 18px; line-height: 1; cursor: pointer; padding: 4px; }
             .ilmc-close:hover { color: #fff; }
             .ilmc-tabs { display: flex; border-bottom: 1px solid #404040; padding: 0 20px; flex-shrink: 0; }
             .ilmc-tab { padding: 10px 20px; cursor: pointer; border-bottom: 2px solid transparent; color: #ddd; font-size: 14px; transition: all 0.2s ease; margin-bottom: -1px; }
-            .ilmc-tab.active { color: #3AACDE; border-bottom-color: #3AACDE; }
+            .ilmc-tab.active { color: #249BD9; border-bottom-color: #249BD9; }
             .ilmc-tab:hover { color: #fff; }
             .ilmc-body { flex: 1; display: flex; flex-direction: column; padding: 16px 20px; overflow: hidden; min-height: 0; }
             .ilmc-toolbar { flex-shrink: 0; margin-bottom: 16px; }
             .ilmc-search-row { display: flex; align-items: center; gap: 10px; }
             .ilmc-search-box { flex: 1; }
-            .ilmc-search-box input { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 35px; background-color: #1a1a1a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 12px center; background-size: 16px; border: 1px solid #404040; border-radius: 4px; color: #e6e6e6; font-size: 13px; }
-            .ilmc-search-box input:focus { outline: none; border-color: #3AACDE; background-color: #262626; box-shadow: 0 0 0 3px rgba(33, 143, 191, 0.15); }
+            .ilmc-search-box input { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px 0 35px; background-color: #1a1a1a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 12px center; background-size: 16px; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; font-size: 13px; }
+            .ilmc-search-box input:focus { outline: none; border-color: #249BD9; background-color: #262626; box-shadow: 0 0 0 3px rgba(36, 155, 217, 0.15); }
             .ilmc-search-box input:disabled { background-color: #252525; color: #666; border-color: #353535; cursor: not-allowed; box-shadow: none; opacity: 0.75; }
             .ilmc-refresh-btn { width: 32px; height: 32px; background: #2f2f2f; border: 1px solid #444; border-radius: 4px; color: #e6e6e6; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color 0.2s ease; }
-            .ilmc-refresh-btn:hover:not(:disabled) { background: #333; border-color: #3AACDE; }
+            .ilmc-refresh-btn:hover:not(:disabled) { background: #333; border-color: #249BD9; }
             .ilmc-refresh-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #666; }
             .ilmc-refresh-btn svg { width: 16px; height: 16px; }
             .ilmc-pull-data-btn { width: 32px; height: 32px; background: #2f2f2f; border: 1px solid #444; border-radius: 4px; color: #e6e6e6; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background-color 0.2s ease, border-color 0.2s ease; }
-            .ilmc-pull-data-btn:hover:not(:disabled) { background: #333; border-color: #3AACDE; }
+            .ilmc-pull-data-btn:hover:not(:disabled) { background: #333; border-color: #249BD9; }
             .ilmc-pull-data-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #666; }
             .ilmc-pull-data-btn svg { width: 16px; height: 16px; }
             .ilmc-folder-row { display: flex; align-items: center; gap: 10px; }
             .ilmc-folder-label { color: #ddd; font-size: 14px; white-space: nowrap; }
             .ilmc-folder-input-wrap { flex: 1; display: flex; align-items: stretch; }
-            .ilmc-folder-input-wrap input { flex: 1; padding: 8px 12px; background: #1a1a1a; border: 1px solid #404040; border-right: none; border-radius: 4px 0 0 4px; color: #fff; font-size: 13px; }
-            .ilmc-folder-input-wrap input:focus { outline: none; border-color: #3AACDE; }
+            .ilmc-folder-input-wrap input { flex: 1; padding: 8px 12px; background: #1a1a1a; border: 1px solid #373737; border-right: none; border-radius: 4px 0 0 4px; color: #fff; font-size: 13px; }
+            .ilmc-folder-input-wrap input:focus { outline: none; border-color: #249BD9; }
             .ilmc-folder-browse { width: 36px; background: #404040; border: 1px solid #555; border-radius: 0 4px 4px 0; color: #fff; cursor: pointer; font-size: 16px; letter-spacing: 1px; }
             .ilmc-folder-browse:hover { background: #555; }
             .ilmc-external-row { display: flex; align-items: center; gap: 10px; }
             .ilmc-node-select { flex: 1; min-width: 0; }
-            .ilmc-node-select select { width: 100%; height: 36px; box-sizing: border-box; padding: 0 32px 0 12px; background-color: #1a1a1a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 12px; border: 1px solid #404040; border-radius: 4px; color: #e6e6e6; font-size: 13px; appearance: none; cursor: pointer; }
-            .ilmc-node-select select:focus { outline: none; border-color: #3AACDE; background-color: #262626; box-shadow: 0 0 0 3px rgba(33, 143, 191, 0.15); }
+            .ilmc-node-select select { width: 100%; height: 36px; box-sizing: border-box; padding: 0 32px 0 12px; background-color: #1a1a1a; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; background-size: 12px; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; font-size: 13px; appearance: none; cursor: pointer; }
+            .ilmc-node-select select:focus { outline: none; border-color: #249BD9; background-color: #262626; box-shadow: 0 0 0 3px rgba(36, 155, 217, 0.15); }
             .ilmc-node-select select option { background-color: #2a2a2a; color: #e6e6e6; }
             .ilmc-external-row .ilmc-search-box { flex: 1; min-width: 0; }
             .ilmc-required { color: #E74C3C; margin-right: 2px; }
             .ilmc-panels { flex: 1; display: flex; gap: 16px; min-height: 0; }
-            .ilmc-panel { flex: 1; background: #1e1e1e; border: 1px solid #404040; border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+            .ilmc-panel { flex: 1; background: #1e1e1e; border: 1px solid #373737; border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
             .ilmc-panel-header { background: #1a1a1a; padding: 10px 14px; border-bottom: 1px solid #404040; font-size: 14px; color: #fff; font-weight: 500; flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
             .ilmc-panel-content { flex: 1; overflow-y: auto; padding: 8px 10px; }
             .ilmc-patient-item { display: flex; align-items: center; padding: 6px 8px; border-bottom: 1px solid #2a2a2a; cursor: pointer; transition: background 0.2s; }
             .ilmc-patient-item:hover { background: #2a2a2a; }
-            .ilmc-patient-item.selected { background: #2a3f4f; border-left: 3px solid #3AACDE; }
+            .ilmc-patient-item.selected { background: #2a3f4f; border-left: 3px solid #249BD9; }
             .ilmc-tree-item { display: flex; align-items: center; padding: 2px 0; min-width: 0; }
             .ilmc-tree-text { flex: 1; color: #fff; font-size: 13px; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
             .ilmc-checkbox { display: inline-flex; align-items: center; cursor: pointer; flex-shrink: 0; }
             .ilmc-checkbox input { display: none; }
-            .ilmc-checkmark { width: 16px; height: 16px; background: #2a2a2a; border: 1px solid #404040; border-radius: 3px; margin-right: 8px; position: relative; transition: all 0.2s; flex-shrink: 0; }
-            .ilmc-checkbox input:checked + .ilmc-checkmark { background: #3AACDE; border-color: #3AACDE; }
+            .ilmc-checkmark { width: 16px; height: 16px; background: #2a2a2a; border: 1px solid #373737; border-radius: 3px; margin-right: 8px; position: relative; transition: all 0.2s; flex-shrink: 0; }
+            .ilmc-checkbox input:checked + .ilmc-checkmark { background: #249BD9; border-color: #249BD9; }
             .ilmc-checkbox input:checked + .ilmc-checkmark::after { content: ''; position: absolute; left: 4px; top: 1px; width: 6px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
             .ilmc-footer { flex-shrink: 0; padding: 12px 20px 16px; display: flex; align-items: center; justify-content: flex-end; gap: 16px; border-top: 1px solid #404040; }
             .ilmc-footer-options { margin-right: auto; }
             .ilmc-auto-delete { display: flex; align-items: center; cursor: pointer; color: #ddd; font-size: 13px; }
             .ilmc-btn { min-width: 80px; height: 32px; border-radius: 4px; border: 1px solid #575757; background: #3f3f3f; color: #d2d2d2; cursor: pointer; font-size: 13px; }
-            .ilmc-btn.primary { border-color: #3AACDE; background: #3AACDE; color: #fff; }
-            .ilmc-btn.primary:hover:not(:disabled) { background: #218FBF; border-color: #218FBF; }
+            .ilmc-btn.primary { border-color: #249BD9; background: #249BD9; color: #fff; }
+            .ilmc-btn.primary:hover:not(:disabled) { background: #1e8ac4; border-color: #1e8ac4; }
             .ilmc-btn:hover:not(:disabled) { background: #4a4a4a; }
             .ilmc-btn:disabled { opacity: 0.45; cursor: not-allowed; color: #888; }
             .ilmc-btn.primary:disabled { background: #3a5a6a; border-color: #3a5a6a; color: #aaa; }
             .ilmc-hidden { display: none !important; }
             .ilmc-exists-mask { position: absolute; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); padding: 16px; box-sizing: border-box; }
-            .ilmc-exists-modal { width: min(480px, 100%); background: linear-gradient(180deg, #333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
+            .ilmc-exists-modal { width: min(480px, 100%); background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
             .ilmc-exists-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
             .ilmc-exists-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
             .ilmc-exists-close { background: none; border: none; color: #8a8a8a; font-size: 18px; cursor: pointer; padding: 4px; }
@@ -132,16 +134,16 @@ class ImportLegacyModalComponent {
             .ilmc-exists-body { padding: 8px 20px 16px; }
             .ilmc-exists-msg { color: #d0d0d0; font-size: 13px; line-height: 1.7; margin-bottom: 16px; }
             .ilmc-exists-option { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; font-size: 13px; color: #ddd; }
-            .ilmc-exists-option input { accent-color: #3AACDE; }
+            .ilmc-exists-option input { accent-color: #249BD9; }
             .ilmc-exists-new-wrap { margin-top: 12px; padding-top: 12px; border-top: 1px solid #3b3b3b; }
             .ilmc-exists-new-row { display: flex; align-items: center; gap: 10px; }
             .ilmc-exists-new-label { color: #ddd; font-size: 13px; white-space: nowrap; }
-            .ilmc-exists-new-input { flex: 1; height: 32px; padding: 0 10px; background: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e6e6e6; font-size: 13px; }
-            .ilmc-exists-new-input:focus { outline: none; border-color: #3AACDE; }
+            .ilmc-exists-new-input { flex: 1; height: 32px; padding: 0 10px; background: #1a1a1a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; font-size: 13px; }
+            .ilmc-exists-new-input:focus { outline: none; border-color: #249BD9; }
             .ilmc-exists-error { margin-top: 8px; color: #E74C3C; font-size: 12px; }
             .ilmc-exists-divider { height: 1px; background: #3b3b3b; }
             .ilmc-exists-footer { padding: 14px 20px 18px; display: flex; justify-content: flex-end; gap: 16px; }
-            .ilmc-success-toast { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30; padding: 10px 20px; background: rgba(42, 63, 79, 0.95); border: 1px solid #3AACDE; border-radius: 4px; color: #fff; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.35); pointer-events: none; }
+            .ilmc-success-toast { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index: 30; padding: 10px 20px; background: rgba(42, 63, 79, 0.95); border: 1px solid #249BD9; border-radius: 4px; color: #fff; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,0.35); pointer-events: none; }
             .ilmc-result-modal { width: min(720px, 100%); height: min(560px, 90vh); max-height: min(560px, 90vh); overflow: hidden; }
             .ilmc-result-modal > .ilmc-exists-header,
             .ilmc-result-modal > .ilmc-result-stats,
@@ -171,7 +173,7 @@ class ImportLegacyModalComponent {
             .ilmc-pull-modal > .ilmc-exists-footer { flex-shrink: 0; }
             .ilmc-pull-modal > .ilmc-exists-body { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 20px 16px; overflow: hidden; }
             .ilmc-pull-toolbar { flex-shrink: 0; margin-bottom: 12px; }
-            .ilmc-pull-data-panel { flex: 1; min-height: 0; background: #1e1e1e; border: 1px solid #404040; border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; }
+            .ilmc-pull-data-panel { flex: 1; min-height: 0; background: #1e1e1e; border: 1px solid #373737; border-radius: 4px; display: flex; flex-direction: column; overflow: hidden; }
             .ilmc-pull-data-panel .ilmc-panel-header { justify-content: space-between; }
             .ilmc-pull-data-hint { color: #888; font-size: 12px; font-weight: 400; flex-shrink: 0; }
             .ilmc-pull-data-panel .ilmc-panel-content { flex: 1; overflow-y: auto; padding: 8px 10px; }
@@ -801,7 +803,7 @@ class ImportLegacyModalComponent {
             <div class="ilmc-exists-modal ilmc-pull-modal" role="dialog" aria-modal="true" aria-label="拉取外部DICOM Query">
                 <div class="ilmc-exists-header">
                     <h3 class="ilmc-exists-title">拉取外部DICOM Query</h3>
-                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="ilmc-exists-body">
                     ${this.renderPullDataModalContent()}
@@ -1242,7 +1244,7 @@ class ImportLegacyModalComponent {
             <div class="ilmc-exists-modal ilmc-result-modal" role="dialog" aria-modal="true" aria-label="导入结果">
                 <div class="ilmc-exists-header">
                     <h3 class="ilmc-exists-title">导入结果</h3>
-                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="ilmc-result-stats">
                     <div class="ilmc-result-stat">
@@ -1368,7 +1370,7 @@ class ImportLegacyModalComponent {
             <div class="ilmc-exists-modal" role="dialog" aria-modal="true" aria-label="图像重复提示">
                 <div class="ilmc-exists-header">
                     <h3 class="ilmc-exists-title">图像重复</h3>
-                    <button type="button" class="ilmc-exists-close" aria-label="关闭">×</button>
+                    <button type="button" class="ilmc-exists-close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="ilmc-exists-body">
                     <div class="ilmc-exists-msg">${this.formatExistsMessage(item)}</div>
@@ -1472,7 +1474,7 @@ class ImportLegacyModalComponent {
             <div class="ilmc-modal" role="dialog" aria-modal="false" aria-label="导入（旧版）">
                 <div class="ilmc-header">
                     <h3 class="ilmc-title">导入</h3>
-                    <button type="button" class="ilmc-close" aria-label="关闭">×</button>
+                    <button type="button" class="ilmc-close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="ilmc-tabs">
                     <div class="ilmc-tab${this.activeTab === 'remote' ? ' active' : ''}" data-tab="remote">远程节点导入</div>

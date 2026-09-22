@@ -10,8 +10,10 @@ class WarningDeleteModalComponent {
         const style = document.createElement('style');
         style.id = 'warning-delete-modal-component-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .wdmc-wrap { width: 100%; height: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
-            .wdmc-modal { width: min(600px, 100%); height: 320px; background: #2D2D2D; border: 1px solid #3a3a3a; border-radius: 8px; color: #fff; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
+            .wdmc-modal { width: min(600px, 100%); height: 320px; background: #2D2D2D; border: 1px solid #373737; border-radius: 4px; color: #fff; box-shadow: 0 12px 36px rgba(0,0,0,0.55); display: flex; flex-direction: column; }
             .wdmc-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
             .wdmc-title { margin: 0; font-size: 16px; font-weight: 500; color: #fff; }
             .wdmc-close { color: #fff; font-size: 18px; line-height: 1; }
@@ -34,7 +36,7 @@ class WarningDeleteModalComponent {
             <div class="wdmc-modal" role="dialog" aria-modal="false" aria-label="警告-删除类弹窗">
                 <div class="wdmc-header">
                     <h3 class="wdmc-title">警告</h3>
-                    <div class="wdmc-close">×</div>
+                    <div class="wdmc-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></div>
                 </div>
                 <div class="wdmc-body">
                     <div class="wdmc-icon">!</div>

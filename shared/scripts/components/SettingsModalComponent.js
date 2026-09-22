@@ -19,9 +19,7 @@ class SettingsModalComponent {
             <div class="settings-modal">
                 <div class="settings-modal-header">
                     <h2>设置</h2>
-                    <button class="settings-modal-close" id="settingsModalClose">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="settings-modal-close" id="settingsModalClose"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="settings-modal-body">
                     <div class="settings-sidebar">

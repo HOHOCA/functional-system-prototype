@@ -35,7 +35,7 @@ class LrtEmbeddedCreateRobustnessModal {
                 height: min(720px, calc(100vh - 48px));
                 background: #1f1f1f;
                 border: 1px solid #3f3f3f;
-                border-radius: 6px;
+                border-radius: 4px;
                 box-shadow: 0 12px 28px rgba(0,0,0,0.45);
                 display: flex;
                 flex-direction: column;
@@ -122,7 +122,7 @@ class LrtEmbeddedCreateRobustnessModal {
                 padding: 0 10px;
                 outline: none;
             }
-            .lrtc-eb-cre-input:focus{ border-color: #3aacde; }
+            .lrtc-eb-cre-input:focus{ border-color: #249BD9; }
             .lrtc-eb-dialog input[type="number"]::-webkit-outer-spin-button,
             .lrtc-eb-dialog input[type="number"]::-webkit-inner-spin-button{
                 -webkit-appearance: none;
@@ -147,7 +147,7 @@ class LrtEmbeddedCreateRobustnessModal {
                 gap: 5px;
                 color: #d7d7d7;
             }
-            .lrtc-eb-cre-radio input{ accent-color: #3aacde; }
+            .lrtc-eb-cre-radio input{ accent-color: #249BD9; }
             .lrtc-eb-cre-custom-count{
                 width: 96px;
                 height: 28px;
@@ -268,7 +268,7 @@ class LrtEmbeddedCreateRobustnessModal {
             .lrtc-eb-cre-cell-input{
                 width: 100%;
                 height: 24px;
-                border: 1px solid #3a3a3a;
+                border: 1px solid #373737;
                 background: #111;
                 color: #fff;
                 border-radius: 4px;
@@ -296,7 +296,7 @@ class LrtEmbeddedCreateRobustnessModal {
             .lrtc-eb-cre-mini-btn{
                 width: 24px;
                 height: 24px;
-                border: 1px solid #3a3a3a;
+                border: 1px solid #373737;
                 background: #1a1a1a;
                 color: #49c7ea;
                 border-radius: 3px;
@@ -325,8 +325,8 @@ class LrtEmbeddedCreateRobustnessModal {
             }
             .lrtc-eb-btn:hover{ background: #343434; }
             .lrtc-eb-btn.primary{
-                border-color: #3aacde;
-                background: #2a9dd0;
+                border-color: #249BD9;
+                background: #249BD9;
                 color: #fff;
             }
             .lrtc-eb-btn.primary:hover{ background: #33addf; }
@@ -595,7 +595,7 @@ class LrtEmbeddedCreateRobustnessModal {
                 <div class="lrtc-eb-header">
                     <h3 id="lrtcEbTitle">${this._escapeAttr(this.options.title || "创建新模板")}</h3>
                     <button type="button" class="lrtc-eb-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="lrtc-eb-body">
@@ -805,7 +805,7 @@ class LoadRobustnessEvaluationTemplateModalComponent {
                 height: min(560px, calc(100vh - 40px));
                 background: #1f1f1f;
                 border: 1px solid #3f3f3f;
-                border-radius: 6px;
+                border-radius: 4px;
                 box-shadow: 0 12px 28px rgba(0,0,0,0.45);
                 display: flex;
                 flex-direction: column;
@@ -930,7 +930,7 @@ class LoadRobustnessEvaluationTemplateModalComponent {
                 border-radius: 4px;
             }
             .lrt-action-ico:hover{
-                color: #3aacde;
+                color: #249BD9;
                 background: rgba(255,255,255,0.06);
             }
             .lrt-left-footer{
@@ -1076,7 +1076,7 @@ class LoadRobustnessEvaluationTemplateModalComponent {
             .lrt-check{
                 width: 14px;
                 height: 14px;
-                accent-color: #3aacde;
+                accent-color: #249BD9;
                 cursor: pointer;
                 flex-shrink: 0;
             }
@@ -1093,8 +1093,8 @@ class LoadRobustnessEvaluationTemplateModalComponent {
             }
             .lrt-btn:hover{ background: #333; }
             .lrt-btn.primary{
-                border-color: #3aacde;
-                background: #2a9dd0;
+                border-color: #249BD9;
+                background: #249BD9;
                 color: #fff;
             }
             .lrt-btn.primary:hover{
@@ -1139,7 +1139,7 @@ class LoadRobustnessEvaluationTemplateModalComponent {
                 <div class="lrt-header">
                     <h3 id="lrtTitle">加载鲁棒性评估模板</h3>
                     <button type="button" class="lrt-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="lrt-body">

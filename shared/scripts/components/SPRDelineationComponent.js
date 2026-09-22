@@ -43,9 +43,7 @@ class SPRDelineationComponent {
             <div class="spr-delineation-modal-content">
                 <div class="spr-delineation-modal-header">
                     <h3>SPR 勾画</h3>
-                    <button class="spr-delineation-close-btn" id="sprDelineationCloseBtn">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="spr-delineation-close-btn" id="sprDelineationCloseBtn"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 
                 <div class="spr-delineation-modal-body">
@@ -212,7 +210,7 @@ class SPRDelineationComponent {
             
             .spr-delineation-modal-content {
                 background: #2d2d2d;
-                border-radius: 8px;
+                border-radius: 4px;
                 width: 600px;
                 max-height: 90vh;
                 display: flex;

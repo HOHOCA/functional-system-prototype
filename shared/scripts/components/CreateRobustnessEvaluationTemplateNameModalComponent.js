@@ -34,7 +34,7 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
                 width: min(420px, calc(100vw - 32px));
                 background: #1f1f1f;
                 border: 1px solid #3f3f3f;
-                border-radius: 6px;
+                border-radius: 4px;
                 box-shadow: 0 12px 28px rgba(0,0,0,0.45);
                 color: #e8e8e8;
                 font-size: 13px;
@@ -95,7 +95,7 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
                 font-size: 13px;
             }
             .crtn-input:focus{
-                border-color: #3aacde;
+                border-color: #249BD9;
             }
             .crtn-footer{
                 display: flex;
@@ -120,8 +120,8 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
                 background: rgba(255,255,255,0.06);
             }
             .crtn-btn.primary{
-                border-color: #3aacde;
-                background: #2a9dd0;
+                border-color: #249BD9;
+                background: #249BD9;
                 color: #fff;
             }
             .crtn-btn.primary:hover{
@@ -140,7 +140,7 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
                 width: min(380px, calc(100vw - 48px));
                 background: #1f1f1f;
                 border: 1px solid #3f3f3f;
-                border-radius: 6px;
+                border-radius: 4px;
                 box-shadow: 0 12px 28px rgba(0,0,0,0.45);
                 overflow: hidden;
             }
@@ -187,7 +187,7 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
             <div class="crtn-dup-dialog" role="alertdialog" aria-modal="true" aria-labelledby="crtnDupMsg">
                 <div class="crtn-dup-head">
                     <button type="button" class="crtn-close" data-dup-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="crtn-dup-body" id="crtnDupMsg">已存在相同组名的模板！</div>
@@ -219,7 +219,7 @@ class CreateRobustnessEvaluationTemplateNameModalComponent {
                 <div class="crtn-header">
                     <h3 id="crtnTitle">创建鲁棒性评估模板</h3>
                     <button type="button" class="crtn-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="crtn-body">

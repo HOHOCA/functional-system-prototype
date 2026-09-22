@@ -24,9 +24,7 @@ class OptimizationSettingsModalComponent {
             <div class="optimization-settings-modal">
                 <div class="optimization-settings-modal-header">
                     <h2>优化设置</h2>
-                    <button class="optimization-settings-modal-close" id="optimizationSettingsModalClose">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="optimization-settings-modal-close" id="optimizationSettingsModalClose"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="optimization-settings-modal-body">
                     <div class="optimization-settings-form">

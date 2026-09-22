@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>计划优化 - MOZI Photon</title>
-    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
     <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
     <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -38,7 +38,7 @@
 
         .top-area {
             display: flex;
-            height: 80px;
+            height: 56px;
             flex-shrink: 0;
             border-bottom: 1px solid #404040;
         }
@@ -52,7 +52,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2px;
+            padding: 0;
         }
 
         .toolbar-area {
@@ -89,7 +89,7 @@
 
         .sidebar-tab {
             width: 100%;
-            min-height: 80px;
+            min-height: 56px;
             padding: 12px 0;
             background: transparent;
             border: none;
@@ -114,8 +114,8 @@
 
         .sidebar-tab.active {
             background: #2a2a2a;
-            color: #3AACDE;
-            border-left-color: #3AACDE;
+            color: #249BD9;
+            border-left-color: #249BD9;
         }
 
         .left-sidebar-content {
@@ -243,8 +243,8 @@
         }
 
         .bottom-control-tab.active {
-            color: #3AACDE;
-            border-bottom-color: #3AACDE;
+            color: #249BD9;
+            border-bottom-color: #249BD9;
             background: #2a2a2a;
         }
 
@@ -510,21 +510,25 @@
         </div>
     </div>
 
-    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
-    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
-    <script src="../../shared/scripts/components/ROIComponent.js"></script>
-    <script src="../../shared/scripts/components/POIComponent.js"></script>
-    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
-    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
+    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/RegistrationComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../../shared/scripts/components/SinglePlanDVHComponent.js"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
-    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
-    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
+    <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
     <script src="../../shared/scripts/components/OptimizationConstraintsComponent.js"></script>
-    <script src="../../photon-client/scripts/PhotonBeamEyeViewComponent.js"></script>
+    <script src="../../photon-client/scripts/PhotonBeamEyeViewComponent.js?v=ui2"></script>
 
     <script>
         let planSequenceTreeComponent = null;
@@ -547,12 +551,7 @@
         let optimizationBEVComponent = null;
         let optimizationLETComponent = null;
 
-        const defaultPatient = {
-            name: 'Li Shan',
-            id: 'WP4TR3',
-            birthDate: '19760613',
-            gender: 'F'
-        };
+        const defaultPatient = window.CurrentPatient.get();
 
         document.addEventListener('DOMContentLoaded', function () {
             patientOverviewComponent = new PatientOverviewComponent('patientOverviewCard', {
@@ -702,11 +701,11 @@
         }
 
         function initOptimizationDVHView() {
-            if (optimizationDVHComponent || typeof DVHComponent === 'undefined') return;
+            if (optimizationDVHComponent || typeof SinglePlanDVHComponent === 'undefined') return;
             const container = document.getElementById('dvhViewContent');
             if (!container) return;
             container.innerHTML = '';
-            optimizationDVHComponent = new DVHComponent(container, {
+            optimizationDVHComponent = new SinglePlanDVHComponent(container, {
                 showHeader: false,
                 toolbarTitle: 'DVH',
                 toolbarContainerId: 'optDvhToolbarHost'

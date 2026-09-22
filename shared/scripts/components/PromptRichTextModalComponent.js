@@ -13,6 +13,8 @@ class PromptRichTextModalComponent {
         const style = document.createElement('style');
         style.id = 'prompt-rich-text-modal-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .prtm-wrap {
                 width: 100%;
                 height: 100%;
@@ -27,8 +29,8 @@ class PromptRichTextModalComponent {
             .prtm-modal {
                 width: min(480px, 100%);
                 background: #2c2c2c;
-                border: 1px solid #3a3a3a;
-                border-radius: 8px;
+                border: 1px solid #373737;
+                border-radius: 4px;
                 color: #e0e0e0;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             }
@@ -49,7 +51,7 @@ class PromptRichTextModalComponent {
             .prtm-table th { background: #2a2a2a; color: #d2d2d2; font-weight: 500; }
             .prtm-actions { padding: 14px 20px 18px; display: flex; justify-content: flex-end; gap: 16px; }
             .prtm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #575757; background: #3f3f3f; color: #d2d2d2; cursor: pointer; font-size: 13px; font-weight: 500; }
-            .prtm-btn.primary { background: #2a9dd0; border-color: #3aacde; color: #fff; font-size: 13px; font-weight: 500; }
+            .prtm-btn.primary { background: #249BD9; border-color: #249BD9; color: #fff; font-size: 13px; font-weight: 500; }
             .prtm-btn.primary:hover { background: #33addf; }
         `;
         document.head.appendChild(style);
@@ -63,7 +65,7 @@ class PromptRichTextModalComponent {
             <div class="prtm-modal" role="dialog" aria-modal="false" aria-label="提示-富文本类">
                 <div class="prtm-header">
                     <h3 class="prtm-title">提示</h3>
-                    <div class="prtm-close">×</div>
+                    <div class="prtm-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></div>
                 </div>
                 <div class="prtm-content">
                     <div class="prtm-warning-row">

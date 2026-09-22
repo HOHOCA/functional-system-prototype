@@ -24,11 +24,11 @@ class PromptProgressModalComponent {
         style.textContent = `
             .ppm-wrap { width: 100%; height: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
             .ppm-wrap.ppm-embed{ min-height: 0; }
-            .ppm-modal { width: min(600px, 100%); height: 319px; background: linear-gradient(180deg, #333333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; display: flex; flex-direction: column; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); }
+            .ppm-modal { width: min(600px, 100%); height: 319px; background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; display: flex; flex-direction: column; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); }
             .ppm-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; margin-top: 30px; margin-bottom: 20px; }
             .ppm-text { margin: 0; color: #c0c0c0; font-size: 13px; line-height: 1.7; }
             .ppm-row { display: flex; align-items: center; gap: 16px; }
-            .ppm-bar { width: 300px; height: 8px; border-radius: 4px; background: #1a1a1a; border: 1px solid #3a3a3a; overflow: hidden; }
+            .ppm-bar { width: 300px; height: 8px; border-radius: 4px; background: #1a1a1a; border: 1px solid #373737; overflow: hidden; }
             .ppm-fill { height: 100%; background: linear-gradient(90deg, #1e92ff 0%, #4da6ff 100%); width: 65%; transition: width 0.2s ease; }
             .ppm-percent { min-width: 40px; color: #8a8a8a; font-size: 13px; }
             .ppm-actions { padding: 14px 20px 18px; display: flex; justify-content: flex-end; }

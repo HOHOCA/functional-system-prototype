@@ -23,9 +23,7 @@ class RobustnessSettingsComponent {
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>鲁棒性设置</h3>
-                        <button class="modal-close" id="robustnessSettingsModalClose">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <button class="modal-close" id="robustnessSettingsModalClose"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                     </div>
                     <div class="modal-body">
                         <div class="robustness-settings-layout">
@@ -153,7 +151,7 @@ class RobustnessSettingsComponent {
 
             .modal-content {
                 background-color: #2a2a2a;
-                border-radius: 8px;
+                border-radius: 4px;
                 width: 90%;
                 max-width: 1200px;
                 max-height: 90vh;

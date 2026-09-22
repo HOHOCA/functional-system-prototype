@@ -25,7 +25,7 @@ class VirtualMonoEnergyComponent {
             <div class="vmi-modal">
                 <div class="modal-header">
                     <span>虚拟单能影像获取</span>
-                    <button class="close-btn" aria-label="close">&times;</button>
+                    <button class="close-btn" aria-label="close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-row">

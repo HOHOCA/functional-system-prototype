@@ -188,7 +188,7 @@ class SequenceTreeComponent {
                          data-file="${displayName}" 
                          data-type="${content.type || 'file'}"
                          ${isStruct ? 'data-struct="true"' : ''}>
-                        <i class="${iconClass} type-icon"></i>
+                        <span class="${iconClass} type-icon"></span>
                         <span class="file-name">${displayName}</span>
                     </div>
                 `;
@@ -196,11 +196,11 @@ class SequenceTreeComponent {
                 const folderIconClass = this.getFolderIconClass(content, level);
                 // 传递计数器给子节点，但子层级会重置同级计数
                 const children = hasChildren ? this.buildTreeHTML(content.children, level + 1, null) : '';
-                const chevron = hasChildren ? '<i class="fas fa-chevron-down chevron-icon"></i>' : '<span class="chevron-placeholder"></span>';
+                const chevron = hasChildren ? '<span class="mozi-ui-icon mozi-ui-icon-chevron-down chevron-icon"></span>' : '<span class="chevron-placeholder"></span>';
                 html += `
                     <div class="tree-item folder-item level-${level + 1}" data-folder="${displayName}">
                         ${chevron}
-                        <i class="${folderIconClass} type-icon"></i>
+                        <span class="${folderIconClass} type-icon"></span>
                         <span class="folder-name">${displayName}</span>
                     </div>
                     ${children ? `<div class="folder-children" style="display: block;">${children}</div>` : ''}
@@ -220,43 +220,39 @@ class SequenceTreeComponent {
     // 根据图标类型/模态获取对应的CSS类
     getIconClass(iconType, modality) {
         const iconMap = {
-            'lungs': 'fas fa-lungs',
-            'file': 'fas fa-file-alt',
-            'cube': 'fas fa-cube',
-            'radiation': 'fas fa-radiation',
-            'target': 'fas fa-bullseye',
-            'ct': 'fas fa-layer-group',
-            'pt': 'fas fa-radiation',
-            'mr': 'fas fa-brain',
-            'plan': 'fas fa-clipboard-check',
-            'group': 'fas fa-folder-open',
-            'dose': 'fas fa-radiation',
-            'default': 'fas fa-file-alt'
+            'lungs': 'seq-icon seq-icon-lungs',
+            'file': 'seq-icon seq-icon-lungs',
+            'cube': 'seq-icon seq-icon-struct',
+            'radiation': 'seq-icon seq-icon-dose',
+            'target': 'seq-icon seq-icon-plan',
+            'ct': 'seq-icon seq-icon-ct',
+            'pt': 'seq-icon seq-icon-lungs',
+            'mr': 'seq-icon seq-icon-ct',
+            'plan': 'seq-icon seq-icon-plan',
+            'group': 'seq-icon seq-icon-study',
+            'dose': 'seq-icon seq-icon-dose',
+            'default': 'seq-icon seq-icon-lungs'
         };
-        // 所有图像模态的文件节点统一使用lungs图标
         if (modality && ['ct', 'pt', 'mr'].includes(modality) && iconType === 'file') {
-            return 'fas fa-lungs';
+            return 'seq-icon seq-icon-lungs';
         }
         if (modality && iconMap[modality]) return iconMap[modality];
         return iconMap[iconType] || iconMap['default'];
     }
 
-    // 根据节点类型获取文件夹图标
     getFolderIconClass(content, level) {
         if (content.type === 'study' || level === 0) {
-            return 'fas fa-folder';
+            return 'seq-icon seq-icon-study';
         } else if (content.type === 'imageGroup') {
-            // PTCT和4DCT都使用layer-group图标表示集合，只有MR使用brain图标
-            return content.modality === 'mr' ? 'fas fa-brain' :
-                   'fas fa-layer-group';
+            return 'seq-icon seq-icon-ct';
         } else if (content.type === 'rtstruct') {
-            return 'fas fa-cube';
+            return 'seq-icon seq-icon-struct';
         } else if (content.type === 'plan') {
-            return 'fas fa-clipboard-check';
+            return 'seq-icon seq-icon-plan';
         } else if (content.type === 'group') {
-            return 'fas fa-bullseye';
+            return 'seq-icon seq-icon-plan';
         }
-        return 'fas fa-folder';
+        return 'seq-icon seq-icon-study';
     }
 
     bindEvents() {
@@ -280,10 +276,10 @@ class SequenceTreeComponent {
                         
                         if (isExpanded) {
                             childrenContainer.style.display = 'none';
-                            chevronIcon.className = 'fas fa-chevron-right chevron-icon';
+                            chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-right chevron-icon';
                         } else {
                             childrenContainer.style.display = 'block';
-                            chevronIcon.className = 'fas fa-chevron-down chevron-icon';
+                            chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-down chevron-icon';
                         }
                     }
                 });
@@ -554,9 +550,7 @@ class SequenceTreeComponent {
             <div class="migrate-sketch-content">
                 <div class="migrate-sketch-header">
                     <h3>迁移勾画</h3>
-                    <button class="migrate-sketch-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="migrate-sketch-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="migrate-sketch-body">
                     <div class="migrate-sketch-form-group">

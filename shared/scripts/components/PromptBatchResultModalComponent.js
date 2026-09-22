@@ -70,9 +70,11 @@ class PromptBatchResultModalComponent {
             document.head.appendChild(style);
         }
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .pbrm-wrap { width: 100%; height: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
             .pbrm-wrap.pbrm-embed { min-height: 0; }
-            .pbrm-modal { width: min(460px, 100%); max-height: min(560px, 90vh); background: linear-gradient(180deg, #333333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
+            .pbrm-modal { width: min(460px, 100%); max-height: min(560px, 90vh); background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
             .pbrm-header { padding: 14px 16px 8px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
             .pbrm-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
             .pbrm-close { border: none; background: transparent; color: #8a8a8a; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
@@ -89,7 +91,7 @@ class PromptBatchResultModalComponent {
             .pbrm-leader { flex: 1; height: 1px; min-width: 12px; background-image: radial-gradient(circle, #6a6a6a 0.85px, transparent 0.9px); background-size: 5px 1px; background-repeat: repeat-x; background-position: center; }
             .pbrm-status { width: 16px; height: 16px; display: inline-flex; flex-shrink: 0; }
             .pbrm-actions { padding: 16px 20px 18px; display: flex; justify-content: flex-end; flex-shrink: 0; }
-            .pbrm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #3aacde; background: #2a9dd0; color: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
+            .pbrm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #249BD9; background: #249BD9; color: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
             .pbrm-btn:hover { background: #33addf; }
         `;
     }
@@ -167,7 +169,7 @@ class PromptBatchResultModalComponent {
             <div class="pbrm-modal" role="dialog" aria-modal="true" aria-labelledby="pbrm-title-el">
                 <div class="pbrm-header">
                     <h3 class="pbrm-title" id="pbrm-title-el">${title}</h3>
-                    <button type="button" class="pbrm-close" data-pbrm-close aria-label="关闭">×</button>
+                    <button type="button" class="pbrm-close" data-pbrm-close aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="pbrm-summary">
                     <div class="pbrm-stat">

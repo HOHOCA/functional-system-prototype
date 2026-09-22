@@ -61,9 +61,7 @@ class SpectralHistogramComponent {
             <div class="spectral-histogram-content">
                 <div class="spectral-histogram-header">
                     <h3>光谱直方图</h3>
-                    <button class="spectral-histogram-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="spectral-histogram-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="spectral-histogram-body">
                     <div class="spectral-histogram-controls">

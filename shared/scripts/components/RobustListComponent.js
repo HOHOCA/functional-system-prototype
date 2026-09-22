@@ -266,9 +266,7 @@ class RobustListComponent {
             <div class="robust-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="robustDeleteTitle">
                 <div class="robust-delete-header">
                     <h3 id="robustDeleteTitle">警告</h3>
-                    <button type="button" class="robust-delete-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button type="button" class="robust-delete-close" data-role="close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="robust-delete-body">
                     <span class="robust-delete-icon">!</span>

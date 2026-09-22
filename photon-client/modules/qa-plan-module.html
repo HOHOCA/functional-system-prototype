@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QA计划 - MOZI Photon</title>
+    <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            color: #eee;
+        }
+        .qa-page {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #000;
+        }
+        .qa-top {
+            display: flex;
+            height: 56px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #373737;
+            background: #232323;
+        }
+        .qa-patient {
+            width: 328px;
+            flex-shrink: 0;
+            border-right: 1px solid #373737;
+            display: flex;
+            align-items: center;
+        }
+        .qa-toolbar {
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            gap: 4px;
+            padding: 6px 10px;
+        }
+        .qa-tool {
+            min-width: 72px;
+            background: transparent;
+            border: none;
+            color: #eee;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .qa-tool i { font-size: 16px; color: #d4d4d4; }
+        .qa-tool .module-tool-lanhu-icon { width: 18px; height: 18px; object-fit: contain; }
+        .qa-tool:hover { background: rgba(238, 238, 238, 0.08); }
+        .qa-main {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            background: #000;
+        }
+        .qa-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 13px;
+            background:
+                radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 70%);
+        }
+        .create-qa-plan-modal { position: fixed; inset: 0; z-index: 2000; }
+        .create-qa-plan-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+        .create-qa-plan-content {
+            position: relative;
+            width: min(960px, 92vw);
+            max-height: 86vh;
+            margin: 7vh auto 0;
+            background: #232323;
+            border: 1px solid #373737;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: #eee;
+        }
+        .create-qa-plan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 36px;
+            padding: 0 12px;
+            background: #2b2b2b;
+            border-bottom: 1px solid #373737;
+        }
+        .create-qa-plan-header h3 { font-size: 14px; font-weight: 400; }
+        .create-qa-plan-close {
+            width: 22px; height: 22px; border: none; background: transparent;
+            color: #d4d4d4; cursor: pointer;
+        }
+        .create-qa-plan-body { padding: 12px 16px; overflow: auto; font-size: 12px; }
+        .create-qa-plan-section { margin-bottom: 14px; }
+        .create-qa-plan-section-title {
+            color: #249BD9; margin-bottom: 8px; font-size: 13px;
+        }
+        .create-qa-plan-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 16px;
+        }
+        .create-qa-plan-main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .create-qa-plan-form-group { margin-bottom: 10px; }
+        .create-qa-plan-label, .create-qa-plan-info-label { color: #d4d4d4; }
+        .create-qa-plan-input, .create-qa-plan-select,
+        .create-qa-plan-select-small, .create-qa-plan-input-small,
+        .create-qa-plan-input-inline {
+            background: #111; border: 1px solid #373737; color: #eee;
+            height: 26px; border-radius: 3px; padding: 0 8px;
+        }
+        .create-qa-plan-radio-item { display: flex; align-items: center; gap: 6px; margin: 4px 0; }
+        .create-qa-plan-footer {
+            display: flex; justify-content: flex-end; gap: 8px;
+            padding: 8px 16px; border-top: 1px solid #373737;
+        }
+        .create-qa-plan-btn {
+            height: 28px; padding: 0 14px; border-radius: 4px; cursor: pointer; font-size: 12px;
+        }
+        .create-qa-plan-btn-cancel { background: #2b2b2b; border: 1px solid #373737; color: #eee; }
+        .create-qa-plan-btn-confirm { background: #249BD9; border: 1px solid #249BD9; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="qa-page">
+        <div class="qa-top">
+            <div class="qa-patient patient-overview">
+                <div id="patientOverviewCard"></div>
+            </div>
+            <div class="qa-toolbar">
+                <button class="qa-tool" data-tool="create-qa" data-label="创建QA计划"><i class="fas fa-file-medical"></i>创建QA计划</button>
+                <button class="qa-tool" data-tool="couch" data-label="设置床结构"><i class="fas fa-bed"></i>设置床结构</button>
+                <button class="qa-tool" data-tool="dose" data-label="剂量计算"><i class="fas fa-calculator"></i>剂量计算</button>
+                <button class="qa-tool" data-tool="export" data-label="导出平面剂量"><i class="fas fa-file-export"></i>导出平面剂量</button>
+                <button class="qa-tool" data-tool="approve" data-label="计划审批"><i class="fas fa-check-circle"></i>计划审批</button>
+                <button class="qa-tool" data-tool="shift" data-label="查看位移值"><i class="fas fa-arrows-alt"></i>查看位移值</button>
+            </div>
+        </div>
+        <div class="qa-main">
+            <div class="qa-viewport">QA 计划工作区（占位）· 点「创建QA计划」打开已有弹窗</div>
+        </div>
+    </div>
+    <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
+    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../../shared/scripts/components/CreateQaPlanComponent.js"></script>
+    <script>
+        new PatientOverviewComponent('patientOverviewCard', {
+            patient: window.CurrentPatient.get()
+        });
+        document.querySelectorAll('.qa-tool').forEach((btn) => {
+            const label = btn.getAttribute('data-label');
+            const icon = window.MoziToolbarIcons && MoziToolbarIcons.html(label);
+            if (icon) {
+                const fa = btn.querySelector('i');
+                if (fa) fa.outerHTML = icon;
+            }
+        });
+        const qaModal = new CreateQaPlanComponent({
+            onConfirm: (data) => console.log('创建QA计划', data)
+        });
+        document.querySelectorAll('.qa-tool').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const tool = btn.getAttribute('data-tool');
+                if (tool === 'create-qa') {
+                    qaModal.show();
+                    return;
+                }
+                console.log('QA工具点击:', tool);
+            });
+        });
+    </script>
+</body>
+</html>

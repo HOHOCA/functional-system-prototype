@@ -59,9 +59,7 @@ class CuttingModalComponent {
             <div class="cutting-modal">
                 <div class="cutting-modal-header">
                     <h2>切割</h2>
-                    <button class="cutting-modal-close" id="cuttingModalClose">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="cutting-modal-close" id="cuttingModalClose"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="cutting-modal-body">
                     <!-- 左侧：切割区域 -->

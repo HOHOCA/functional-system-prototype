@@ -27,9 +27,7 @@ class CreateQaPlanComponent {
             <div class="create-qa-plan-content">
                 <div class="create-qa-plan-header">
                     <h3>创建QA计划</h3>
-                    <button class="create-qa-plan-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="create-qa-plan-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="create-qa-plan-body">
                     <!-- 治疗计划信息（只读） -->

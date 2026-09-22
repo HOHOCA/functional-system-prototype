@@ -10,8 +10,10 @@ class WarningRichTextModalComponent {
         const style = document.createElement('style');
         style.id = 'warning-rich-text-modal-component-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .wrtmc-wrap { width: 100%; height: 100%; min-height: 430px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
-            .wrtmc-modal { width: min(480px, 100%); background: #2c2c2c; border: 1px solid #3a3a3a; border-radius: 8px; color: #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .wrtmc-modal { width: min(480px, 100%); background: #2c2c2c; border: 1px solid #373737; border-radius: 4px; color: #e0e0e0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
             .wrtmc-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
             .wrtmc-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
             .wrtmc-close { color: #8a8a8a; font-size: 18px; line-height: 1; }
@@ -37,7 +39,7 @@ class WarningRichTextModalComponent {
             <div class="wrtmc-modal" role="dialog" aria-modal="false" aria-label="警告-富文本类弹窗">
                 <div class="wrtmc-header">
                     <h3 class="wrtmc-title">警告</h3>
-                    <div class="wrtmc-close">×</div>
+                    <div class="wrtmc-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></div>
                 </div>
                 <div class="wrtmc-content">
                     <div class="wrtmc-warning-row">

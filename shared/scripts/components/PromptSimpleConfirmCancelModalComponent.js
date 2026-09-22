@@ -19,6 +19,8 @@ class PromptSimpleConfirmCancelModalComponent {
         const style = document.createElement('style');
         style.id = 'prompt-simple-confirm-cancel-modal-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .psccm-wrap {
                 width: 100%;
                 height: 100%;
@@ -29,7 +31,7 @@ class PromptSimpleConfirmCancelModalComponent {
                 box-sizing: border-box;
             }
             .psccm-wrap.psccm-embed { min-height: 0; }
-            .psccm-modal { width: min(600px, 100%); height: 250px; max-height: min(360px, 90vh); background: linear-gradient(180deg, #333333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
+            .psccm-modal { width: min(600px, 100%); height: 250px; max-height: min(360px, 90vh); background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
             .psccm-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
             .psccm-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
             .psccm-close { border: none; background: transparent; cursor: pointer; padding: 6px 8px; color: #8a8a8a; font-size: 18px; line-height: 1; border-radius: 4px; }
@@ -38,7 +40,7 @@ class PromptSimpleConfirmCancelModalComponent {
             .psccm-divider { height: 1px; background: #3b3b3b; flex-shrink: 0; }
             .psccm-actions { padding: 14px 20px 18px; display: flex; gap: 16px; justify-content: flex-end; flex-shrink: 0; }
             .psccm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #575757; background: #3f3f3f; color: #d2d2d2; cursor: pointer; font-size: 13px; font-weight: 500; }
-            .psccm-btn.primary { background: #2a9dd0; border-color: #3aacde; color: #fff; }
+            .psccm-btn.primary { background: #249BD9; border-color: #249BD9; color: #fff; }
             .psccm-btn.primary:hover { background: #33addf; }
         `;
         document.head.appendChild(style);
@@ -75,7 +77,7 @@ class PromptSimpleConfirmCancelModalComponent {
             <div class="psccm-modal" role="dialog" aria-modal="true" aria-labelledby="psccm-title-el">
                 <div class="psccm-header">
                     <h3 class="psccm-title" id="psccm-title-el"></h3>
-                    <button type="button" class="psccm-close" aria-label="关闭">×</button>
+                    <button type="button" class="psccm-close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="psccm-content"></div>
                 <div class="psccm-divider"></div>

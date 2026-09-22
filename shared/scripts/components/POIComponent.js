@@ -28,40 +28,35 @@ class POIComponent {
             <div class="poi-panel-container">
             <div class="poi-struct-header">
                 <div class="struct-info">
-                    <i class="fas fa-eye"></i>
+                    <span class="mozi-ui-icon mozi-ui-icon-eye poi-header-eye"></span>
                     <span class="struct-name">CT1 RTStruct1 2024-06-06 12:00:00</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
                 </div>
             </div>
             
             <div class="poi-list-section">
                 <div class="poi-tree">
-                            <div class="poi-item" data-poi="ISO">
-                                <i class="fas fa-eye poi-visibility visible"></i>
+                            <div class="poi-item" data-poi="ISO" data-visible="true">
                                 <div class="poi-color" style="background: #ff6b6b;"></div>
                                 <span class="poi-name">ISO</span>
                                 <i class="fas fa-crosshairs poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Laser">
-                                <i class="fas fa-eye poi-visibility visible"></i>
+                            <div class="poi-item" data-poi="Laser" data-visible="true">
                                 <div class="poi-color" style="background: #4ecdc4;"></div>
                                 <span class="poi-name">Laser</span>
                                 <i class="fas fa-crosshairs poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Marker1">
-                                <i class="fas fa-eye poi-visibility visible"></i>
+                            <div class="poi-item" data-poi="Marker1" data-visible="true">
                                 <div class="poi-color" style="background: #45b7d1;"></div>
                                 <span class="poi-name">Marker1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Control1">
-                                <i class="fas fa-eye poi-visibility visible"></i>
+                            <div class="poi-item" data-poi="Control1" data-visible="true">
                                 <div class="poi-color" style="background: #96ceb4;"></div>
                                 <span class="poi-name">Control1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Registration1">
-                                <i class="fas fa-eye poi-visibility visible"></i>
+                            <div class="poi-item" data-poi="Registration1" data-visible="true">
                                 <div class="poi-color" style="background: #feca57;"></div>
                                 <span class="poi-name">Registration1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
@@ -72,16 +67,16 @@ class POIComponent {
             <div class="poi-toolbar-section">
                 <div class="poi-toolbar">
                     <button class="poi-tool-btn" id="${this.options.prefix}poi-visibility-btn" title="全局显隐">
-                        <i class="far fa-eye"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-poi-tb-eye" aria-hidden="true"></span>
                     </button>
                     <button class="poi-tool-btn" id="${this.options.prefix}poi-add-btn" title="新建点">
-                        <i class="fas fa-crosshairs"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-poi-tb-add" aria-hidden="true"></span>
                     </button>
                     <button class="poi-tool-btn" id="${this.options.prefix}poi-delete-btn" title="删除点">
-                        <i class="far fa-trash-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-poi-tb-trash" aria-hidden="true"></span>
                     </button>
                     <button class="poi-tool-btn" id="${this.options.prefix}poi-move-btn" title="移动点">
-                        <i class="fas fa-arrows-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-poi-tb-move" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -180,7 +175,7 @@ class POIComponent {
         // 表头眼睛图标点击事件（全部显示/隐藏）
         const structHeader = container.querySelector('.poi-struct-header');
         if (structHeader) {
-            const headerEyeIcon = structHeader.querySelector('.fa-eye');
+            const headerEyeIcon = structHeader.querySelector('.poi-header-eye');
             if (headerEyeIcon) {
                 headerEyeIcon.style.cursor = 'pointer';
                 headerEyeIcon.addEventListener('click', (e) => {
@@ -190,33 +185,18 @@ class POIComponent {
             }
         }
 
-        // POI可见性切换
-        const visibilityIcons = container.querySelectorAll('.poi-visibility');
-        visibilityIcons.forEach(icon => {
-            icon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isVisible = icon.classList.contains('visible');
-                
-                if (isVisible) {
-                    icon.classList.remove('visible');
-                    icon.className = 'fas fa-eye-slash poi-visibility';
-                } else {
-                    icon.classList.add('visible');
-                    icon.className = 'fas fa-eye poi-visibility visible';
-                }
-                
-                // 更新表头眼睛图标状态
-                this.updateHeaderEyeIcon();
-            });
-        });
-
-        // 工具栏按钮点击
+        // 工具栏按钮点击（蓝湖：显隐仅工具栏全局入口，行内无眼睛）
         const toolButtons = container.querySelectorAll('.poi-tool-btn');
         toolButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const buttonId = button.id;
                 
+                if (buttonId === `${this.options.prefix}poi-visibility-btn`) {
+                    this.toggleAllPOIVisibility();
+                    return;
+                }
+
                 // 处理新建POI按钮
                 if (buttonId === `${this.options.prefix}poi-add-btn`) {
                     this.showNewPOIModal();
@@ -528,11 +508,10 @@ class POIComponent {
         poiItem.className = 'poi-item';
         poiItem.setAttribute('data-poi', poiData.name);
         
-        const typeIcon = poiData.type === 'ISO' || poiData.type === 'UNDEFINED' 
+        poiItem.setAttribute('data-visible', 'true');
+        const typeIcon = poiData.type === 'ISO' || poiData.type === 'UNDEFINED' || poiData.type === 'INIT_LASER_ISO'
             ? 'fa-crosshairs' : 'fa-map-marker-alt';
-        
         poiItem.innerHTML = `
-            <i class="fas fa-eye poi-visibility visible"></i>
             <div class="poi-color" style="background: ${poiData.color};"></div>
             <span class="poi-name">${poiData.name}</span>
             <i class="fas ${typeIcon} poi-type-icon"></i>
@@ -542,6 +521,7 @@ class POIComponent {
         
         // 绑定事件
         this.bindPOIItemEvents(poiItem);
+        this.updateHeaderEyeIcon();
         
         // 触发回调
         if (this.options.onPOIAdded) {
@@ -564,21 +544,6 @@ class POIComponent {
                 this.options.onPOISelect(poiName, poiItem);
             }
         });
-
-        const visibilityIcon = poiItem.querySelector('.poi-visibility');
-        if (visibilityIcon) {
-            visibilityIcon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isVisible = visibilityIcon.classList.contains('visible');
-                if (isVisible) {
-                    visibilityIcon.classList.remove('visible');
-                    visibilityIcon.className = 'fas fa-eye-slash poi-visibility';
-                } else {
-                    visibilityIcon.classList.add('visible');
-                    visibilityIcon.className = 'fas fa-eye poi-visibility visible';
-                }
-            });
-        }
     }
 
     // 关闭模态窗口
@@ -607,7 +572,7 @@ class POIComponent {
             .new-poi-modal {
                 width: 480px;
                 background: #2b2b2b;
-                border-radius: 8px;
+                border-radius: 4px;
                 overflow: hidden;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             }
@@ -759,34 +724,31 @@ class POIComponent {
         document.head.appendChild(style);
     }
 
-    // 切换所有POI的可见性
+    // 切换所有POI的可见性（仅状态标记 + 表头/工具栏反馈，行内无显隐图标）
     toggleAllPOIVisibility() {
         const container = document.getElementById(this.containerId);
         if (!container) return;
-        
-        const visibilityIcons = container.querySelectorAll('.poi-visibility');
-        if (visibilityIcons.length === 0) return;
-        
-        // 检查是否所有POI都可见
-        const allVisible = Array.from(visibilityIcons).every(icon => {
-            return icon.classList.contains('visible');
+
+        const poiItems = container.querySelectorAll('.poi-item');
+        if (poiItems.length === 0) return;
+
+        const allVisible = Array.from(poiItems).every(item => item.getAttribute('data-visible') !== 'false');
+        poiItems.forEach(item => {
+            item.setAttribute('data-visible', allVisible ? 'false' : 'true');
         });
-        
-        // 切换所有POI的可见性
-        visibilityIcons.forEach(icon => {
-            if (allVisible) {
-                // 全部隐藏
-                icon.classList.remove('visible');
-                icon.className = 'fas fa-eye-slash poi-visibility';
-            } else {
-                // 全部显示
-                icon.classList.add('visible');
-                icon.className = 'fas fa-eye poi-visibility visible';
-            }
-        });
-        
-        // 更新表头眼睛图标
+
         this.updateHeaderEyeIcon();
+        this.updateToolbarEyeIcon(!allVisible);
+    }
+
+    updateToolbarEyeIcon(allVisible) {
+        const container = document.getElementById(this.containerId);
+        if (!container) return;
+        const btn = container.querySelector(`#${this.options.prefix}poi-visibility-btn .mozi-ui-icon`);
+        if (!btn) return;
+        btn.className = allVisible
+            ? 'mozi-ui-icon mozi-ui-icon-poi-tb-eye'
+            : 'mozi-ui-icon mozi-ui-icon-eye-slash';
     }
     
     // 更新表头眼睛图标状态
@@ -797,29 +759,23 @@ class POIComponent {
         const structHeader = container.querySelector('.poi-struct-header');
         if (!structHeader) return;
         
-        const headerEyeIcon = structHeader.querySelector('.fa-eye, .fa-eye-slash');
+        const headerEyeIcon = structHeader.querySelector('.poi-header-eye');
         if (!headerEyeIcon) return;
         
-        const visibilityIcons = container.querySelectorAll('.poi-visibility');
-        if (visibilityIcons.length === 0) {
-            // 没有POI时，显示默认的眼睛图标
-            headerEyeIcon.className = 'fas fa-eye';
-            headerEyeIcon.style.color = '#888';
+        const poiItems = container.querySelectorAll('.poi-item');
+        if (poiItems.length === 0) {
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye poi-header-eye';
             return;
         }
         
-        // 检查是否所有POI都可见
-        const allVisible = Array.from(visibilityIcons).every(icon => {
-            return icon.classList.contains('visible');
-        });
+        const allVisible = Array.from(poiItems).every(item => item.getAttribute('data-visible') !== 'false');
         
         if (allVisible) {
-            headerEyeIcon.className = 'fas fa-eye';
-            headerEyeIcon.style.color = '#3AACDE';
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye poi-header-eye';
         } else {
-            headerEyeIcon.className = 'fas fa-eye-slash';
-            headerEyeIcon.style.color = '#888';
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash poi-header-eye';
         }
+        this.updateToolbarEyeIcon(allVisible);
     }
 
     // 销毁组件

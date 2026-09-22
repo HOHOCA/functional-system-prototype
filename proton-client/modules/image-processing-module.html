@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>图像处理 - MOZI Proton</title>
-    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
@@ -37,7 +37,7 @@
         /* 顶部区域（患者概览 + 工具栏） */
         .top-area {
             display: flex;
-            height: 80px;
+            height: 56px;
             flex-shrink: 0;
             border-bottom: 1px solid #404040;
         }
@@ -52,7 +52,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2px;
+            padding: 0;
         }
 
         .patient-card {
@@ -110,7 +110,7 @@
 
         .sidebar-tab {
             width: 100%;
-            min-height: 80px;
+            min-height: 56px;
             padding: 12px 0;
             background: transparent;
             border: none;
@@ -135,8 +135,8 @@
 
         .sidebar-tab.active {
             background: #2a2a2a;
-            color: #3AACDE;
-            border-left-color: #3AACDE;
+            color: #249BD9;
+            border-left-color: #249BD9;
         }
 
         /* 左侧栏内容区域 */
@@ -260,11 +260,11 @@
         }
 
         .tree-line.selected {
-            background-color: rgba(33, 143, 191, 0.2);
+            background-color: rgba(36, 155, 217, 0.2);
         }
 
         .tree-line.selected:hover {
-            background-color: rgba(33, 143, 191, 0.3);
+            background-color: rgba(36, 155, 217, 0.3);
         }
 
         .tree-toggle {
@@ -285,7 +285,7 @@
         .tree-line i {
             margin-right: 8px;
             width: 16px;
-            color: #3AACDE;
+            color: #249BD9;
             font-size: 14px;
             flex-shrink: 0;
         }
@@ -472,16 +472,19 @@
     </div>
 
     <!-- 加载组件脚本 -->
-    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
-    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
-    <script src="../../shared/scripts/components/ROIComponent.js"></script>
-    <script src="../../shared/scripts/components/POIComponent.js"></script>
-    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
-    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
-    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
+    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/RegistrationComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
 
     <script>
         // 组件实例
@@ -495,12 +498,7 @@
         let moduleToolbar = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
-        const defaultPatient = {
-            name: 'Dong, Wuping',
-            id: '0000576304',
-            birthDate: '19730307',
-            gender: 'M'
-        };
+        const defaultPatient = window.CurrentPatient.get();
 
         // 左侧栏页签切换逻辑
         document.addEventListener('DOMContentLoaded', function() {

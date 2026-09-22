@@ -1,231 +1,40 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="mozi-app">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOZI Proton - 质子治疗计划系统</title>
-    <link rel="stylesheet" href="../shared/styles/styles.css">
+    <link rel="stylesheet" href="../shared/styles/styles.css?v=ui19">
+    <link rel="stylesheet" href="../shared/styles/mozi-chrome.css?v=ui7">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
-            background: #1a1a1a;
-            color: #ffffff;
-            overflow: hidden;
-        }
-
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* 顶部导航栏 */
-        .top-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 60px;
-            background: #2a2a2a;
-            border-bottom: 1px solid #404040;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 600;
-            color: #3AACDE;
-            white-space: nowrap;
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 2px;
-        }
-
-        .nav-icon-btn {
-            width: 36px;
-            height: 36px;
-            background: transparent;
-            border: none;
-            color: #ddd;
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .nav-icon-btn:hover {
-            background: #404040;
-            color: #ffffff;
-        }
-
-        .nav-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 2px;
-        }
-
-        .nav-item {
-            padding: 8px 20px;
-            color: #ddd;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.3s;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .nav-item:hover {
-            background: #404040;
-            color: #ffffff;
-        }
-
-        .nav-item.active {
-            background-color: rgba(33, 143, 191, 0.2);
-            color: #ffffff;
-            border-bottom: 3px solid #3AACDE;
-            position: relative;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .physics-module-btn {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            background: transparent;
-            border: none;
-            border-radius: 4px;
-            color: #ddd;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .physics-module-btn:hover {
-            background: #404040;
-            color: #ffffff;
-        }
-
-        .physics-module-btn svg {
-            display: block;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #ddd;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .user-profile:hover {
-            color: #ffffff;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 2px;
-        }
-
-        .window-control-btn {
-            width: 32px;
-            height: 32px;
-            background: transparent;
-            border: none;
-            color: #ddd;
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .window-control-btn:hover {
-            background: #404040;
-            color: #ffffff;
-        }
-
-        .window-control-btn.close-btn:hover {
-            background: #e53935;
-            color: #ffffff;
-        }
-
-        /* 主内容区域 */
-        .main-content {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .module-frame {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            background: #1a1a1a;
-            display: none;
-        }
-
-        .module-frame.active {
-            display: block;
-        }
-    </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- 顶部导航栏 -->
         <header class="top-nav">
             <div class="nav-left">
-                <div class="logo">MOZI-PROTON</div>
+                <div class="logo" title="MOZI Proton">
+                    <span class="logo-wordmark" aria-hidden="true"></span>
+                    <span class="logo-version">PROTON</span>
+                </div>
                 <div class="nav-icons">
                     <button class="nav-icon-btn" id="navWorkflowBtn" title="工作流">
-                        <i class="fas fa-project-diagram"></i>
+                        <img src="../shared/assets/icons/ui/chrome-workflow.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navSaveBtn" title="保存">
-                        <i class="fas fa-save"></i>
+                        <img src="../shared/assets/icons/ui/chrome-save.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navCloseBtn" title="关闭">
-                        <i class="fas fa-times"></i>
+                        <img src="../shared/assets/icons/ui/chrome-close-case.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navUndoBtn" title="撤销">
-                        <i class="fas fa-undo"></i>
+                        <img src="../shared/assets/icons/ui/chrome-undo.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navRedoBtn" title="恢复">
-                        <i class="fas fa-redo"></i>
+                        <img src="../shared/assets/icons/ui/chrome-redo.png" alt="">
                     </button>
                 </div>
             </div>
-            
+
             <div class="nav-center">
                 <nav class="main-nav">
                     <a href="#" class="nav-item active" data-module="patient">患者管理</a>
@@ -236,7 +45,7 @@
                     <a href="#" class="nav-item" data-module="evaluation">计划评估</a>
                 </nav>
             </div>
-            
+
             <div class="nav-right">
                 <button type="button" class="physics-module-btn" id="physicsModuleBtn" title="物理模块" aria-label="物理模块">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -246,45 +55,45 @@
                         <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
                     </svg>
                 </button>
-                <i class="fas fa-cog" style="cursor: pointer;"></i>
+                <button class="nav-icon-btn" id="navSettingsBtn" title="系统设置">
+                    <img src="../shared/assets/icons/ui/chrome-settings.png" alt="">
+                </button>
+                <span class="nav-divider"></span>
                 <div class="user-profile">
-                    张三 <i class="fas fa-chevron-down"></i>
+                    <img src="../shared/assets/icons/ui/chrome-user.png" alt="">
+                    <span>mpadmin</span>
                 </div>
+                <span class="nav-divider"></span>
                 <div class="window-controls">
                     <button class="window-control-btn" title="最小化">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                        <img src="../shared/assets/icons/ui/chrome-minimize.png" alt="">
+                    </button>
+                    <button class="window-control-btn maximize-btn" title="最大化">
+                        <img src="../shared/assets/icons/ui/chrome-maximize.png" alt="">
                     </button>
                     <button class="window-control-btn close-btn" title="关闭">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
+                        <img src="../shared/assets/icons/ui/chrome-close-window.png" alt="">
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- 主内容区域 - 使用 iframe 加载各个模块 -->
         <main class="main-content">
-            <iframe id="patientFrame" class="module-frame active" src="modules/patient-management-module.html" loading="lazy"></iframe>
-            <iframe id="imageFrame" class="module-frame" src="modules/image-processing-module.html" loading="lazy"></iframe>
-            <iframe id="targetFrame" class="module-frame" src="modules/target-delineation-module.html" loading="lazy"></iframe>
-            <iframe id="planFrame" class="module-frame" src="modules/plan-design-module.html" loading="lazy"></iframe>
-            <iframe id="planOptimizationFrame" class="module-frame" src="modules/plan-optimization-module.html" loading="lazy"></iframe>
-            <iframe id="evaluationFrame" class="module-frame" src="modules/plan-evaluation-module.html" loading="lazy"></iframe>
+            <iframe id="patientFrame" class="module-frame active" src="modules/patient-management-module.html?v=ui8" loading="lazy"></iframe>
+            <iframe id="imageFrame" class="module-frame" src="modules/image-processing-module.html?v=ui8" loading="lazy"></iframe>
+            <iframe id="targetFrame" class="module-frame" src="modules/target-delineation-module.html?v=ui8" loading="lazy"></iframe>
+            <iframe id="planFrame" class="module-frame" src="modules/plan-design-module.html?v=ui8" loading="lazy"></iframe>
+            <iframe id="planOptimizationFrame" class="module-frame" src="modules/plan-optimization-module.html?v=ui8" loading="lazy"></iframe>
+            <iframe id="evaluationFrame" class="module-frame" src="modules/plan-evaluation-module.html?v=ui8" loading="lazy"></iframe>
         </main>
     </div>
 
     <script>
-        // 模块导航逻辑
         document.addEventListener('DOMContentLoaded', function() {
             const navItems = document.querySelectorAll('.nav-item');
             const moduleFrames = document.querySelectorAll('.module-frame');
-            const settingsIcon = document.querySelector('.nav-right .fa-cog');
-            
-            // 模块与iframe的映射
+            const settingsBtn = document.getElementById('navSettingsBtn');
+
             const moduleFrameMap = {
                 'patient': 'patientFrame',
                 'image': 'imageFrame',
@@ -293,76 +102,66 @@
                 'plan-optimization': 'planOptimizationFrame',
                 'evaluation': 'evaluationFrame'
             };
-            
-            // 导航切换处理
+
             navItems.forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
-                    
                     const moduleName = this.getAttribute('data-module');
                     const frameId = moduleFrameMap[moduleName];
-                    
                     if (!frameId) return;
-                    
-                    // 更新导航激活状态
                     navItems.forEach(nav => nav.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    // 切换iframe显示
                     moduleFrames.forEach(frame => frame.classList.remove('active'));
                     document.getElementById(frameId).classList.add('active');
                 });
             });
-            
-            // 顶部右侧系统设置图标点击，跳转到系统设置页面
-            if (settingsIcon) {
-                settingsIcon.addEventListener('click', function() {
+
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', function() {
                     window.location.href = '../shared/modules/system-settings.html';
                 });
             }
 
-            // 物理模块：各项目内容不同，质子进入质子专属页
             const physicsModuleBtn = document.getElementById('physicsModuleBtn');
             if (physicsModuleBtn) {
                 physicsModuleBtn.addEventListener('click', function() {
                     window.location.href = './modules/physics-module.html';
                 });
             }
-            
-            // 工具栏按钮事件（可根据需要添加功能）
+
             document.getElementById('navWorkflowBtn').addEventListener('click', function() {
                 console.log('工作流按钮点击');
             });
-            
             document.getElementById('navSaveBtn').addEventListener('click', function() {
                 console.log('保存按钮点击');
             });
-            
             document.getElementById('navCloseBtn').addEventListener('click', function() {
                 console.log('关闭按钮点击');
             });
-            
             document.getElementById('navUndoBtn').addEventListener('click', function() {
                 console.log('撤销按钮点击');
             });
-            
             document.getElementById('navRedoBtn').addEventListener('click', function() {
                 console.log('恢复按钮点击');
             });
-            
-            // 窗口控制按钮事件
+
             document.querySelectorAll('.window-control-btn').forEach((btn) => {
                 btn.addEventListener('click', function() {
                     if (this.classList.contains('close-btn')) {
-                        // 返回到主页
                         window.location.href = '../index.html';
+                    } else if (this.classList.contains('maximize-btn')) {
+                        if (!document.fullscreenElement) {
+                            document.documentElement.requestFullscreen?.();
+                        } else {
+                            document.exitFullscreen?.();
+                        }
                     } else {
-                        // 最小化窗口
                         alert('最小化窗口');
                     }
                 });
             });
         });
     </script>
+    <script src="../shared/scripts/MoziInstantTip.js?v=1"></script>
 </body>
 </html>

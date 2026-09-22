@@ -530,8 +530,8 @@ class PlanLibraryGeneratedModalComponent {
                 min-height: 0;
                 min-width: 0;
                 background: #1a1a1a;
-                border: 1px solid #3a3a3a;
-                border-radius: 6px;
+                border: 1px solid #373737;
+                border-radius: 4px;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
@@ -605,7 +605,7 @@ class PlanLibraryGeneratedModalComponent {
             }
             .plg-rail-tab.is-active{
                 background: rgba(58,172,222,0.18);
-                color: #3aacde;
+                color: #249BD9;
                 font-weight: 500;
             }
             .plg-sidebar{
@@ -774,7 +774,7 @@ class PlanLibraryGeneratedModalComponent {
             .plg-machine-ms-trigger:hover{ border-color: #555; }
             .plg-machine-ms-trigger:focus{
                 outline: none;
-                border-color: #3aacde;
+                border-color: #249BD9;
                 box-shadow: 0 0 0 1px rgba(58,172,222,0.25);
             }
             .plg-machine-ms-text{
@@ -958,7 +958,7 @@ class PlanLibraryGeneratedModalComponent {
             .plg-plan-head button{
                 border: none;
                 background: transparent;
-                color: #3aacde;
+                color: #249BD9;
                 cursor: pointer;
                 padding: 4px;
             }
@@ -1223,8 +1223,8 @@ class PlanLibraryGeneratedModalComponent {
                 }
             } else if (key === 'dvh') {
                 const el = this.root.querySelector('#plgNEDVHMount');
-                if (el && typeof window.DVHComponent === 'function') {
-                    this._mainAreaInstances[instKey] = new window.DVHComponent(el, {
+                if (el && typeof window.SinglePlanDVHComponent === 'function') {
+                    this._mainAreaInstances[instKey] = new window.SinglePlanDVHComponent(el, {
                         showHeader: false,
                         showToolbar: true,
                         toolbarContainerId: 'plgNETabTools',
@@ -1376,7 +1376,7 @@ class PlanLibraryGeneratedModalComponent {
             <div class="plg-dialog">
                 <div class="plg-head">
                     <h2>生成计划库</h2>
-                    <button type="button" class="plg-close" data-plg-close aria-label="关闭"><i class="fas fa-times"></i></button>
+                    <button type="button" class="plg-close" data-plg-close aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="plg-body">
                     <div class="plg-sidebar-wrap">
@@ -1434,7 +1434,7 @@ class PlanLibraryGeneratedModalComponent {
                                                         <div class="plg-goal-item" data-plg-goal-id="lung_v20" data-plg-op="<=" data-plg-target="20">
                                                             <label class="plg-goal-line">
                                                                 <input type="checkbox" checked />
-                                                                <span class="plg-swatch" style="background:#3aacde"></span>
+                                                                <span class="plg-swatch" style="background:#249BD9"></span>
                                                                 <span>lung V20 &lt;= 20.00 %</span>
                                                             </label>
                                                             <div class="plg-goal-slider">

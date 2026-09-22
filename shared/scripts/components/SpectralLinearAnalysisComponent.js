@@ -94,9 +94,7 @@ class SpectralLinearAnalysisComponent {
                             </select>
                         </div>
                     </div>
-                    <button class="spectral-linear-analysis-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="spectral-linear-analysis-close"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="spectral-linear-analysis-body">
                     <div class="spectral-linear-analysis-left-panel">

@@ -134,7 +134,7 @@ class ProtonCreatePlanComponent {
                 color: #e8e8e8;
                 font-weight: 500;
                 border-color: #404040;
-                border-bottom: 2px solid #3aacde;
+                border-bottom: 2px solid #249BD9;
                 background: #2a2a2a;
             }
             .pcp-inner-panel{
@@ -260,7 +260,7 @@ class ProtonCreatePlanComponent {
                 margin: 0;
             }
             .pcp-control:focus{
-                border-color: #3aacde;
+                border-color: #249BD9;
                 box-shadow: 0 0 0 2px rgba(58,172,222,0.12);
             }
             .pcp-control[readonly]{
@@ -350,7 +350,7 @@ class ProtonCreatePlanComponent {
                 user-select: none;
             }
             .pcp-radio input{
-                accent-color: #3aacde;
+                accent-color: #249BD9;
             }
             .pcp-footer{
                 border-top: 1px solid #383838;
@@ -377,8 +377,8 @@ class ProtonCreatePlanComponent {
                 background: rgba(255,255,255,0.06);
             }
             .pcp-btn.primary{
-                border-color: #3aacde;
-                background: #2a9dd0;
+                border-color: #249BD9;
+                background: #249BD9;
                 color: #fff;
             }
             .pcp-btn.primary:hover{
@@ -451,7 +451,7 @@ class ProtonCreatePlanComponent {
                 <div class="pcp-header">
                     <h3>新建计划</h3>
                     <button class="pcp-close" data-role="close" aria-label="关闭">
-                        <i class="fas fa-times" style="font-size:14px;"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="pcp-body">

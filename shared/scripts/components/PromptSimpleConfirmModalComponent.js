@@ -17,9 +17,11 @@ class PromptSimpleConfirmModalComponent {
         const style = document.createElement('style');
         style.id = 'prompt-simple-confirm-modal-styles';
         style.textContent = `
+
+            .mozi-ui-icon-close-x { width: 12px; height: 12px; pointer-events: none; }
             .pscm-wrap { width: 100%; height: 100%; min-height: 420px; display: flex; align-items: center; justify-content: center; background: #111; padding: 16px; box-sizing: border-box; }
             .pscm-wrap.pscm-embed{ min-height: 0; }
-            .pscm-modal { width: min(600px, 100%); height: 320px; background: linear-gradient(180deg, #333333 0%, #2b2b2b 100%); border: 1px solid #3a3a3a; border-radius: 8px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
+            .pscm-modal { width: min(600px, 100%); height: 320px; background: #2a2a2a; border: 1px solid #373737; border-radius: 4px; color: #e6e6e6; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55); display: flex; flex-direction: column; }
             .pscm-header { padding: 14px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
             .pscm-title { margin: 0; font-size: 16px; font-weight: 500; color: #d7d7d7; }
             .pscm-close { border: none; background: transparent; color: #8a8a8a; font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
@@ -27,7 +29,7 @@ class PromptSimpleConfirmModalComponent {
             .pscm-content { padding: 8px 20px 0; text-align: center; color: #c0c0c0; font-size: 13px; line-height: 1.7; flex: 1; display: flex; align-items: center; justify-content: center; }
             .pscm-divider { height: 1px; background: #3b3b3b; }
             .pscm-actions { padding: 14px 20px 18px; display: flex; gap: 16px; justify-content: flex-end; }
-            .pscm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #3aacde; background: #2a9dd0; color: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
+            .pscm-btn { min-width: 88px; height: 32px; border-radius: 4px; border: 1px solid #249BD9; background: #249BD9; color: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
             .pscm-btn:hover { background: #33addf; }
         `;
         document.head.appendChild(style);
@@ -67,7 +69,7 @@ class PromptSimpleConfirmModalComponent {
             <div class="pscm-modal" role="dialog" aria-modal="true" aria-labelledby="pscm-title-el">
                 <div class="pscm-header">
                     <h3 class="pscm-title" id="pscm-title-el">${title}</h3>
-                    <button type="button" class="pscm-close" data-pscm-close aria-label="关闭">×</button>
+                    <button type="button" class="pscm-close" data-pscm-close aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="pscm-content">${message}</div>
                 <div class="pscm-divider"></div>

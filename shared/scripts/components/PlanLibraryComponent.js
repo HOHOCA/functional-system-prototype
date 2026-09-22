@@ -219,7 +219,7 @@ class PlanLibraryComponent {
             }
             .plc-rail-tab.is-active{
                 background: rgba(58,172,222,0.18);
-                color: #3aacde;
+                color: #249BD9;
                 font-weight: 500;
             }
             .plc-sidebar-panel{
@@ -375,7 +375,7 @@ class PlanLibraryComponent {
                 font-family: inherit;
             }
             .plc-control:focus{
-                border-color: #3aacde;
+                border-color: #249BD9;
                 box-shadow: 0 0 0 1px rgba(58,172,222,0.2);
             }
             .plc-control:disabled, .plc-control[readonly]{
@@ -430,7 +430,7 @@ class PlanLibraryComponent {
                 border: none;
                 border-radius: 3px;
                 background: transparent;
-                color: #3aacde;
+                color: #249BD9;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -456,7 +456,7 @@ class PlanLibraryComponent {
                 box-sizing: border-box;
             }
             .plc-beam-card.is-active{
-                border-color: #3aacde;
+                border-color: #249BD9;
                 box-shadow: 0 0 0 1px rgba(58,172,222,0.35);
             }
             .plc-beam-card .plc-beam-card-body{
@@ -486,7 +486,7 @@ class PlanLibraryComponent {
             }
             .plc-beam-card.is-active .plc-beam-num{
                 background: #2a7fad;
-                border-color: #3aacde;
+                border-color: #249BD9;
                 color: #fff;
             }
             .plc-clinical-wrap{
@@ -507,7 +507,7 @@ class PlanLibraryComponent {
                 color: #9a9a9a;
             }
             .plc-clinical a{
-                color: #3aacde;
+                color: #249BD9;
                 text-decoration: none;
                 margin-left: 6px;
             }
@@ -523,7 +523,7 @@ class PlanLibraryComponent {
                 height: 36px;
                 border: none;
                 border-radius: 4px;
-                background: #2a9dd0;
+                background: #249BD9;
                 color: #fff;
                 font-size: 13px;
                 font-weight: 500;
@@ -1064,7 +1064,7 @@ class PlanLibraryComponent {
             .plc-cg-btn-primary{
                 box-sizing: border-box;
                 border: none;
-                background: #2a9dd0;
+                background: #249BD9;
                 color: #fff;
                 font-size: 13px;
                 font-weight: 500;
@@ -1753,7 +1753,7 @@ class PlanLibraryComponent {
                         <div class="plc-cg-head">
                             <h3 id="plcClinicalGoalsTitle">临床目标设置</h3>
                             <div class="plc-cg-head-actions">
-                                <button type="button" class="plc-cg-close" data-role="cg-dismiss" aria-label="关闭临床目标"><i class="fas fa-times"></i></button>
+                                <button type="button" class="plc-cg-close" data-role="cg-dismiss" aria-label="关闭临床目标"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                             </div>
                         </div>
                         <div class="plc-cg-body">
@@ -1842,7 +1842,7 @@ class PlanLibraryComponent {
                     <div class="plc-opt-shell" role="dialog" aria-modal="true" aria-labelledby="plcOptSettingsTitle" tabindex="-1">
                         <div class="plc-opt-head">
                             <h3 id="plcOptSettingsTitle">优化设置</h3>
-                            <button type="button" class="plc-opt-close" data-role="opt-dismiss" aria-label="关闭优化设置"><i class="fas fa-times"></i></button>
+                            <button type="button" class="plc-opt-close" data-role="opt-dismiss" aria-label="关闭优化设置"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                         </div>
                         <div class="plc-opt-body">
                             <div class="plc-opt-row">
@@ -1859,7 +1859,7 @@ class PlanLibraryComponent {
                 </div>
                 <div class="plc-header">
                     <h3>生成计划库</h3>
-                    <button type="button" class="plc-close" data-role="close" aria-label="关闭"><i class="fas fa-times"></i></button>
+                    <button type="button" class="plc-close" data-role="close" aria-label="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="plc-main">
                     <aside class="plc-rail" role="tablist" aria-label="侧栏页签">

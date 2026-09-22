@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>患者管理 - MOZI Brachy</title>
-    <link rel="stylesheet" href="../../shared/styles/styles.css">
+    <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
     <link rel="stylesheet" href="../../shared/styles/patient-management.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -83,7 +83,7 @@
         }
         
         .bottom-action-bar .btn-primary {
-            background: #3AACDE;
+            background: #249BD9;
             color: #fff;
         }
         
@@ -243,11 +243,11 @@
 
         /* 选中状态 - 与患者列表一致 */
         .tree-line.selected {
-            background-color: rgba(33, 143, 191, 0.2);
+            background-color: rgba(36, 155, 217, 0.2);
         }
 
         .tree-line.selected:hover {
-            background-color: rgba(33, 143, 191, 0.3);
+            background-color: rgba(36, 155, 217, 0.3);
         }
 
         /* 展开/折叠按钮 */
@@ -270,7 +270,7 @@
         .tree-line i {
             margin-right: 8px;
             width: 16px;
-            color: #3AACDE;
+            color: #249BD9;
             font-size: 14px;
             flex-shrink: 0;
         }
@@ -374,7 +374,7 @@
         
         .form-input:focus {
             outline: none;
-            border-color: #3AACDE;
+            border-color: #249BD9;
         }
         
         .form-input.readonly {
@@ -500,56 +500,7 @@
             </div>
 
             <!-- 文件信息 -->
-            <div class="file-info" id="fileInfo">
-                <h4>文件信息</h4>
-                <div class="info-grid" id="imageFileInfo">
-                    <div class="info-item">
-                        <span class="label">扫描设备</span>
-                        <span class="value">
-                            <span id="scanDeviceValue">GE Discovery CT750 HD</span>
-                            <button class="edit-icon-btn" id="editScanDeviceBtn" title="修改">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">患者摆位</span>
-                        <span class="value">HFS</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">图像模态</span>
-                        <span class="value">CT</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">图像层数</span>
-                        <span class="value">102</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">拍摄日期</span>
-                        <span class="value">2019.01.03</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">拍摄时间</span>
-                        <span class="value">17:02:12</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">序列号</span>
-                        <span class="value">3</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">序列ID</span>
-                        <span class="value">38467.39468.342</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">序列描述</span>
-                        <span class="value">HearCewity</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="label">检查描述</span>
-                        <span class="value">Chest Routine</span>
-                    </div>
-                </div>
-            </div>
+            <div class="file-info" id="fileInfoHost"></div>
         </div>
         </div><!-- 关闭 main-content-wrapper -->
         
@@ -567,47 +518,12 @@
         </div>
     </div>
 
-    <!-- 图像属性弹窗 -->
-    <div class="modal-overlay" id="imagePropertiesModal" style="display: none;">
-        <div class="modal-dialog">
-            <div class="modal-header">
-                <h3>图像属性</h3>
-                <button class="modal-close" id="closeModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>CT图像</label>
-                    <input type="text" value="CT 65" readonly class="form-input readonly">
-                </div>
-                <div class="form-group">
-                    <label>扫描设备</label>
-                    <select class="form-input">
-                        <option>GE MEDICAL SYSTEMS</option>
-                        <option>SIEMENS</option>
-                        <option>PHILIPS</option>
-                    </select>
-                    <p class="form-hint">根据DICOM数据中指定字段自动匹配扫描设备</p>
-                </div>
-                <div class="chart-section">
-                    <h4>电子密度对照表</h4>
-                    <p class="chart-subtitle">CT转电子密度</p>
-                    <div class="chart-placeholder">
-                        <canvas id="densityChart" width="600" height="300"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelBtn">取消</button>
-                <button class="btn btn-primary" id="confirmBtn">确定</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 组件引用 -->
-    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
-    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../../shared/scripts/components/FileInfoComponent.js?v=1"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
     <script src="../../shared/scripts/components/RegistrationPanel.js"></script>
     <script src="../../shared/scripts/components/PatientManagementComponent.js"></script>
     <script src="../../shared/scripts/components/ImportLegacyModalComponent.js"></script>
@@ -681,13 +597,14 @@
         let importLegacyModal = null;
 
         function toPatientOverviewData(patient) {
-            if (!patient) return { name: '--', id: '--', birthDate: '', gender: '' };
-            return {
+            if (!patient) return window.CurrentPatient.get();
+            return CurrentPatient.normalize({
                 name: patient.name,
                 id: patient.id,
                 birthDate: (patient.birthDate || '').replace(/-/g, ''),
-                gender: patient.gender || ''
-            };
+                gender: patient.gender || '',
+                machine: patient.machine
+            });
         }
 
         // 加载患者数据到表格
@@ -695,8 +612,9 @@
             const tbody = document.getElementById('patientTableBody');
             if (!tbody) return;
             
+            const currentId = (window.CurrentPatient && CurrentPatient.get().id) || mockPatients[0].id;
             tbody.innerHTML = mockPatients.map((patient, index) => `
-                <tr class="${index === 0 ? 'selected' : ''}" onclick="selectPatient(this, ${index})">
+                <tr class="${patient.id === currentId ? 'selected' : ''}" onclick="selectPatient(this, ${index})">
                     <td><i class="fas fa-folder"></i></td>
                     <td>${patient.id}</td>
                     <td>${patient.name}</td>
@@ -723,109 +641,24 @@
             
             // 更新右侧患者信息
             const patient = mockPatients[index];
-            if (patientOverviewComponent) {
-                patientOverviewComponent.setPatient(toPatientOverviewData(patient));
+            if (patient) {
+                const data = toPatientOverviewData(patient);
+                if (window.CurrentPatient) CurrentPatient.set(data);
+                if (patientOverviewComponent) {
+                    patientOverviewComponent.setPatient(data);
+                }
             }
         }
-        
-        // 不同类型节点的文件信息数据
-        const fileInfoData = {
-            'CT': {
-                title: '文件信息',
-                fields: [
-                    { label: '数据类型', value: 'CT' },
-                    { label: '扫描设备', value: 'GE MEDICAL SYSTEMS', editable: true },
-                    { label: '患者摆位', value: 'Head First-Prone', isDropdown: true },
-                    { label: '图像层数', value: '185' },
-                    { label: '拍摄时间', value: '2025-10-01 10:00:00' },
-                    { label: '序列号', value: '3' },
-                    { label: '序列ID', value: '1.2.586.698.5588456.636851.5' },
-                    { label: '序列描述', value: 'CT SIMoooooooooooooooo' },
-                    { label: '检查描述', value: 'xxxxx' }
-                ]
-            },
-            'RTSTRUCT': {
-                title: '文件信息',
-                fields: [
-                    { label: '数据类型', value: 'RTStruct' },
-                    { label: '创建者', value: 'xxxx' },
-                    { label: '创建时间', value: '2025-10-01 10:00:00' },
-                    { label: '序列号', value: '3' },
-                    { label: '序列ID', value: '1.2.586.698.5588456.636851.5' },
-                    { label: '序列描述', value: 'CT SIMoooooooooooooooo' },
-                    { label: '检查描述', value: 'xxxxx' },
-                    { label: '审批人', value: 'NONE' },
-                    { label: '审批时间', value: '2025-10-01 10:00:00' }
-                ]
-            },
-            'RTPLAN': {
-                title: '文件信息',
-                fields: [
-                    { label: '数据类型', value: 'RTPlan' },
-                    { label: '计划名称', value: 'Pelvis4ARC' },
-                    { label: '计划描述', value: 'xxxxxx' },
-                    { label: '治疗机器', value: 'Halycen' },
-                    { label: '辐射类型', value: 'PHOTON' },
-                    { label: '治疗技术', value: 'mARC' },
-                    { label: '剂型处方', value: '靶区_PTV，总剂量-5040，分次数-28' },
-                    { label: '审批人', value: 'xxxx' },
-                    { label: '审批时间', value: '2025-10-01 10:00:00' }
-                ]
-            }
-        };
+        let fileInfoComponent = null;
+        function clientPrefix() {
+            const path = location.pathname || '';
+            if (path.includes('proton-client')) return 'proton-';
+            if (path.includes('brachy-client')) return 'brachy-';
+            return 'photon-';
+        }
 
-        // 更新文件信息显示
         function updateFileInfo(type) {
-            const fileInfoContainer = document.getElementById('imageFileInfo');
-            if (!fileInfoContainer) return;
-
-            const data = fileInfoData[type];
-            if (!data) return;
-
-            let html = '';
-            data.fields.forEach(field => {
-                if (field.editable) {
-                    html += `
-                        <div class="info-item">
-                            <span class="label">${field.label}</span>
-                            <span class="value">
-                                <span id="scanDeviceValue">${field.value}</span>
-                                <button class="edit-icon-btn" id="editScanDeviceBtn" title="修改">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </span>
-                        </div>
-                    `;
-                } else if (field.isDropdown) {
-                    html += `
-                        <div class="info-item">
-                            <span class="label">${field.label}</span>
-                            <span class="value">${field.value}</span>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="info-item">
-                            <span class="label">${field.label}</span>
-                            <span class="value">${field.value}</span>
-                        </div>
-                    `;
-                }
-            });
-
-            fileInfoContainer.innerHTML = html;
-
-            // 重新绑定编辑按钮事件
-            const editBtn = document.getElementById('editScanDeviceBtn');
-            if (editBtn) {
-                editBtn.addEventListener('click', function() {
-                    const modal = document.getElementById('imagePropertiesModal');
-                    if (modal) {
-                        modal.style.display = 'flex';
-                        drawChart();
-                    }
-                });
-            }
+            if (fileInfoComponent) fileInfoComponent.setType(type);
         }
 
         // 选择树节点
@@ -893,124 +726,24 @@
                 importLegacyModal.show();
             });
         }
-
-        // 弹窗相关功能
-        function initializeModal() {
-            const modal = document.getElementById('imagePropertiesModal');
-            const editBtn = document.getElementById('editScanDeviceBtn');
-            const closeBtn = document.getElementById('closeModal');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const confirmBtn = document.getElementById('confirmBtn');
-            
-            // 打开弹窗
-            if (editBtn) {
-                editBtn.addEventListener('click', function() {
-                    modal.style.display = 'flex';
-                    drawChart();
-                });
-            }
-            
-            // 关闭弹窗
-            function closeModal() {
-                modal.style.display = 'none';
-            }
-            
-            if (closeBtn) closeBtn.addEventListener('click', closeModal);
-            if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-            
-            // 点击遮罩层关闭
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-            
-            // 确定按钮
-            if (confirmBtn) {
-                confirmBtn.addEventListener('click', function() {
-                    // 这里可以添加保存逻辑
-                    console.log('确定修改');
-                    closeModal();
-                });
-            }
-        }
-        
-        // 绘制图表
-        function drawChart() {
-            const canvas = document.getElementById('densityChart');
-            if (!canvas) return;
-            
-            const ctx = canvas.getContext('2d');
-            const width = canvas.width;
-            const height = canvas.height;
-            
-            // 清空画布
-            ctx.clearRect(0, 0, width, height);
-            
-            // 绘制网格背景
-            ctx.fillStyle = '#1a1a1a';
-            ctx.fillRect(0, 0, width, height);
-            
-            // 绘制网格线
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 1;
-            
-            // 垂直网格线
-            for (let i = 0; i <= 10; i++) {
-                const x = (width / 10) * i;
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, height);
-                ctx.stroke();
-            }
-            
-            // 水平网格线
-            for (let i = 0; i <= 10; i++) {
-                const y = (height / 10) * i;
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(width, y);
-                ctx.stroke();
-            }
-            
-            // 绘制蓝色曲线
-            ctx.strokeStyle = '#3AACDE';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            
-            // 模拟数据点
-            const points = [
-                {x: 0, y: 0.5},
-                {x: 0.2, y: 0.45},
-                {x: 0.4, y: 0.4},
-                {x: 0.6, y: 0.35},
-                {x: 0.8, y: 0.3},
-                {x: 1, y: 0.25}
-            ];
-            
-            points.forEach((point, index) => {
-                const x = point.x * width;
-                const y = point.y * height;
-                if (index === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            });
-            
-            ctx.stroke();
-        }
-        
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化患者概览组件
+            const initialPatient = toPatientOverviewData(
+                mockPatients.find((item) => item.id === CurrentPatient.get().id) || mockPatients[0]
+            );
+            CurrentPatient.set(initialPatient);
             patientOverviewComponent = new PatientOverviewComponent('patientOverviewCard', {
-                patient: toPatientOverviewData(mockPatients[0])
+                patient: initialPatient
+            });
+
+            fileInfoComponent = new FileInfoComponent('fileInfoHost', {
+                type: 'CT',
+                prefix: clientPrefix()
             });
 
             loadPatientData();
             initializeSequenceTree();
-            initializeModal();
             initializeImportButton();
         });
     </script>
