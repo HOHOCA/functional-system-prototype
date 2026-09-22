@@ -80,10 +80,10 @@ class ChannelListComponent {
                         <thead>
                             <tr>
                                 <th style="width: 50px; min-width: 50px; text-align: center;">
-                                    <i class="fas fa-eye" style="color: #888; cursor: pointer;" title="可见性"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-eye ch-header-eye" style="cursor: pointer;" title="可见性"></span>
                                 </th>
                                 <th style="width: 50px; min-width: 50px; text-align: center;">
-                                    <i class="fas fa-lock" style="color: #888; cursor: pointer;" title="锁定"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-unlock channel-header-lock" style="cursor: pointer;" title="锁定" aria-hidden="true"></span>
                                 </th>
                                 <th style="width: 60px; text-align: center;">序号</th>
                                 <th style="width: 120px;">名称</th>
@@ -103,28 +103,28 @@ class ChannelListComponent {
                 <!-- 底部操作栏 -->
                 <div class="channel-list-toolbar">
                     <button class="channel-toolbar-btn" id="${this.options.prefix}addBtn" title="添加 添加施源器">
-                        <i class="fas fa-plus"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-add"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}deleteBtn" title="删除 删除选中施源器" disabled>
-                        <i class="fas fa-trash-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}deleteAllBtn" title="删除所有 删除所有施源器">
-                        <i class="fas fa-trash"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash-all"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}manualRebuildBtn" title="手动重建 手动重建施源器" disabled>
-                        <i class="fas fa-mouse-pointer"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-pointer"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}autoRebuildBtn" title="自动重建 自动重建施源器" disabled>
-                        <i class="fas fa-robot"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-auto"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}modelRebuildBtn" title="模型重建 从库中选择施源器模型自动重建" disabled>
-                        <i class="fas fa-shapes"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-model"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}loadTemplateBtn" title="加载模板 将已有模板加载到当前通道列表" disabled>
-                        <i class="fas fa-file-import"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-import"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}createTemplateBtn" title="创建模板 将当前通道列表内容保存为模板" disabled>
-                        <i class="fas fa-bookmark"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-bookmark"></span>
                     </button>
                 </div>
             </div>
@@ -225,10 +225,13 @@ class ChannelListComponent {
                 
                 // 检查是否点击了表头的眼睛图标（第一列）
                 const headerEyeTh = clickedElement.closest('thead th:first-child');
-                if (headerEyeTh && (clickedElement.classList.contains('fa-eye') || 
+                if (headerEyeTh && (clickedElement.classList.contains('fa-eye') ||
                                      clickedElement.classList.contains('fa-eye-slash') ||
+                                     clickedElement.classList.contains('ch-header-eye') ||
+                                     clickedElement.classList.contains('mozi-ui-icon') ||
                                      clickedElement.classList.contains('fas') ||
-                                     clickedElement.tagName === 'I')) {
+                                     clickedElement.tagName === 'I' ||
+                                     clickedElement.tagName === 'SPAN')) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.toggleAllVisibility();
@@ -239,8 +242,14 @@ class ChannelListComponent {
                 const headerLockTh = clickedElement.closest('thead th:nth-child(2)');
                 if (headerLockTh && (clickedElement.classList.contains('fa-lock') || 
                                       clickedElement.classList.contains('fa-unlock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-unlock') ||
+                                      clickedElement.classList.contains('channel-header-lock') ||
+                                      clickedElement.classList.contains('dwell-header-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon') ||
                                       clickedElement.classList.contains('fas') ||
-                                      clickedElement.tagName === 'I')) {
+                                      clickedElement.tagName === 'I' ||
+                                      clickedElement.tagName === 'SPAN')) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.toggleAllLock();
@@ -382,14 +391,14 @@ class ChannelListComponent {
                     class="${isSelected ? 'selected' : ''}"
                 >
                     <td style="text-align: center;">
-                        <i class="fas ${isVisible ? 'fa-eye' : 'fa-eye-slash'} channel-visibility-icon ${isVisible ? 'visible' : ''}" 
-                           style="color: ${isVisible ? '#3AACDE' : '#888'}; cursor: pointer;" 
-                           title="${isVisible ? '隐藏' : '显示'}"></i>
+                        <span class="mozi-ui-icon ${isVisible ? 'mozi-ui-icon-eye' : 'mozi-ui-icon-eye-slash'} channel-visibility-icon ${isVisible ? 'visible' : ''}"
+                           style="cursor: pointer;"
+                           title="${isVisible ? '隐藏' : '显示'}"></span>
                     </td>
                     <td style="text-align: center;">
-                        <i class="fas ${isLocked ? 'fa-lock' : 'fa-unlock'} channel-lock-icon" 
-                           style="color: ${isLocked ? '#f59e0b' : '#888'}; cursor: pointer;" 
-                           title="${isLocked ? '解锁' : '锁定'}"></i>
+                        <span class="mozi-ui-icon ${isLocked ? 'mozi-ui-icon-lock' : 'mozi-ui-icon-unlock'} channel-lock-icon"
+                           style="cursor: pointer;"
+                           title="${isLocked ? '解锁' : '锁定'}" aria-hidden="true"></span>
                     </td>
                     <td style="text-align: center;">${channel.number}</td>
                     <td>
@@ -553,23 +562,23 @@ class ChannelListComponent {
         const headerTh = document.querySelector(`#${this.options.prefix}channelTable thead th:first-child`);
         if (!headerTh) return;
         
-        const headerEyeIcon = headerTh.querySelector('.fa-eye, .fa-eye-slash, .fas');
+        const headerEyeIcon = headerTh.querySelector('.ch-header-eye, .fa-eye, .fa-eye-slash, .fas');
         if (headerEyeIcon && this.channels.length > 0) {
             const allVisible = this.channels.every(channel => {
                 return this.channelVisibility.get(channel.id) !== false;
             });
             
             if (allVisible) {
-                headerEyeIcon.className = 'fas fa-eye';
-                headerEyeIcon.style.color = '#3AACDE';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye ch-header-eye';
+                headerEyeIcon.style.color = '#249BD9';
             } else {
-                headerEyeIcon.className = 'fas fa-eye-slash';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash ch-header-eye';
                 headerEyeIcon.style.color = '#888';
             }
         } else if (this.channels.length === 0) {
             // 如果没有通道，显示默认的眼睛图标
             if (headerEyeIcon) {
-                headerEyeIcon.className = 'fas fa-eye';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye ch-header-eye';
                 headerEyeIcon.style.color = '#888';
             }
         }
@@ -624,24 +633,24 @@ class ChannelListComponent {
         const headerTh = document.querySelector(`#${this.options.prefix}channelTable thead th:nth-child(2)`);
         if (!headerTh) return;
         
-        const headerLockIcon = headerTh.querySelector('.fa-lock, .fa-unlock, .fas');
+        const headerLockIcon = headerTh.querySelector('.mozi-ui-icon, .fa-lock, .fa-unlock, .fas');
         if (headerLockIcon && this.channels.length > 0) {
             const allLocked = this.channels.every(channel => {
                 return this.channelLocked.get(channel.id) === true;
             });
             
             if (allLocked) {
-                headerLockIcon.className = 'fas fa-lock';
-                headerLockIcon.style.color = '#f59e0b';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-lock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             } else {
-                headerLockIcon.className = 'fas fa-unlock';
-                headerLockIcon.style.color = '#888';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             }
         } else if (this.channels.length === 0) {
             // 如果没有通道，显示默认的解锁图标
             if (headerLockIcon) {
-                headerLockIcon.className = 'fas fa-unlock';
-                headerLockIcon.style.color = '#888';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             }
         }
     }
@@ -1402,9 +1411,7 @@ class ChannelListComponent {
             <div class="model-save-dialog-content">
                 <div class="model-save-dialog-header">
                     <h3>另存为新模型</h3>
-                    <button class="model-save-dialog-close" title="关闭">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="model-save-dialog-close" title="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="model-save-dialog-body">
                     <div class="model-save-form-item">
@@ -1512,7 +1519,7 @@ class ChannelListComponent {
                 .model-save-dialog-content {
                     background: #1a1a1a;
                     border: 1px solid #333;
-                    border-radius: 8px;
+                    border-radius: 4px;
                     width: 500px;
                     max-width: 90vw;
                     display: flex;
@@ -1683,9 +1690,7 @@ class ChannelListComponent {
                     <span>序号: ${channel.number !== undefined ? channel.number : ''}</span>
                     <span>名称: ${channel.name || 'NONE'}</span>
                 </div>
-                <button class="model-rebuild-modal-close" title="关闭">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="model-rebuild-modal-close" title="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
             </div>
             <div class="model-rebuild-modal-body model-rebuild-modal-body-layout">
                 <!-- 左侧区域 -->
@@ -3048,7 +3053,7 @@ class ChannelListComponent {
         
         // 创建一个弯曲的管状模型
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a,
             transparent: true,
             opacity: 0.9
@@ -3076,7 +3081,7 @@ class ChannelListComponent {
     // 创建插植针模型
     createImplantNeedleModel(preview3D, modelInfo, channel) {
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a
         });
         
@@ -3099,7 +3104,7 @@ class ChannelListComponent {
         const selectedChannels = channel.selectedChannels || [1];
         const centerTubeProtrusion = channel.centerTubeProtrusion || 0;
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a,
             transparent: true,
             opacity: 0.9
@@ -3413,7 +3418,7 @@ class ChannelListComponent {
                 left: 50%;
                 transform: translate(-50%, -50%);
                 background: #1a1a1a;
-                border-radius: 8px;
+                border-radius: 4px;
                 width: 560px;
                 max-width: 95vw;
                 max-height: 85vh;
@@ -4020,7 +4025,7 @@ class ChannelListComponent {
             }
             
             .channel-circle.selected {
-                fill: #3AACDE;
+                fill: #249BD9;
                 stroke: #5aaeff;
             }
             
@@ -4131,8 +4136,8 @@ class ChannelListComponent {
             }
             
             .model-rebuild-toolbar-btn.active {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4184,8 +4189,8 @@ class ChannelListComponent {
             }
             
             .model-rebuild-footer-btn.active {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4210,7 +4215,7 @@ class ChannelListComponent {
             
             .model-rebuild-preprocessing-mask-content {
                 background: #2a2a2a;
-                border-radius: 8px;
+                border-radius: 4px;
                 padding: 24px;
                 min-width: 400px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -4256,8 +4261,8 @@ class ChannelListComponent {
             }
             
             .model-rebuild-mask-btn-primary {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4293,7 +4298,7 @@ class ChannelListComponent {
             .custom-dialog {
                 background: #2a2a2a;
                 border: 1px solid #333;
-                border-radius: 8px;
+                border-radius: 4px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
                 min-width: 320px;
                 max-width: 500px;

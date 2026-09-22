@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>计划设计 - MOZI Brachy</title>
-        <link rel="stylesheet" href="../../shared/styles/styles.css">
+        <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
         <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
         <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -42,7 +42,7 @@
         /* 顶部区域（患者概览 + 工具栏） */
         .top-area {
             display: flex;
-            height: 80px;
+            height: 56px;
             flex-shrink: 0;
             border-bottom: 1px solid #404040;
         }
@@ -57,7 +57,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2px;
+            padding: 0;
         }
 
         .patient-card {
@@ -123,7 +123,7 @@
 
         .sidebar-tab {
             width: 100%;
-            min-height: 80px;
+            min-height: 56px;
             padding: 12px 0;
             background: transparent;
             border: none;
@@ -148,8 +148,8 @@
 
         .sidebar-tab.active {
             background: #2a2a2a;
-            color: #3AACDE;
-            border-left-color: #3AACDE;
+            color: #249BD9;
+            border-left-color: #249BD9;
         }
 
         /* 左侧栏内容区域 */
@@ -273,11 +273,11 @@
         }
 
         .tree-line.selected {
-            background-color: rgba(33, 143, 191, 0.2);
+            background-color: rgba(36, 155, 217, 0.2);
         }
 
         .tree-line.selected:hover {
-            background-color: rgba(33, 143, 191, 0.3);
+            background-color: rgba(36, 155, 217, 0.3);
         }
 
         .tree-toggle {
@@ -298,7 +298,7 @@
         .tree-line i {
             margin-right: 8px;
             width: 16px;
-            color: #3AACDE;
+            color: #249BD9;
             font-size: 14px;
             flex-shrink: 0;
         }
@@ -442,8 +442,8 @@
         }
 
         .dvh-view-tab.active {
-            color: #3AACDE;
-            border-bottom-color: #3AACDE;
+            color: #249BD9;
+            border-bottom-color: #249BD9;
             background: #2a2a2a;
         }
 
@@ -629,8 +629,8 @@
         }
 
         .bottom-control-tab.active {
-            color: #3AACDE;
-            border-bottom-color: #3AACDE;
+            color: #249BD9;
+            border-bottom-color: #249BD9;
             background: #2a2a2a;
         }
 
@@ -805,20 +805,7 @@
                         <button class="bottom-control-tab" data-tab="doseStats">剂量统计</button>
                     </div>
                     <div class="bottom-control-tabs-right">
-                        <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏下边栏">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                <defs>
-                                    <linearGradient id="gradient-bottom-maximize" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                    </linearGradient>
-                                </defs>
-                                <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-bottom-maximize)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
+                        <button class="bottom-control-fullscreen-btn" id="bottomControlFullscreenBtn" title="全屏下边栏"><span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span></button>
                     </div>
                 </div>
                 
@@ -855,21 +842,25 @@
     </div>
 
     <!-- 加载组件脚本 -->
-    <script src="../../shared/scripts/components/PatientOverviewComponent.js"></script>
-    <script src="../../shared/scripts/components/SequenceTreeComponent.js"></script>
-    <script src="../../shared/scripts/components/ROIComponent.js"></script>
-    <script src="../../shared/scripts/components/POIComponent.js"></script>
-    <script src="../../shared/scripts/components/RegistrationComponent.js"></script>
-    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/CoronalView2DComponent.js"></script>
-    <script src="../../shared/scripts/components/SagittalView2DComponent.js"></script>
-        <script src="../scripts/BrachyView3DComponent.js"></script>
+    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/RegistrationComponent.js?v=ui2"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
+        <script src="../scripts/BrachyView3DComponent.js?v=ui2"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
-    <script src="../../shared/scripts/components/ModuleToolbarComponent.js"></script>
-    <script src="../../shared/scripts/components/DOSEComponent.js"></script>
-    <script src="../scripts/ChannelListComponent.js"></script>
-    <script src="../scripts/DwellControlComponent.js"></script>
-    <script src="../../shared/scripts/components/ClinicalTargetComponent.js"></script>
+    <script src="../../shared/scripts/components/SinglePlanDVHComponent.js"></script>
+    <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
+    <script src="../scripts/ChannelListComponent.js?v=ui19"></script>
+    <script src="../scripts/DwellControlComponent.js?v=ui19"></script>
+    <script src="../../shared/scripts/components/ClinicalTargetComponent.js?v=ui9"></script>
     <script src="../../shared/scripts/components/DoseStatisticsComponent.js"></script>
 
     <script>
@@ -889,12 +880,7 @@
         let dwellControlListComponent = null;
         let clinicalTargetComponent = null;
         let doseStatisticsComponent = null;
-        const defaultPatient = {
-            name: 'Li Shan',
-            id: 'WP4TR3',
-            birthDate: '19760613',
-            gender: 'F'
-        };
+        const defaultPatient = window.CurrentPatient.get();
 
         // 左侧栏页签切换逻辑
         document.addEventListener('DOMContentLoaded', function() {
@@ -1336,8 +1322,8 @@
             // 初始化DVH组件（应用方案B：工具栏外置）
             let dvhComponent = null;
             const dvhCanvasHost = document.getElementById('dvhCanvasHost');
-            if (typeof DVHComponent !== 'undefined' && dvhCanvasHost) {
-                dvhComponent = new DVHComponent('dvhCanvasHost', {
+            if (typeof SinglePlanDVHComponent !== 'undefined' && dvhCanvasHost) {
+                dvhComponent = new SinglePlanDVHComponent('dvhCanvasHost', {
                     toolbarContainerId: 'dvhToolbarHost', // 工具栏挂载到外部容器
                     showHeader: false,
                     enableToolbar: true,

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>组件展示 - Component Gallery</title>
     <link rel="stylesheet" href="gallery.css">
-    <link rel="stylesheet" href="../shared/styles/styles.css">
+    <link rel="stylesheet" href="../shared/styles/styles.css?v=ui19">
     <link rel="stylesheet" href="../shared/styles/system-settings.css">
     <link rel="stylesheet" href="../shared/styles/styles_plan_view_2d.css">
     <link rel="stylesheet" href="../shared/styles/styles_dvh.css">
@@ -57,32 +57,34 @@
     <!-- 加载所有共享组件（按字母顺序） -->
     <script src="../shared/scripts/components/BeamOptimizationSettingsComponent.js"></script>
     <script src="../shared/scripts/components/CreateQaPlanComponent.js"></script>
-    <script src="../shared/scripts/components/CrossSectionView2DComponent.js"></script>
-    <script src="../shared/scripts/components/CoronalView2DComponent.js"></script>
-    <script src="../shared/scripts/components/SagittalView2DComponent.js"></script>
+    <script src="../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
+    <script src="../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
+    <script src="../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
     <script src="../shared/scripts/components/CuttingModalComponent.js"></script>
-    <script src="../shared/scripts/components/DOSEComponent.js"></script>
+    <script src="../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
     <script src="../shared/scripts/components/DoseStatisticsComponent.js"></script>
     <script src="../shared/scripts/components/DVHComponent.js"></script>
+    <script src="../shared/scripts/components/SinglePlanDVHComponent.js"></script>
+    <script src="../shared/scripts/components/MultiPlanDVHComponent.js"></script>
     <script src="../shared/scripts/components/FourDCTRobustnessEvaluationDVHComponent.js"></script>
     <script src="../shared/scripts/components/OptimizationConstraintsComponent.js"></script>
     <script src="../shared/scripts/components/OptimizationSettingsModalComponent.js"></script>
     <script src="../shared/scripts/components/PatientInfoComponent.js"></script>
     <script src="../shared/scripts/components/PatientManagementComponent.js"></script>
     <script src="../shared/scripts/components/PlanComparisonDoseStatisticsComponent.js"></script>
-    <script src="../shared/scripts/components/POIComponent.js"></script>
-    <script src="../shared/scripts/components/RegistrationComponent.js"></script>
+    <script src="../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../shared/scripts/components/RegistrationComponent.js?v=ui2"></script>
     <script src="../shared/scripts/components/RegistrationPanel.js"></script>
     <script src="../shared/scripts/components/RobustnessSettingsComponent.js"></script>
-    <script src="../shared/scripts/components/ROIComponent.js"></script>
-    <script src="../shared/scripts/components/View3DFailedComponent.js"></script>
+    <script src="../shared/scripts/components/ROIComponent.js?v=ui18"></script>
+    <script src="../shared/scripts/components/View3DFailedComponent.js?v=ui2"></script>
     <script src="../shared/scripts/components/SelectComponent.js"></script>
-    <script src="../proton-client/scripts/ProtonView3DComponent.js"></script>
-    <script src="../photon-client/scripts/PhotonView3DComponent.js"></script>
-    <script src="../photon-client/scripts/PhotonBeamEyeViewComponent.js"></script>
+    <script src="../proton-client/scripts/ProtonView3DComponent.js?v=ui2"></script>
+    <script src="../photon-client/scripts/PhotonView3DComponent.js?v=ui2"></script>
+    <script src="../photon-client/scripts/PhotonBeamEyeViewComponent.js?v=ui2"></script>
     <script src="../photon-client/scripts/DMLCBeamListComponent.js"></script>
     <script src="../photon-client/scripts/PhotonProtonBeamOptimizationSettingsComponent.js"></script>
-    <script src="../proton-client/scripts/ProtonBeamEyeViewComponent.js"></script>
+    <script src="../proton-client/scripts/ProtonBeamEyeViewComponent.js?v=ui2"></script>
     <script src="../proton-client/scripts/ProtonBeamListComponentPBS.js"></script>
     <script src="../proton-client/scripts/ProtonBeamOptimizationSettingsComponent.js"></script>
     <script src="../proton-client/scripts/ProtonArcSettingsComponent.js"></script>
@@ -97,19 +99,23 @@
     <script src="../shared/scripts/components/LoadRobustnessEvaluationTemplateModalComponent.js"></script>
     <script src="../shared/scripts/components/ScenarioListComponent.js"></script>
     <script src="../shared/scripts/components/FourDCTScenarioListComponent.js"></script>
-    <script src="../shared/scripts/components/SequenceTree.js"></script>
-    <script src="../shared/scripts/components/SequenceTreeComponent.js"></script>
+    <script src="../shared/scripts/components/SequenceTree.js?v=ui19"></script>
+    <script src="../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
     <script src="../shared/scripts/components/SettingsModalComponent.js"></script>
     <script src="../shared/scripts/components/SpectralHistogramComponent.js"></script>
     <script src="../shared/scripts/components/SpectralLinearAnalysisComponent.js"></script>
     <script src="../shared/scripts/components/SPRDelineationComponent.js"></script>
     <script src="../shared/scripts/components/ThreePlansComparisonDoseStatisticsComponent.js"></script>
     <script src="../shared/scripts/components/VirtualMonoEnergyComponent.js"></script>
-    <script src="../shared/scripts/components/ModuleToolbarComponent.js"></script>
-    <script src="../shared/scripts/components/PatientOverviewComponent.js"></script>
-    <script src="../brachy-client/scripts/ChannelListComponent.js"></script>
-    <script src="../brachy-client/scripts/ChannelListBII2Component.js?v=holes-layout"></script>
-    <script src="../brachy-client/scripts/DwellControlComponent.js"></script>
+    <script src="../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
+    <script src="../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
+    <script src="../shared/scripts/MoziInstantTip.js?v=1"></script>
+    <script src="../shared/scripts/CurrentPatient.js?v=2"></script>
+    <script src="../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
+    <script src="../shared/scripts/components/FileInfoComponent.js?v=1"></script>
+    <script src="../brachy-client/scripts/ChannelListComponent.js?v=ui19"></script>
+    <script src="../brachy-client/scripts/ChannelListBII2Component.js?v=ui19"></script>
+    <script src="../brachy-client/scripts/DwellControlComponent.js?v=ui19"></script>
     <script src="../shared/scripts/components/ClinicalTargetComponent.js"></script>
     <!-- 加载展示逻辑 -->
     <script src="gallery.js"></script>

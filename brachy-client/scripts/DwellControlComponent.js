@@ -52,7 +52,7 @@ class DwellControlComponent {
                         <thead>
                             <tr>
                                 <th style="width: 30px; min-width: 30px; text-align: center;">
-                                    <i class="fas fa-lock" style="color: #888; cursor: pointer;" title="锁定"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-unlock dwell-header-lock" style="cursor: pointer;" title="锁定" aria-hidden="true"></span>
                                 </th>
                                 <th style="width: 70px; min-width: 70px;">位置[mm]</th>
                                 <th style="width: 70px; min-width: 70px;">时间[S]</th>
@@ -81,8 +81,14 @@ class DwellControlComponent {
                 
                 if (headerLockTh && (clickedElement.classList.contains('fa-lock') || 
                                       clickedElement.classList.contains('fa-unlock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-unlock') ||
+                                      clickedElement.classList.contains('dwell-header-lock') ||
+                                      clickedElement.classList.contains('dwell-header-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon') ||
                                       clickedElement.classList.contains('fas') ||
-                                      clickedElement.tagName === 'I')) {
+                                      clickedElement.tagName === 'I' ||
+                                      clickedElement.tagName === 'SPAN')) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.toggleAllLock();
@@ -244,9 +250,9 @@ class DwellControlComponent {
             html += `
                 <tr class="dwell-group-row" data-group-id="${group.id}">
                     <td style="text-align: center; width: 30px; min-width: 30px;">
-                        <i class="fas ${isGroupLocked ? 'fa-lock' : 'fa-unlock'} group-lock-icon" 
-                           style="color: ${isGroupLocked ? '#f59e0b' : '#888'}; cursor: pointer;" 
-                           title="${isGroupLocked ? '解锁' : '锁定'}"></i>
+                        <span class="mozi-ui-icon ${isGroupLocked ? 'mozi-ui-icon-lock' : 'mozi-ui-icon-unlock'} group-lock-icon"
+                           style="cursor: pointer;"
+                           title="${isGroupLocked ? '解锁' : '锁定'}" aria-hidden="true"></span>
                     </td>
                     <td colspan="6" style="padding: 8px 12px; background: #252525; cursor: pointer;">
                         <i class="fas fa-chevron-${group.expanded ? 'down' : 'right'}" style="margin-right: 8px; color: #888;"></i>
@@ -268,9 +274,9 @@ class DwellControlComponent {
                     html += `
                         <tr data-point-id="${point.id}" class="dwell-data-row ${isSelected ? 'selected' : ''}">
                             <td style="text-align: center; width: 30px; min-width: 30px;">
-                                <i class="fas ${isLocked ? 'fa-lock' : 'fa-unlock'} dwell-lock-icon" 
-                                   style="color: ${isLocked ? '#f59e0b' : '#888'}; cursor: pointer;" 
-                                   title="${isLocked ? '解锁' : '锁定'}"></i>
+                                <span class="mozi-ui-icon ${isLocked ? 'mozi-ui-icon-lock' : 'mozi-ui-icon-unlock'} dwell-lock-icon"
+                                   style="cursor: pointer;"
+                                   title="${isLocked ? '解锁' : '锁定'}" aria-hidden="true"></span>
                             </td>
                             <td style="color: #ccc;">${point.position.toFixed(1)}</td>
                             <td>
@@ -427,7 +433,7 @@ class DwellControlComponent {
         const headerTh = document.querySelector(`#${this.options.prefix}dwellControlTable thead th:first-child`);
         if (!headerTh) return;
 
-        const headerLockIcon = headerTh.querySelector('.fa-lock, .fa-unlock, .fas');
+        const headerLockIcon = headerTh.querySelector('.mozi-ui-icon, .fa-lock, .fa-unlock, .fas');
         if (!headerLockIcon) return;
 
         // 获取所有驻留点
@@ -440,8 +446,8 @@ class DwellControlComponent {
 
         if (allPoints.length === 0) {
             // 没有点时，显示默认的解锁图标
-            headerLockIcon.className = 'fas fa-unlock';
-            headerLockIcon.style.color = '#888';
+            headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock dwell-header-lock';
+            headerLockIcon.removeAttribute('style');
             return;
         }
 
@@ -451,11 +457,11 @@ class DwellControlComponent {
         });
 
         if (allLocked) {
-            headerLockIcon.className = 'fas fa-lock';
-            headerLockIcon.style.color = '#f59e0b';
+            headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-lock dwell-header-lock';
+            headerLockIcon.removeAttribute('style');
         } else {
-            headerLockIcon.className = 'fas fa-unlock';
-            headerLockIcon.style.color = '#888';
+            headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock dwell-header-lock';
+            headerLockIcon.removeAttribute('style');
         }
     }
 

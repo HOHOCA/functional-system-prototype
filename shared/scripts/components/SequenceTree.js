@@ -195,7 +195,7 @@ class SequenceTree {
             // 生成状态图标
             let statusIcons = '';
             if (item.approved) {
-                statusIcons += `<i class="fas fa-lock status-icon approved" title="审批人: ${item.approvedBy}, 审批时间: ${item.approvedTime}"></i>`;
+                statusIcons += `<span class="mozi-ui-icon mozi-ui-icon-lock status-icon approved" title="审批人: ${item.approvedBy}, 审批时间: ${item.approvedTime}" aria-hidden="true"></span>`;
             }
             if (item.external) {
                 statusIcons += `<i class="fas fa-external-link-alt status-icon external" title="外部导入"></i>`;

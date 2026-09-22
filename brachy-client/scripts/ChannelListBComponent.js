@@ -80,10 +80,10 @@ class ChannelListBII2Component {
                         <thead>
                             <tr>
                                 <th style="width: 50px; min-width: 50px; text-align: center;">
-                                    <i class="fas fa-eye" style="color: #888; cursor: pointer;" title="可见性"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-eye channel-header-eye" style="cursor:pointer;opacity:.7" title="可见性"></span>
                                 </th>
                                 <th style="width: 50px; min-width: 50px; text-align: center;">
-                                    <i class="fas fa-lock" style="color: #888; cursor: pointer;" title="锁定"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-unlock channel-header-lock" style="cursor: pointer;" title="锁定" aria-hidden="true"></span>
                                 </th>
                                 <th style="width: 60px; text-align: center;">序号</th>
                                 <th style="width: 120px;">名称</th>
@@ -103,16 +103,16 @@ class ChannelListBII2Component {
                 <!-- 底部操作栏 -->
                 <div class="channel-list-toolbar">
                     <button class="channel-toolbar-btn" id="${this.options.prefix}selectHolesBtn" title="选择使用孔洞 添加模拟插植针或管道类施源器">
-                        <i class="fas fa-plus"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-add"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}editBtn" title="编辑 编辑模拟插植针/管道类施源器" disabled>
-                        <i class="fas fa-edit"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-edit"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}deleteBtn" title="删除 删除选中施源器" disabled>
-                        <i class="fas fa-trash-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash"></span>
                     </button>
                     <button class="channel-toolbar-btn" id="${this.options.prefix}deleteAllBtn" title="删除所有 删除所有施源器">
-                        <i class="fas fa-trash"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash-all"></span>
                     </button>
                 </div>
             </div>
@@ -176,7 +176,11 @@ class ChannelListBII2Component {
                 
                 // 检查是否点击了表头的眼睛图标（第一列）
                 const headerEyeTh = clickedElement.closest('thead th:first-child');
-                if (headerEyeTh && (clickedElement.classList.contains('fa-eye') || 
+                if (headerEyeTh && (clickedElement.classList.contains('mozi-ui-icon-eye') || 
+                                     clickedElement.classList.contains('mozi-ui-icon-eye-slash') ||
+                                     clickedElement.classList.contains('channel-header-eye') ||
+                                     clickedElement.classList.contains('channel-visibility-icon') ||
+                                     clickedElement.classList.contains('fa-eye') || 
                                      clickedElement.classList.contains('fa-eye-slash') ||
                                      clickedElement.classList.contains('fas') ||
                                      clickedElement.tagName === 'I')) {
@@ -190,8 +194,14 @@ class ChannelListBII2Component {
                 const headerLockTh = clickedElement.closest('thead th:nth-child(2)');
                 if (headerLockTh && (clickedElement.classList.contains('fa-lock') || 
                                       clickedElement.classList.contains('fa-unlock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon-unlock') ||
+                                      clickedElement.classList.contains('channel-header-lock') ||
+                                      clickedElement.classList.contains('dwell-header-lock') ||
+                                      clickedElement.classList.contains('mozi-ui-icon') ||
                                       clickedElement.classList.contains('fas') ||
-                                      clickedElement.tagName === 'I')) {
+                                      clickedElement.tagName === 'I' ||
+                                      clickedElement.tagName === 'SPAN')) {
                     e.stopPropagation();
                     e.preventDefault();
                     this.toggleAllLock();
@@ -333,14 +343,14 @@ class ChannelListBII2Component {
                     class="${isSelected ? 'selected' : ''}"
                 >
                     <td style="text-align: center;">
-                        <i class="fas ${isVisible ? 'fa-eye' : 'fa-eye-slash'} channel-visibility-icon ${isVisible ? 'visible' : ''}" 
-                           style="color: ${isVisible ? '#3AACDE' : '#888'}; cursor: pointer;" 
-                           title="${isVisible ? '隐藏' : '显示'}"></i>
+                        <span class="mozi-ui-icon ${isVisible ? 'mozi-ui-icon-eye' : 'mozi-ui-icon-eye-slash'} channel-visibility-icon ${isVisible ? 'visible' : ''}" 
+                           style="color: ${isVisible ? '#249BD9' : '#888'}; cursor: pointer;" 
+                           title="${isVisible ? '隐藏' : '显示'}"></span>
                     </td>
                     <td style="text-align: center;">
-                        <i class="fas ${isLocked ? 'fa-lock' : 'fa-unlock'} channel-lock-icon" 
-                           style="color: ${isLocked ? '#f59e0b' : '#888'}; cursor: pointer;" 
-                           title="${isLocked ? '解锁' : '锁定'}"></i>
+                        <span class="mozi-ui-icon ${isLocked ? 'mozi-ui-icon-lock' : 'mozi-ui-icon-unlock'} channel-lock-icon"
+                           style="cursor: pointer;"
+                           title="${isLocked ? '解锁' : '锁定'}" aria-hidden="true"></span>
                     </td>
                     <td style="text-align: center;">${channel.number}</td>
                     <td>
@@ -504,24 +514,24 @@ class ChannelListBII2Component {
         const headerTh = document.querySelector(`#${this.options.prefix}channelTable thead th:first-child`);
         if (!headerTh) return;
         
-        const headerEyeIcon = headerTh.querySelector('.fa-eye, .fa-eye-slash, .fas');
+        const headerEyeIcon = headerTh.querySelector('.channel-header-eye, .mozi-ui-icon-eye, .mozi-ui-icon-eye-slash, .fa-eye, .fa-eye-slash');
         if (headerEyeIcon && this.channels.length > 0) {
             const allVisible = this.channels.every(channel => {
                 return this.channelVisibility.get(channel.id) !== false;
             });
             
             if (allVisible) {
-                headerEyeIcon.className = 'fas fa-eye';
-                headerEyeIcon.style.color = '#3AACDE';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye channel-header-eye';
+                headerEyeIcon.style.opacity = '1';
             } else {
-                headerEyeIcon.className = 'fas fa-eye-slash';
-                headerEyeIcon.style.color = '#888';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash channel-header-eye';
+                headerEyeIcon.style.opacity = '0.7';
             }
         } else if (this.channels.length === 0) {
             // 如果没有通道，显示默认的眼睛图标
             if (headerEyeIcon) {
-                headerEyeIcon.className = 'fas fa-eye';
-                headerEyeIcon.style.color = '#888';
+                headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye channel-header-eye';
+                headerEyeIcon.style.opacity = '0.7';
             }
         }
     }
@@ -575,24 +585,24 @@ class ChannelListBII2Component {
         const headerTh = document.querySelector(`#${this.options.prefix}channelTable thead th:nth-child(2)`);
         if (!headerTh) return;
         
-        const headerLockIcon = headerTh.querySelector('.fa-lock, .fa-unlock, .fas');
+        const headerLockIcon = headerTh.querySelector('.mozi-ui-icon, .fa-lock, .fa-unlock, .fas');
         if (headerLockIcon && this.channels.length > 0) {
             const allLocked = this.channels.every(channel => {
                 return this.channelLocked.get(channel.id) === true;
             });
             
             if (allLocked) {
-                headerLockIcon.className = 'fas fa-lock';
-                headerLockIcon.style.color = '#f59e0b';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-lock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             } else {
-                headerLockIcon.className = 'fas fa-unlock';
-                headerLockIcon.style.color = '#888';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             }
         } else if (this.channels.length === 0) {
             // 如果没有通道，显示默认的解锁图标
             if (headerLockIcon) {
-                headerLockIcon.className = 'fas fa-unlock';
-                headerLockIcon.style.color = '#888';
+                headerLockIcon.className = 'mozi-ui-icon mozi-ui-icon-unlock channel-header-lock';
+                headerLockIcon.removeAttribute('style');
             }
         }
     }
@@ -1333,9 +1343,7 @@ class ChannelListBII2Component {
             <div class="model-save-dialog-content">
                 <div class="model-save-dialog-header">
                     <h3>另存为新模型</h3>
-                    <button class="model-save-dialog-close" title="关闭">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="model-save-dialog-close" title="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
                 </div>
                 <div class="model-save-dialog-body">
                     <div class="model-save-form-item">
@@ -1443,7 +1451,7 @@ class ChannelListBII2Component {
                 .model-save-dialog-content {
                     background: #1a1a1a;
                     border: 1px solid #333;
-                    border-radius: 8px;
+                    border-radius: 4px;
                     width: 500px;
                     max-width: 90vw;
                     display: flex;
@@ -1614,9 +1622,7 @@ class ChannelListBII2Component {
                     <span>序号: ${channel.number !== undefined ? channel.number : ''}</span>
                     <span>名称: ${channel.name || 'NONE'}</span>
                 </div>
-                <button class="model-rebuild-modal-close" title="关闭">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="model-rebuild-modal-close" title="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
             </div>
             <div class="model-rebuild-modal-body model-rebuild-modal-body-layout">
                 <!-- 左侧区域 -->
@@ -2979,7 +2985,7 @@ class ChannelListBII2Component {
         
         // 创建一个弯曲的管状模型
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a,
             transparent: true,
             opacity: 0.9
@@ -3007,7 +3013,7 @@ class ChannelListBII2Component {
     // 创建插植针模型
     createImplantNeedleModel(preview3D, modelInfo, channel) {
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a
         });
         
@@ -3030,7 +3036,7 @@ class ChannelListBII2Component {
         const selectedChannels = channel.selectedChannels || [1];
         const centerTubeProtrusion = channel.centerTubeProtrusion || 0;
         const material = new THREE.MeshPhongMaterial({ 
-            color: 0x3AACDE,
+            color: 0x249BD9,
             emissive: 0x1a5a7a,
             transparent: true,
             opacity: 0.9
@@ -3344,7 +3350,7 @@ class ChannelListBII2Component {
                 left: 50%;
                 transform: translate(-50%, -50%);
                 background: #1a1a1a;
-                border-radius: 8px;
+                border-radius: 4px;
                 width: 560px;
                 max-width: 95vw;
                 max-height: 85vh;
@@ -3951,7 +3957,7 @@ class ChannelListBII2Component {
             }
             
             .channel-circle.selected {
-                fill: #3AACDE;
+                fill: #249BD9;
                 stroke: #5aaeff;
             }
             
@@ -4062,8 +4068,8 @@ class ChannelListBII2Component {
             }
             
             .model-rebuild-toolbar-btn.active {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4115,8 +4121,8 @@ class ChannelListBII2Component {
             }
             
             .model-rebuild-footer-btn.active {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4141,7 +4147,7 @@ class ChannelListBII2Component {
             
             .model-rebuild-preprocessing-mask-content {
                 background: #2a2a2a;
-                border-radius: 8px;
+                border-radius: 4px;
                 padding: 24px;
                 min-width: 400px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -4187,8 +4193,8 @@ class ChannelListBII2Component {
             }
             
             .model-rebuild-mask-btn-primary {
-                background: #3AACDE;
-                border-color: #3AACDE;
+                background: #249BD9;
+                border-color: #249BD9;
                 color: #fff;
             }
             
@@ -4224,7 +4230,7 @@ class ChannelListBII2Component {
             .custom-dialog {
                 background: #2a2a2a;
                 border: 1px solid #333;
-                border-radius: 8px;
+                border-radius: 4px;
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
                 min-width: 320px;
                 max-width: 500px;
@@ -4413,9 +4419,7 @@ class ChannelListBII2Component {
         return `
             <div class="select-holes-modal-header">
                 <div class="select-holes-modal-title">选择使用孔洞</div>
-                <button class="select-holes-modal-close" title="关闭">
-                    <i class="fas fa-times"></i>
-                </button>
+                <button class="select-holes-modal-close" title="关闭"><span class="mozi-ui-icon mozi-ui-icon-close-x" aria-hidden="true"></span></button>
             </div>
             <div class="select-holes-modal-body">
                 <!-- 左侧控制面板 -->
@@ -4986,7 +4990,7 @@ class ChannelListBII2Component {
 
             .select-holes-select:focus {
                 outline: none;
-                border-color: #3AACDE;
+                border-color: #249BD9;
             }
 
             .select-holes-checkbox-group {
@@ -5100,9 +5104,9 @@ class ChannelListBII2Component {
             }
 
             .select-holes-btn-confirm {
-                background: #3AACDE;
+                background: #249BD9;
                 color: #fff;
-                border-color: #3AACDE;
+                border-color: #249BD9;
             }
 
             .select-holes-btn-confirm:hover {
@@ -5311,10 +5315,10 @@ class ChannelListBII2Component {
         const tailElement = tailSVG?.querySelector(selector);
         
         if (tipElement) {
-            tipElement.setAttribute('fill', isHighlighted ? '#3AACDE' : 'white');
+            tipElement.setAttribute('fill', isHighlighted ? '#249BD9' : 'white');
         }
         if (tailElement) {
-            tailElement.setAttribute('fill', isHighlighted ? '#3AACDE' : 'white');
+            tailElement.setAttribute('fill', isHighlighted ? '#249BD9' : 'white');
         }
     }
     
