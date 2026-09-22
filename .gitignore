@@ -33,3 +33,6 @@ build/
 *.min.js
 *.min.css
 
+
+__pycache__/
+*.pyc
