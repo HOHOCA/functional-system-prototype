@@ -76,7 +76,7 @@ class SelectComponent {
             .mt-select.is-open .mt-select-trigger,
             .mt-select-trigger:focus {
                 outline: none;
-                border-color: #3AACDE;
+                border-color: #249BD9;
             }
             .mt-select-trigger[disabled] {
                 opacity: 0.45;
@@ -203,7 +203,7 @@ class SelectComponent {
                 min-width: 72px;
                 height: 28px;
                 border-radius: 4px;
-                border: 1px solid #3aacde;
+                border: 1px solid #249BD9;
                 background: #2a9dd0;
                 color: #fff;
                 font-size: 12px;

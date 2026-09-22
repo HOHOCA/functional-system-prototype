@@ -534,7 +534,7 @@ class ProtonBeamListComponentPBSArc {
                             <tr>
                                 <th class="col-index">序号</th>
                                 <th class="col-eye" style="text-align: center;">
-                                    <i class="fas fa-eye proton-beam-eye-btn" data-action="toggle-all-visibility" title="可见性"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-eye proton-beam-eye-btn" data-action="toggle-all-visibility" title="可见性" aria-hidden="true"></span>
                                 </th>
                                 <th style="width: 110px;">名称</th>
                                 <th style="width: 140px;">治疗机</th>
@@ -1334,12 +1334,12 @@ class ProtonBeamListComponentPBSArc {
             const selectedClass = b.id === this.selectedBeamId ? 'is-selected' : '';
             const isVisible = b.visible !== false;
             const eyeClass = isVisible ? '' : 'is-off';
-            const eyeIcon = isVisible ? 'fa-eye' : 'fa-eye-slash';
+            const eyeIcon = isVisible ? 'mozi-ui-icon-eye' : 'mozi-ui-icon-eye-slash';
             return `
                 <tr class="${selectedClass}" data-beam-id="${b.id}">
                     <td class="col-index">${idx + 1}</td>
                     <td class="col-eye">
-                        <i class="fas ${eyeIcon} proton-beam-eye-btn ${eyeClass}" data-action="toggle-visibility" title="可见性"></i>
+                        <span class="mozi-ui-icon ${eyeIcon} proton-beam-eye-btn ${eyeClass}" data-action="toggle-visibility" title="可见性" aria-hidden="true"></span>
                     </td>
                     <td>${this.renderInputCell('name', b.name)}</td>
                     <td>${this.renderReadonlyCell('machine', b.machine)}</td>

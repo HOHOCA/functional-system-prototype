@@ -94,16 +94,16 @@ class View3DComponent {
         return `
             <div class="view3d-toolbar">
                 <button class="view3d-tool-btn" data-tool="rotate" title="旋转">
-                    <i class="fas fa-redo"></i>
+                    <span class="mozi-view-icon mozi-view-icon-rotate" aria-hidden="true"></span>
                 </button>
                 <button class="view3d-tool-btn" data-tool="zoom" title="缩放">
-                    <i class="fas fa-search-plus"></i>
+                    <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                 </button>
                 <button class="view3d-tool-btn" data-tool="pan" title="拖动">
-                    <i class="fas fa-hand-paper"></i>
+                    <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
                 </button>
                 <button class="view3d-tool-btn" data-tool="maximize" title="最大化">
-                    <i class="fas fa-expand"></i>
+                    <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
                 </button>
             </div>
         `;
@@ -113,20 +113,20 @@ class View3DComponent {
         return `
             <div class="view3d-context-menu" style="display: none;">
                 <div class="context-menu-item" data-action="pan">
-                    <i class="fas fa-hand-paper"></i>
+                    <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
                     <span>拖动</span>
                 </div>
                 <div class="context-menu-item" data-action="zoom">
-                    <i class="fas fa-search-plus"></i>
+                    <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                     <span>缩放</span>
                 </div>
                 <div class="context-menu-item" data-action="rotate">
-                    <i class="fas fa-redo"></i>
+                    <span class="mozi-view-icon mozi-view-icon-rotate" aria-hidden="true"></span>
                     <span>旋转</span>
                 </div>
                 <div class="context-menu-divider"></div>
                 <div class="context-menu-item" data-action="maximize">
-                    <i class="fas fa-expand"></i>
+                    <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
                     <span>最大/最小化</span>
                 </div>
                 <div class="context-menu-divider"></div>

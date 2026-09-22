@@ -56,7 +56,7 @@ npx http-server
 - 等...
 
 ### 数据分析 (Analysis)
-- 剂量体积直方图(DVH)
+- 剂量体积直方图（单个计划DVH / 多个计划DVH）
 - 剂量统计
 - 线剂量分布
 - 计划对比
@@ -139,7 +139,7 @@ case 'YourComponentClass':
 目前已配置 **36个组件**：
 
 - ✅ CrossSectionView2D - 2D横截面视图
-- ✅ DVH - 剂量体积直方图
+- ✅ 单个计划DVH / 多个计划DVH - 剂量体积直方图
 - ✅ View3D - 3D重建视图
 - ✅ BeamEyeView - 射束眼视图
 - ✅ BeamList - 射束列表

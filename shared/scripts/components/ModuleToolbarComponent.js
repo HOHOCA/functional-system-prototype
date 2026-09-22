@@ -276,6 +276,21 @@ class ModuleToolbarComponent {
      * 渲染工具按钮
      * @param {boolean} showSeparator - 是否显示分类分隔符（悬浮模式）
      */
+    /**
+     * 优先使用蓝湖产品图标；没有匹配时才用传入的 SVG / Font Awesome。
+     */
+    getToolIconHTML(tool) {
+        const icons = window.MoziToolbarIcons;
+        if (icons) {
+            const html = icons.html(tool.label) || icons.html(tool.id);
+            if (html) return html;
+        }
+        if (tool.icon && String(tool.icon).trim().startsWith('<')) {
+            return tool.icon;
+        }
+        return `<i class="${tool.icon || 'fas fa-circle'}"></i>`;
+    }
+
     renderTools(showSeparator = false) {
         let html = '';
         const categories = this.state.categories;
@@ -293,9 +308,7 @@ class ModuleToolbarComponent {
             // 渲染分类工具
             tools.forEach(tool => {
                 // 支持自定义 SVG/HTML 图标（如果 icon 以 < 开头，则直接使用 HTML）
-                const iconHTML = tool.icon && tool.icon.trim().startsWith('<') 
-                    ? tool.icon 
-                    : `<i class="${tool.icon}"></i>`;
+                const iconHTML = this.getToolIconHTML(tool);
                 
                 html += `
                     <button class="module-tool-btn" 
@@ -710,9 +723,7 @@ class ModuleToolbarComponent {
             </div>
             <div class="module-toolbar-more-content">
                 ${hiddenTools.length > 0 ? hiddenTools.map(tool => {
-                    const iconHTML = tool.icon && tool.icon.trim().startsWith('<') 
-                        ? tool.icon 
-                        : `<i class="${tool.icon}"></i>`;
+                    const iconHTML = this.getToolIconHTML(tool);
                     return `
                     <button class="module-toolbar-more-item" data-tool="${tool.id}" title="${tool.tooltip || tool.label}">
                         ${iconHTML}
@@ -828,9 +839,7 @@ class ModuleToolbarComponent {
                                 ? this.state.toolVisibility[tool.id] 
                                 : (tool.visible !== false);
                             
-                            const iconHTML = tool.icon && tool.icon.trim().startsWith('<') 
-                                ? tool.icon 
-                                : `<i class="${tool.icon}"></i>`;
+                            const iconHTML = this.getToolIconHTML(tool);
                             return `
                                 <div class="module-toolbar-custom-tool-item ${isVisible ? 'checked' : ''}" 
                                      data-tool="${tool.id}">

@@ -462,7 +462,7 @@ class OptimizationConstraintsComponent {
             justify-content: center;
         }
         .opt-constraints-eye-btn.active {
-            color: #3AACDE;
+            color: #249BD9;
         }
         .opt-constraints-color-dot {
             width: 12px;
@@ -652,7 +652,7 @@ class OptimizationConstraintsComponent {
             width: 16px;
             height: 16px;
             margin: 0;
-            accent-color: #3AACDE;
+            accent-color: #249BD9;
             cursor: pointer;
         }
         .opt-column-setting-row .opt-col-toggle:disabled {
@@ -709,7 +709,7 @@ class OptimizationConstraintsComponent {
             min-width: 72px;
             height: 30px;
             padding: 0 14px;
-            background: #3AACDE;
+            background: #249BD9;
             border: 1px solid #2f9bc9;
             color: #fff;
             border-radius: 4px;
@@ -718,7 +718,7 @@ class OptimizationConstraintsComponent {
         }
         .opt-modal-column-settings .opt-col-btn-ok:hover {
             background: #4ab8e8;
-            border-color: #3AACDE;
+            border-color: #249BD9;
         }
         /* —— 编辑约束弹窗（分区表单，随函数切换条件区）—— */
         .opt-edit-constraint-modal {
@@ -831,7 +831,7 @@ class OptimizationConstraintsComponent {
             border-color: #5a5a5a;
         }
         .opt-ec-select-scope {
-            color: #3AACDE;
+            color: #249BD9;
         }
         .opt-ec-func-wrap {
             display: flex;
@@ -900,7 +900,7 @@ class OptimizationConstraintsComponent {
             min-width: 72px;
             height: 30px;
             padding: 0 14px;
-            background: #3AACDE !important;
+            background: #249BD9 !important;
             border: 1px solid #2f9bc9 !important;
             color: #fff !important;
             border-radius: 4px;
@@ -996,7 +996,7 @@ class OptimizationConstraintsComponent {
         .opt-add-roi-addall {
             margin-top: 8px;
             font-size: 12px;
-            color: #3AACDE;
+            color: #249BD9;
             cursor: pointer;
             user-select: none;
             display: inline-block;
@@ -1358,7 +1358,7 @@ class OptimizationConstraintsComponent {
                 return `<th data-col="${col.key}" style="text-align: center;">
                             <i class="fas ${allVisible ? 'fa-eye' : 'fa-eye-slash'}" 
                                data-role="header-toggle-visible"
-                               style="color: ${allVisible ? '#3AACDE' : '#888'}; cursor: pointer;" 
+                               style="color: ${allVisible ? '#249BD9' : '#888'}; cursor: pointer;" 
                                title="${allVisible ? '全部隐藏' : '全部显示'}"></i>
                         </th>`;
             }
@@ -1434,7 +1434,7 @@ class OptimizationConstraintsComponent {
             case 'visible':
                 return `<td style="text-align: center;">
                     <i class="fas ${roi.visible ? 'fa-eye' : 'fa-eye-slash'} opt-constraints-row-eye" 
-                       style="color: ${roi.visible ? '#3AACDE' : '#888'}; cursor: pointer;" 
+                       style="color: ${roi.visible ? '#249BD9' : '#888'}; cursor: pointer;" 
                        title="${roi.visible ? '隐藏' : '显示'}"></i>
                 </td>`;
             case 'color':
@@ -1659,7 +1659,7 @@ class OptimizationConstraintsComponent {
     getFunctionAccentColor(group) {
         if (group === 'max') return '#e53935';
         if (group === 'min') return '#43a047';
-        if (group === 'avg') return '#3AACDE';
+        if (group === 'avg') return '#249BD9';
         return '#757575';
     }
 

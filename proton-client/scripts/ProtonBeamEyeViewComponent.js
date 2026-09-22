@@ -140,9 +140,9 @@ class ProtonBeamEyeViewComponent {
                         
                         <!-- 右上角工具按钮（与新质子一致） -->
                         <div class="bev-view-tools" style="${this.options.showToolbar ? 'display:none;' : ''}">
-                            <button class="bev-view-tool-btn" data-tool="zoom" title="缩放"><i class="fas fa-search-plus"></i></button>
+                            <button class="bev-view-tool-btn" data-tool="zoom" title="缩放"><span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span></button>
                             <button class="bev-view-tool-btn" data-tool="pan" title="平移"><i class="fas fa-arrows-alt"></i></button>
-                            <button class="bev-view-tool-btn" data-tool="maximize" title="全屏"><i class="fas fa-expand"></i></button>
+                            <button class="bev-view-tool-btn" data-tool="maximize" title="全屏"><span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span></button>
                         </div>
                         
                         <!-- 主视图canvas -->
@@ -226,43 +226,13 @@ class ProtonBeamEyeViewComponent {
                 ${titleHtml}
                 <div class="toolbar-group toolbar-group-right">
                     <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="${this.currentTool === 'zoom'}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-zoom-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="10" cy="10" r="7" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" fill="none"/>
-                            <line x1="15" y1="15" x2="21" y2="21" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="7" y1="10" x2="13" y2="10" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="10" y1="7" x2="10" y2="13" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-pan" title="平移" data-active="${this.currentTool === 'pan'}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-pan-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="url(#gradient-pan-${this.containerId})" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-maximize" title="全屏" data-active="${this.isFullscreen}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-maximize-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -284,43 +254,13 @@ class ProtonBeamEyeViewComponent {
             <div class="cross-section-view2d-toolbar" data-bev-toolbar="${this.containerId}" style="background: transparent; border: none; padding: 0; height: auto;">
                 <div class="toolbar-group toolbar-group-right">
                     <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="${this.currentTool === 'zoom'}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-zoom-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="10" cy="10" r="7" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" fill="none"/>
-                            <line x1="15" y1="15" x2="21" y2="21" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="7" y1="10" x2="13" y2="10" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="10" y1="7" x2="10" y2="13" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-pan" title="平移" data-active="${this.currentTool === 'pan'}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-pan-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="url(#gradient-pan-${this.containerId})" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-maximize" title="全屏" data-active="${this.isFullscreen}">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-maximize-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>

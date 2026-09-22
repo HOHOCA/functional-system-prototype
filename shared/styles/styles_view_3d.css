@@ -43,13 +43,13 @@
 }
 
 .view3d-tool-btn:hover {
-    background: #3AACDE;
+    background: #249BD9;
     border-color: #00aaff;
     color: #fff;
 }
 
 .view3d-tool-btn.active {
-    background: #3AACDE;
+    background: #249BD9;
     border-color: #00aaff;
     color: #fff;
 }
@@ -120,7 +120,7 @@
 }
 
 .context-menu-item:hover {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 

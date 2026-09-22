@@ -490,7 +490,7 @@ class ProtonBeamListComponentPBS {
                             <tr>
                                 <th class="col-index">序号</th>
                                 <th class="col-eye" style="text-align: center;">
-                                    <i class="fas fa-eye proton-beam-eye-btn" data-action="toggle-all-visibility" title="可见性"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-eye proton-beam-eye-btn" data-action="toggle-all-visibility" title="可见性" aria-hidden="true"></span>
                                 </th>
                                 <th style="width: 110px;">名称</th>
                                 <th style="width: 140px;">治疗机</th>
@@ -515,19 +515,19 @@ class ProtonBeamListComponentPBS {
                 </div>
                 <div class="proton-beam-list-toolbar">
                     <button class="proton-beam-toolbar-btn" data-action="add" title="添加">
-                        添加
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-add" aria-hidden="true"></span>
                     </button>
                     <button class="proton-beam-toolbar-btn" data-action="edit" title="编辑" disabled>
-                        编辑
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-edit" aria-hidden="true"></span>
                     </button>
                     <button class="proton-beam-toolbar-btn" data-action="delete" title="删除" disabled>
-                        删除
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash" aria-hidden="true"></span>
                     </button>
                     <button class="proton-beam-toolbar-btn" data-action="copy" title="复制" disabled>
-                        复制
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-doc-add" aria-hidden="true"></span>
                     </button>
                     <button class="proton-beam-toolbar-btn" data-action="sort" title="排序">
-                        排序
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-sort" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -1208,12 +1208,12 @@ class ProtonBeamListComponentPBS {
             const selectedClass = b.id === this.selectedBeamId ? 'is-selected' : '';
             const isVisible = b.visible !== false;
             const eyeClass = isVisible ? '' : 'is-off';
-            const eyeIcon = isVisible ? 'fa-eye' : 'fa-eye-slash';
+            const eyeIcon = isVisible ? 'mozi-ui-icon-eye' : 'mozi-ui-icon-eye-slash';
             return `
                 <tr class="${selectedClass}" data-beam-id="${b.id}">
                     <td class="col-index">${idx + 1}</td>
                     <td class="col-eye">
-                        <i class="fas ${eyeIcon} proton-beam-eye-btn ${eyeClass}" data-action="toggle-visibility" title="可见性"></i>
+                        <span class="mozi-ui-icon ${eyeIcon} proton-beam-eye-btn ${eyeClass}" data-action="toggle-visibility" title="可见性" aria-hidden="true"></span>
                     </td>
                     <td>${this.renderInputCell('name', b.name)}</td>
                     <td>${this.renderReadonlyCell('machine', b.machine)}</td>

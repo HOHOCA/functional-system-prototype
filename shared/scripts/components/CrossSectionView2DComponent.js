@@ -160,104 +160,27 @@ renderToolbar() {
                 <div class="toolbar-title">Axial</div>
                 <div class="toolbar-group toolbar-group-right">
                     <button class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-zoom-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="10" cy="10" r="7" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" fill="none"/>
-                            <line x1="15" y1="15" x2="21" y2="21" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="7" y1="10" x2="13" y2="10" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                            <line x1="10" y1="7" x2="10" y2="13" stroke="url(#gradient-zoom-${this.containerId})" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-pan" title="移动" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-pan-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="url(#gradient-pan-${this.containerId})" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-adjust" title="灰度值" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-adjust-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <circle cx="12" cy="12" r="9" stroke="url(#gradient-adjust-${this.containerId})" stroke-width="2" fill="none"/>
-                            <path d="M12 3 A9 9 0 0 1 12 21 Z" fill="url(#gradient-adjust-${this.containerId})" opacity="0.3"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-wl" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-rotate" title="旋转" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-rotate-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="6" y="8" width="12" height="8" rx="1" stroke="url(#gradient-rotate-${this.containerId})" stroke-width="2" fill="none"/>
-                            <path d="M18 8 L18 5 L21 8 L18 11 L18 8" fill="url(#gradient-rotate-${this.containerId})"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-rotate" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-measure" title="测量" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-measure-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="4" y="3" width="4" height="18" rx="1" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2" fill="none"/>
-                            <line x1="8" y1="6" x2="11" y2="6" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2"/>
-                            <line x1="8" y1="9" x2="10" y2="9" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2"/>
-                            <line x1="8" y1="12" x2="11" y2="12" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2"/>
-                            <line x1="8" y1="15" x2="10" y2="15" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2"/>
-                            <line x1="8" y1="18" x2="11" y2="18" stroke="url(#gradient-measure-${this.containerId})" stroke-width="2"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-measure" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-maximize" title="最大化" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-maximize-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M3 3 L3 9 M3 3 L9 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 3 L21 9 M21 3 L15 3" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M3 21 L3 15 M3 21 L9 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M21 21 L21 15 M21 21 L15 21" stroke="url(#gradient-maximize-${this.containerId})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-grid" title="网格" data-active="false">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                            <defs>
-                                <linearGradient id="gradient-grid-${this.containerId}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <rect x="4" y="4" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="10" y="4" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="16" y="4" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="4" y="10" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="10" y="10" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="16" y="10" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="4" y="16" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="10" y="16" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                            <rect x="16" y="16" width="5" height="5" stroke="url(#gradient-grid-${this.containerId})" stroke-width="1.5" fill="none"/>
-                        </svg>
+                        <span class="mozi-view-icon mozi-view-icon-grid" aria-hidden="true"></span>
                         <svg width="8" height="8" viewBox="0 0 8 8" style="margin-left: 2px;">
-                            <polygon points="4,6 2,2 6,2" fill="url(#gradient-grid-${this.containerId})"/>
+                            <polygon points="4,6 2,2 6,2" fill="#00d4ff"/>
                         </svg>
                     </button>
                 </div>

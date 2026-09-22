@@ -117,6 +117,7 @@ class DVHComponent {
         this.container.innerHTML = `
             <div class="dvh-wrapper">
                 ${internalToolbar}
+                ${this.renderChromeBeforeCanvas()}
                 <div class="dvh-canvas-container">
                     <canvas class="dvh-canvas"></canvas>
                 </div>
@@ -133,7 +134,19 @@ class DVHComponent {
         this.canvas = this.container.querySelector('.dvh-canvas');
         this.ctx = this.canvas.getContext('2d');
         this.tooltip = document.getElementById(`${this.containerId}-tooltip`);
+        this.afterRender();
     }
+
+    /** 子类可覆盖：工具栏与画布之间的查询栏/图例等 */
+    renderChromeBeforeCanvas() {
+        return '';
+    }
+
+    /** 子类可覆盖：DOM 渲染完成后的钩子 */
+    afterRender() {}
+
+    /** 子类可覆盖：绑定查询栏等额外事件 */
+    bindChromeEvents() {}
 
     renderToolbar() {
         if (!this.options.enableToolbar || !this.options.showToolbar) return '';
@@ -281,6 +294,8 @@ class DVHComponent {
                 }
             }
         });
+
+        this.bindChromeEvents();
     }
 
 
@@ -518,15 +533,15 @@ class DVHComponent {
         const volume = point.volume.toFixed(2);
         const volumeAbs = point.volumeAbsolute ? point.volumeAbsolute.toFixed(2) : '0.00';
 
-        // 复刻截图样式：深灰色背景，顶部带颜色线的ROI名称，下面是V和D数据
+        const planLabel = curve.planName ? ` · ${curve.planName}` : '';
         this.tooltip.innerHTML = `
             <div class="dvh-tooltip-header">
                 <div class="dvh-tooltip-color-line" style="background: ${curve.color};"></div>
-                <span class="dvh-tooltip-roi-name">${curve.roiName}</span>
+                <span class="dvh-tooltip-roi-name">${curve.roiName}${planLabel}</span>
             </div>
             <div class="dvh-tooltip-content">
-                <div class="dvh-tooltip-row">V: ${volume}% (${volumeAbs}cm³)</div>
-                <div class="dvh-tooltip-row">D: ${dose}cGy</div>
+                <div class="dvh-tooltip-row">体积: ${volume}%(${volumeAbs}cm³)</div>
+                <div class="dvh-tooltip-row">剂量: ${dose}cGy</div>
             </div>
         `;
 
@@ -791,6 +806,7 @@ class DVHComponent {
 
             ctx.strokeStyle = curve.color;
             ctx.lineWidth = lineWidth;
+            ctx.setLineDash(Array.isArray(curve.lineDash) ? curve.lineDash : []);
             ctx.beginPath();
 
             let isFirst = true;
@@ -806,6 +822,7 @@ class DVHComponent {
             });
 
             ctx.stroke();
+            ctx.setLineDash([]);
         });
     }
 

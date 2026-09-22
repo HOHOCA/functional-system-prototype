@@ -121,7 +121,7 @@
 }
 
 .pm-tab.active {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -208,7 +208,7 @@
 
 .pm-tree-item.active {
     background: rgba(58, 172, 222, 0.28);
-    border-left-color: #3AACDE;
+    border-left-color: #249BD9;
     color: #fff;
 }
 
@@ -418,7 +418,7 @@
 }
 
 .pm-context-menu button:hover {
-    background: #3AACDE;
+    background: #249BD9;
     color: #fff;
 }
 
@@ -460,7 +460,7 @@
 }
 
 .pm-input:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
 }
 
 .pm-input[readonly],
@@ -490,7 +490,7 @@
 }
 
 .pm-check input {
-    accent-color: #3AACDE;
+    accent-color: #249BD9;
     width: 14px;
     height: 14px;
 }
@@ -716,13 +716,13 @@
 }
 
 .pm-btn:hover {
-    border-color: #3AACDE;
+    border-color: #249BD9;
     color: #fff;
 }
 
 .pm-btn.primary {
-    background: #3AACDE;
-    border-color: #3AACDE;
+    background: #249BD9;
+    border-color: #249BD9;
     color: #fff;
 }
 
@@ -768,7 +768,7 @@
 .pm-link-btn {
     height: 26px;
     padding: 0 10px;
-    background: #3AACDE;
+    background: #249BD9;
     border: none;
     border-radius: 3px;
     color: #fff;

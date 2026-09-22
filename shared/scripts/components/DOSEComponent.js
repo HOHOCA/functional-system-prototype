@@ -100,9 +100,9 @@ class DOSEComponent {
                                id="${this.options.prefix}doseTemplate" 
                                value="${this.doseTemplate}" 
                                placeholder="选择或输入模板名称">
-                        <i class="fas fa-chevron-down dose-template-dropdown-icon"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-chevron-down dose-template-dropdown-icon" aria-hidden="true"></span>
                         <button class="dose-template-save-btn" id="${this.options.prefix}doseTemplateSave" title="保存模板">
-                            <i class="fas fa-save"></i>
+                            <span class="mozi-ui-icon mozi-ui-icon-ch-bookmark" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
@@ -112,7 +112,7 @@ class DOSEComponent {
                     <button class="dose-action-btn" 
                             id="${this.options.prefix}doseFill" 
                             title="填充">
-                        <i class="fas fa-fill-drip"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-fill" aria-hidden="true"></span>
                     </button>
                     <button class="dose-action-btn ${this.boldEnabled ? 'active' : ''}" 
                             id="${this.options.prefix}doseBold" 
@@ -122,13 +122,13 @@ class DOSEComponent {
                     <button class="dose-action-btn" 
                             id="${this.options.prefix}doseActionAdd" 
                             title="添加">
-                        <i class="fas fa-plus"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-plus" aria-hidden="true"></span>
                     </button>
                     <button class="dose-action-btn" 
                             id="${this.options.prefix}doseActionDelete" 
                             title="删除"
                             ${this.selectedLevelIndex === null ? 'disabled' : ''}>
-                        <i class="fas fa-trash"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-trash" aria-hidden="true"></span>
                     </button>
                 </div>
                 
@@ -138,7 +138,7 @@ class DOSEComponent {
                         <thead>
                             <tr>
                                 <th class="dose-visibility-header">
-                                    <i class="fas fa-eye"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-eye" aria-hidden="true"></span>
                                 </th>
                                 <th>颜色</th>
                                 <th>剂量[%]</th>
@@ -150,8 +150,8 @@ class DOSEComponent {
                                 <tr class="dose-level-row ${this.selectedLevelIndex === index ? 'selected' : ''}" 
                                     data-index="${index}">
                                     <td class="dose-visibility-cell">
-                                        <i class="fas ${level.visible ? 'fa-eye dose-visibility-icon visible' : 'fa-eye-slash dose-visibility-icon'}" 
-                                           data-index="${index}"></i>
+                                        <span class="mozi-ui-icon ${level.visible ? 'mozi-ui-icon-eye dose-visibility-icon visible' : 'mozi-ui-icon-eye-slash dose-visibility-icon'}" 
+                                           data-index="${index}" aria-hidden="true"></span>
                                     </td>
                                     <td class="dose-color-cell">
                                         <div class="dose-color-box" style="background-color: ${level.color};"></div>
@@ -324,11 +324,11 @@ class DOSEComponent {
                 
                 if (isVisible) {
                     icon.classList.remove('visible');
-                    icon.className = 'fas fa-eye-slash dose-visibility-icon';
+                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash dose-visibility-icon';
                     this.doseLevels[index].visible = false;
                 } else {
                     icon.classList.add('visible');
-                    icon.className = 'fas fa-eye dose-visibility-icon visible';
+                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye dose-visibility-icon visible';
                     this.doseLevels[index].visible = true;
                 }
             }

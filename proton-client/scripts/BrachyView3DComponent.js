@@ -22,10 +22,10 @@ class BrachyView3DComponent {
                     <div class="cross-section-view2d-toolbar">
                         <div class="toolbar-group toolbar-group-right">
                             <button class="toolbar-btn-svg" title="旋转">
-                                <i class="fas fa-sync-alt"></i>
+                                <span class="mozi-view-icon mozi-view-icon-rotate" aria-hidden="true"></span>
                             </button>
                             <button class="toolbar-btn-svg" title="缩放">
-                                <i class="fas fa-search-plus"></i>
+                                <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
                             </button>
                         </div>
                     </div>

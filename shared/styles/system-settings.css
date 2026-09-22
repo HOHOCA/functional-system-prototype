@@ -18,9 +18,9 @@
     font-family: 'Microsoft YaHei', Arial, sans-serif;
 }
 
-/* Checkbox accent color aligned to primary (#3AACDE) */
+/* Checkbox accent color aligned to primary (#249BD9) */
 ::where(.system-settings-page, .system-settings-scope) input[type="checkbox"] {
-    accent-color: #3AACDE;
+    accent-color: #249BD9;
 }
 
 :where(.system-settings-page, .system-settings-scope) .settings-left {
@@ -55,7 +55,7 @@
 :where(.system-settings-page, .system-settings-scope) .settings-nav-item.active {
     color: #ffffff;
     background-color: rgba(58, 172, 222, 0.2);
-    border-right-color: #3AACDE;
+    border-right-color: #249BD9;
 }
 :where(.system-settings-page, .system-settings-scope) .settings-nav-item i { width: 20px; text-align: center; font-size: 1rem; }
 
@@ -88,8 +88,8 @@
 }
 :where(.system-settings-page, .system-settings-scope) .panel-tab:hover { color: #e0e0e0; }
 :where(.system-settings-page, .system-settings-scope) .panel-tab.active {
-    color: #3AACDE;
-    border-bottom-color: #3AACDE;
+    color: #249BD9;
+    border-bottom-color: #249BD9;
 }
 
 :where(.system-settings-page, .system-settings-scope) .data-table-wrap {
@@ -127,7 +127,7 @@
 }
 :where(.system-settings-page, .system-settings-scope) .data-table .cell-input:hover { border-color: #555; }
 :where(.system-settings-page, .system-settings-scope) .data-table .cell-input:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
     background: #252525;
 }
 :where(.system-settings-page, .system-settings-scope) .data-table .cell-input[readonly] { cursor: default; opacity: 0.9; }
@@ -226,8 +226,8 @@
 :where(.system-settings-page, .system-settings-scope) .panel-actions .btn-primary {
     padding: 6px 16px;
     font-size: 0.875rem;
-    background: #3AACDE;
-    border-color: #3AACDE;
+    background: #249BD9;
+    border-color: #249BD9;
     color: #fff;
 }
 :where(.system-settings-page, .system-settings-scope) .panel-actions .btn-primary:hover { background: #1976d2; }
@@ -265,11 +265,11 @@
 /* ===== Theme alignment with brachy-client (shared/styles/styles.css) ===== */
 /* Keep system-settings layout rules, but align highlight colors to Brachy */
 ::where(.system-settings-page, .system-settings-scope) .settings-right { background: #1a1a1a; }
-::where(.system-settings-page, .system-settings-scope) .panel-tab.active { color: #3AACDE; border-bottom-color: #3AACDE; }
+::where(.system-settings-page, .system-settings-scope) .panel-tab.active { color: #249BD9; border-bottom-color: #249BD9; }
 
-::where(.system-settings-page, .system-settings-scope) .data-table .cell-input:focus { border-color: #3AACDE; }
-::where(.system-settings-page, .system-settings-scope) .data-table .cell-select:focus { border-color: #3AACDE; }
-::where(.system-settings-page, .system-settings-scope) .data-table tbody tr.selected { background-color: rgba(33, 143, 191, 0.2); }
+::where(.system-settings-page, .system-settings-scope) .data-table .cell-input:focus { border-color: #249BD9; }
+::where(.system-settings-page, .system-settings-scope) .data-table .cell-select:focus { border-color: #249BD9; }
+::where(.system-settings-page, .system-settings-scope) .data-table tbody tr.selected { background-color: rgba(36, 155, 217, 0.2); }
 
 /* Ensure action buttons fully follow global .btn styles */
 ::where(.system-settings-page, .system-settings-scope) .panel-actions .btn {
@@ -281,8 +281,8 @@
     transition: all 0.3s;
 }
 ::where(.system-settings-page, .system-settings-scope) .panel-actions .btn-primary {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 ::where(.system-settings-page, .system-settings-scope) .panel-actions .btn-primary:hover { background-color: #005a9e; }
@@ -293,20 +293,20 @@
 ::where(.system-settings-page, .system-settings-scope) .panel-actions .btn-secondary:hover { background-color: #555555; }
 
 ::where(.system-settings-page, .system-settings-scope) .drawing-template-list-item.selected {
-    background-color: rgba(33, 143, 191, 0.2);
-    border-color: #3AACDE;
+    background-color: rgba(36, 155, 217, 0.2);
+    border-color: #249BD9;
     color: #ffffff;
 }
 
 ::where(.system-settings-page, .system-settings-scope) .organ-limit-list-item.selected {
-    background-color: rgba(33, 143, 191, 0.2);
-    border-color: #3AACDE;
+    background-color: rgba(36, 155, 217, 0.2);
+    border-color: #249BD9;
 }
-::where(.system-settings-page, .system-settings-scope) .organ-limit-right-header .template-name-input:focus { border-color: #3AACDE; }
-::where(.system-settings-page, .system-settings-scope) .organ-limit-right-header .search-input-wrap input:focus { border-color: #3AACDE; outline: none; }
-::where(.system-settings-page, .system-settings-scope) .organ-limit-table tbody tr.selected { background-color: rgba(33, 143, 191, 0.2); }
+::where(.system-settings-page, .system-settings-scope) .organ-limit-right-header .template-name-input:focus { border-color: #249BD9; }
+::where(.system-settings-page, .system-settings-scope) .organ-limit-right-header .search-input-wrap input:focus { border-color: #249BD9; outline: none; }
+::where(.system-settings-page, .system-settings-scope) .organ-limit-table tbody tr.selected { background-color: rgba(36, 155, 217, 0.2); }
 ::where(.system-settings-page, .system-settings-scope) .organ-limit-table td .cell-input:focus,
-::where(.system-settings-page, .system-settings-scope) .organ-limit-table td .cell-select:focus { border-color: #3AACDE; }
+::where(.system-settings-page, .system-settings-scope) .organ-limit-table td .cell-select:focus { border-color: #249BD9; }
 
 /* drawing-template panel */
 :where(.system-settings-page, .system-settings-scope) #panel-drawing-template { display: none; padding: 0; overflow: hidden; }
@@ -399,7 +399,7 @@
 :where(.system-settings-page, .system-settings-scope) .drawing-template-list-item:hover { background: #333; }
 :where(.system-settings-page, .system-settings-scope) .drawing-template-list-item.selected {
     background-color: rgba(58, 172, 222, 0.2);
-    border-color: #3AACDE;
+    border-color: #249BD9;
     color: #ffffff;
 }
 :where(.system-settings-page, .system-settings-scope) .drawing-template-list-item .item-name {
@@ -632,7 +632,7 @@
     box-sizing: border-box;
 }
 :where(.system-settings-page, .system-settings-scope) .organ-limit-left-search input:focus {
-    border-color: #3AACDE;
+    border-color: #249BD9;
     outline: none;
 }
 :where(.system-settings-page, .system-settings-scope) .organ-limit-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
@@ -786,8 +786,8 @@
     transition: all 0.3s;
 }
 :where(.system-settings-page, .system-settings-scope) .organ-limit-right-footer .btn-primary {
-    background-color: #3AACDE;
-    border-color: #3AACDE;
+    background-color: #249BD9;
+    border-color: #249BD9;
     color: #ffffff;
 }
 :where(.system-settings-page, .system-settings-scope) .organ-limit-right-footer .btn-primary:hover { background-color: #005a9e; }
@@ -889,7 +889,7 @@
     display: block;
 }
 .organ-limit-table .row-actions .btn-row-copy:hover,
-.organ-limit-table .row-actions .btn-row-del:hover { color: #3AACDE; }
+.organ-limit-table .row-actions .btn-row-del:hover { color: #249BD9; }
 :where(.system-settings-page, .system-settings-scope) .organ-limit-table td:last-child { width: 56px; }
 
 /* required mark & error highlighting for organ-limit */

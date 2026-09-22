@@ -336,7 +336,7 @@
                                 <tr>
                                     <th class="col-index dmlc-sticky-col" rowspan="2">序号</th>
                                     <th class="col-eye dmlc-sticky-col dmlc-sticky-col-2" rowspan="2">
-                                        <i class="fas fa-eye dmlc-beam-eye-btn" data-action="toggle-all-visibility" title="可见性"></i>
+                                        <span class="mozi-ui-icon mozi-ui-icon-eye dmlc-beam-eye-btn" data-action="toggle-all-visibility" title="可见性" aria-hidden="true"></span>
                                     </th>
                                     <th class="dmlc-sticky-col dmlc-sticky-col-3" rowspan="2" style="width:100px;min-width:100px;">名称</th>
                                     <th rowspan="2" style="width:120px;">治疗机</th>
@@ -474,12 +474,12 @@
                 .map((beam, index) => {
                     const sel = this.selectedBeamId === beam.id ? 'is-selected' : '';
                     const eyeClass = beam.visible ? 'dmlc-beam-eye-btn' : 'dmlc-beam-eye-btn is-off';
-                    const icon = beam.visible ? 'fa-eye' : 'fa-eye-slash';
+                    const icon = beam.visible ? 'mozi-ui-icon-eye' : 'mozi-ui-icon-eye-slash';
                     return `
                         <tr data-beam-id="${beam.id}" class="${sel}">
                             <td class="col-index dmlc-sticky-col">${index + 1}</td>
                             <td class="col-eye dmlc-sticky-col dmlc-sticky-col-2">
-                                <i class="fas ${icon} ${eyeClass}" data-action="toggle-visibility" title="可见性"></i>
+                                <span class="mozi-ui-icon ${icon} ${eyeClass}" data-action="toggle-visibility" title="可见性" aria-hidden="true"></span>
                             </td>
                             <td class="dmlc-sticky-col dmlc-sticky-col-3">
                                 <input class="dmlc-beam-cell-control" data-field="name" value="${this.esc(beam.name)}" />

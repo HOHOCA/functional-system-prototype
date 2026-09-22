@@ -340,6 +340,22 @@ class ComponentGallery {
         // 说明：组件库预览需要快速迭代脚本。这里不依赖 query 版本号，
         // 每次预览都会移除旧脚本并重新加载，确保拿到最新代码。
         try {
+            // 依赖先于目标组件加载，避免 extends 时基类未定义
+            if (
+                (component.className === 'FourDCTRobustnessEvaluationDVHComponent' ||
+                    component.className === 'LETdVHComponent' ||
+                    component.className === 'SinglePlanDVHComponent' ||
+                    component.className === 'MultiPlanDVHComponent') &&
+                typeof DVHComponent === 'undefined'
+            ) {
+                await this.loadScriptIfNeeded('../shared/scripts/components/DVHComponent.js');
+            }
+            if (
+                component.className === 'MultiPlanDVHComponent' &&
+                typeof SinglePlanDVHComponent === 'undefined'
+            ) {
+                await this.loadScriptIfNeeded('../shared/scripts/components/SinglePlanDVHComponent.js');
+            }
             if (component.filePath) {
                 try {
                     // 清理旧全局定义，确保新脚本生效
@@ -350,13 +366,6 @@ class ComponentGallery {
                     // ignore
                 }
                 await this.reloadScript(component.filePath);
-            }
-            if (
-                (component.className === 'FourDCTRobustnessEvaluationDVHComponent' ||
-                    component.className === 'LETdVHComponent') &&
-                typeof DVHComponent === 'undefined'
-            ) {
-                await this.loadScriptIfNeeded('../shared/scripts/components/DVHComponent.js');
             }
         } catch (error) {
             console.error('加载组件脚本失败:', error);
@@ -575,9 +584,18 @@ class ComponentGallery {
                     }
                     break;
                     
-                case 'DVHComponent':
-                    if (typeof DVHComponent !== 'undefined') {
-                        instance = new DVHComponent(componentContainer, {
+                case 'SinglePlanDVHComponent':
+                    if (typeof SinglePlanDVHComponent !== 'undefined') {
+                        instance = new SinglePlanDVHComponent(componentContainer, {
+                            enableToolbar: true,
+                            enableContextMenu: true
+                        });
+                    }
+                    break;
+
+                case 'MultiPlanDVHComponent':
+                    if (typeof MultiPlanDVHComponent !== 'undefined') {
+                        instance = new MultiPlanDVHComponent(componentContainer, {
                             enableToolbar: true,
                             enableContextMenu: true
                         });
@@ -883,15 +901,18 @@ class ComponentGallery {
                     }
                     break;
                     
+                case 'FileInfoComponent':
+                    if (typeof FileInfoComponent !== 'undefined') {
+                        instance = new FileInfoComponent(componentContainer.id, {
+                            type: 'CT',
+                            prefix: 'gallery-'
+                        });
+                    }
+                    break;
                 case 'PatientOverviewComponent':
                     if (typeof PatientOverviewComponent !== 'undefined') {
                         instance = new PatientOverviewComponent(componentContainer.id, {
-                            patient: {
-                                name: 'Dong, Wuping',
-                                id: '0000576304',
-                                birthDate: '19730307',
-                                gender: 'M'
-                            }
+                            patient: window.CurrentPatient.get()
                         });
                     }
                     break;

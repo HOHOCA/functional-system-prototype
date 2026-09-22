@@ -6945,8 +6945,8 @@ function initializeOptimizationDVHView() {
     
     // 延迟初始化，确保DOM已渲染
     setTimeout(() => {
-        if (window.DVHComponent) {
-            const dvhView = new window.DVHComponent('opt-right-dvh', {
+        if (window.SinglePlanDVHComponent) {
+            const dvhView = new window.SinglePlanDVHComponent('opt-right-dvh', {
                 enableToolbar: true,
                 enableContextMenu: true,
                 onCurveClick: (curve) => {
@@ -6968,7 +6968,7 @@ function initializeOptimizationDVHView() {
             
             console.log('计划优化DVH视图组件初始化完成');
         } else {
-            console.error('DVHComponent not available');
+            console.error('SinglePlanDVHComponent not available');
         }
     }, 100);
 }
@@ -6990,8 +6990,8 @@ function initializePlanDesignDVHView() {
     }
     
     setTimeout(() => {
-        if (window.DVHComponent) {
-            const dvhView = new window.DVHComponent('planDvhViewContainer', {
+        if (window.SinglePlanDVHComponent) {
+            const dvhView = new window.SinglePlanDVHComponent('planDvhViewContainer', {
                 enableToolbar: true,
                 enableContextMenu: true,
                 onCurveClick: (curve) => {
@@ -7012,7 +7012,7 @@ function initializePlanDesignDVHView() {
             
             console.log('计划设计DVH视图组件初始化完成');
         } else {
-            console.error('DVHComponent not available');
+            console.error('SinglePlanDVHComponent not available');
         }
     }, 100);
 }

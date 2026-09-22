@@ -44,9 +44,9 @@
 
 .patient-search-input:focus {
     outline: none;
-    border-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
     background-color: #262626;
-    box-shadow: 0 0 0 3px rgba(33, 143, 191, 0.15);
+    box-shadow: 0 0 0 3px rgba(36, 155, 217, 0.15);
 }
 
 .patient-search-buttons {
@@ -70,7 +70,7 @@
 
 .patient-search-btn:hover {
     background-color: #333333;
-    border-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
 }
 
 .patient-search-btn svg {
@@ -127,12 +127,12 @@
 
 .patient-table th.sortable[data-sort="asc"]::after {
     content: "▲";
-    color: var(--primary-color, #3AACDE);
+    color: var(--primary-color, #249BD9);
 }
 
 .patient-table th.sortable[data-sort="desc"]::after {
     content: "▼";
-    color: var(--primary-color, #3AACDE);
+    color: var(--primary-color, #249BD9);
 }
 
 .patient-table td {
@@ -151,11 +151,11 @@
 }
 
 .patient-table tr.selected {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .patient-table tr.selected:hover {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .patient-icon {
@@ -197,7 +197,7 @@
 }
 
 .patient-pagination-select:hover {
-    border-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
 }
 
 .patient-pagination-jump {
@@ -211,7 +211,7 @@
     border-radius: var(--border-radius, 4px);
     background-color: var(--background-medium, #1F1F1F);
     font-size: 14px;
-    color: var(--primary-color, #3AACDE);
+    color: var(--primary-color, #249BD9);
     text-align: center;
     width: 40px;
     transition: all var(--transition-fast, 0.2s ease);
@@ -219,8 +219,8 @@
 
 .patient-pagination-page-input:focus {
     outline: none;
-    border-color: var(--primary-color, #3AACDE);
-    box-shadow: 0 0 0 2px rgba(33, 143, 191, 0.15);
+    border-color: var(--primary-color, #249BD9);
+    box-shadow: 0 0 0 2px rgba(36, 155, 217, 0.15);
 }
 
 .patient-pagination-page-unit {
@@ -253,8 +253,8 @@
 
 .patient-pagination-btn:hover:not(:disabled) {
     background-color: #333333;
-    border-color: var(--primary-color, #3AACDE);
-    color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
+    color: var(--primary-color, #249BD9);
 }
 
 .patient-pagination-btn:disabled {
@@ -287,18 +287,18 @@
 
 .patient-pagination-page:hover {
     background-color: #333333;
-    border-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
 }
 
 .patient-pagination-page-active {
-    background-color: var(--primary-color, #3AACDE);
-    border-color: var(--primary-color, #3AACDE);
+    background-color: var(--primary-color, #249BD9);
+    border-color: var(--primary-color, #249BD9);
     color: var(--text-primary, #ffffff);
 }
 
 .patient-pagination-page-active:hover {
-    background-color: var(--primary-hover, #218FBF);
-    border-color: var(--primary-hover, #218FBF);
+    background-color: var(--primary-hover, #1e8ac4);
+    border-color: var(--primary-hover, #1e8ac4);
 }
 
 /* 右侧面板 */
@@ -325,7 +325,7 @@
 }
 
 .patient-tree-info {
-    color: var(--primary-color, #3AACDE);
+    color: var(--primary-color, #249BD9);
     font-size: 13px;
     margin-bottom: 15px;
 }
@@ -350,7 +350,7 @@
 }
 
 .patient-tree-node.selected {
-    background-color: rgba(33, 143, 191, 0.2);
+    background-color: rgba(36, 155, 217, 0.2);
 }
 
 .patient-tree-icon {
@@ -435,18 +435,18 @@
 
 .patient-footer-btn-secondary:hover {
     background-color: #333333;
-    border-color: var(--primary-color, #3AACDE);
+    border-color: var(--primary-color, #249BD9);
 }
 
 .patient-footer-btn-primary {
-    background-color: var(--primary-color, #3AACDE);
-    border-color: var(--primary-color, #3AACDE);
+    background-color: var(--primary-color, #249BD9);
+    border-color: var(--primary-color, #249BD9);
     color: var(--text-primary, #ffffff);
 }
 
 .patient-footer-btn-primary:hover {
-    background-color: var(--primary-hover, #218FBF);
-    border-color: var(--primary-hover, #218FBF);
+    background-color: var(--primary-hover, #1e8ac4);
+    border-color: var(--primary-hover, #1e8ac4);
 }
 
 /* 右键菜单 */
@@ -477,8 +477,8 @@
 }
 
 .patient-context-menu-item:hover {
-    background-color: rgba(33, 143, 191, 0.15);
-    color: var(--primary-color, #3AACDE);
+    background-color: rgba(36, 155, 217, 0.15);
+    color: var(--primary-color, #249BD9);
 }
 
 /* 响应式设计 */

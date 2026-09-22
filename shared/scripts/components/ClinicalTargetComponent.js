@@ -211,19 +211,19 @@ class ClinicalTargetComponent {
                 <!-- 底部操作栏 -->
                 <div class="clinical-target-toolbar">
                     <button class="clinical-target-toolbar-btn" id="${this.options.prefix}addBtn" title="添加目标">
-                        <i class="fas fa-plus"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-add" aria-hidden="true"></span>
                     </button>
                     <button class="clinical-target-toolbar-btn" id="${this.options.prefix}editBtn" title="编辑目标" disabled>
-                        <i class="fas fa-pencil-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-edit" aria-hidden="true"></span>
                     </button>
                     <button class="clinical-target-toolbar-btn" id="${this.options.prefix}deleteBtn" title="删除" disabled>
-                        <i class="fas fa-trash-alt"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-trash" aria-hidden="true"></span>
                     </button>
                     <button class="clinical-target-toolbar-btn" id="${this.options.prefix}loadTemplateBtn" title="加载模板">
-                        <i class="fas fa-folder-open"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-import" aria-hidden="true"></span>
                     </button>
                     <button class="clinical-target-toolbar-btn" id="${this.options.prefix}createTemplateBtn" title="创建模板" disabled>
-                        <i class="fas fa-save"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-ch-bookmark" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>

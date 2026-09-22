@@ -34,9 +34,9 @@ class ROIComponent {
             <div class="roi-panel-container">
             <div class="roi-struct-header">
                 <div class="struct-info">
-                    <i class="fas fa-eye"></i>
+                    <span class="mozi-ui-icon mozi-ui-icon-eye roi-header-eye"></span>
                     <span class="struct-name">CT 1 RTStruct 2 2024-06-16 16:...</span>
-                    <i class="fas fa-chevron-down"></i>
+                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
                 </div>
             </div>
             
@@ -44,17 +44,17 @@ class ROIComponent {
                 <div class="roi-tree">
                     <div class="roi-category expanded" data-category="target">
                         <div class="roi-category-header">
-                            <i class="fas fa-chevron-down"></i>
+                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
                             <span>靶区(7)</span>
                         </div>
                         <div class="roi-category-content">
                             <div class="roi-item" data-roi="CTV1">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #ff6b6b;"></div>
                                 <span class="roi-name">CTV1</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -85,12 +85,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="CTV2">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #4ecdc4;"></div>
                                 <span class="roi-name">CTV2</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -121,12 +121,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item active" data-roi="GTVnd(L)">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #45b7d1;"></div>
                                 <span class="roi-name">GTVnd(L)</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -157,12 +157,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="GTVnd(R)">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #96ceb4;"></div>
                                 <span class="roi-name">GTVnd(R)</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -193,12 +193,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="GTVnx">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #feca57;"></div>
                                 <span class="roi-name">GTVnx</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -229,12 +229,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="PTVnx-6996">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #ff9ff3;"></div>
                                 <span class="roi-name">PTVnx-6996</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -265,12 +265,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="PTV1-6006">
-                                <i class="fas fa-eye-slash roi-visibility"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility"></span>
                                 <div class="roi-color" style="background: #54a0ff;"></div>
                                 <span class="roi-name">PTV1-6006</span>
-                                <i class="fas fa-user roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-user roi-type-icon"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -305,17 +305,17 @@ class ROIComponent {
                     
                     <div class="roi-category expanded" data-category="non-target">
                         <div class="roi-category-header">
-                            <i class="fas fa-chevron-down"></i>
+                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
                             <span>非靶区(3)</span>
                         </div>
                         <div class="roi-category-content">
                             <div class="roi-item" data-roi="Bladder">
-                                <i class="fas fa-eye roi-visibility visible"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye roi-visibility visible"></span>
                                 <div class="roi-color" style="background: #feca57;"></div>
                                 <span class="roi-name">Bladder</span>
-                                <i class="fas fa-project-diagram roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-roi-type roi-type-icon" aria-hidden="true"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -346,12 +346,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="Bowel_Small">
-                                <i class="fas fa-eye roi-visibility visible"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye roi-visibility visible"></span>
                                 <div class="roi-color" style="background: #96ceb4;"></div>
                                 <span class="roi-name">Bowel_Small</span>
-                                <i class="fas fa-project-diagram roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-roi-type roi-type-icon" aria-hidden="true"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -382,12 +382,12 @@ class ROIComponent {
                                 </div>
                             </div>
                             <div class="roi-item" data-roi="External">
-                                <i class="fas fa-eye roi-visibility visible"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-eye roi-visibility visible"></span>
                                 <div class="roi-color" style="background: #feca57;"></div>
                                 <span class="roi-name">External</span>
-                                <i class="fas fa-project-diagram roi-type-icon"></i>
+                                <span class="mozi-ui-icon mozi-ui-icon-roi-type roi-type-icon" aria-hidden="true"></span>
                                 <div class="roi-drawing-dropdown">
-                                    <i class="fas fa-chevron-down roi-dropdown-trigger"></i>
+                                    <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-dropdown-trigger"></span>
                                     <div class="roi-dropdown-menu">
                                         <div class="roi-dropdown-header">勾画类型</div>
                                         <div class="roi-dropdown-option" data-type="rigid">
@@ -425,25 +425,25 @@ class ROIComponent {
             <div class="roi-toolbar-section">
                 <div class="roi-toolbar">
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-visibility-all-btn" title="全部显示/全部隐藏">
-                        <i class="fas fa-eye"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-eye" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-fill-all-btn" title="全部填充/全部取消">
-                        <i class="fas fa-fill-drip"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-fill" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-bold-all-btn" title="全部加粗/全部取消">
-                        <i class="fas fa-bold"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-bold" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-assign-image-btn" title="显示/隐藏赋值HU的图像">
-                        <i class="fas fa-image"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-image" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-add-btn" title="新建勾画">
-                        <i class="fas fa-plus"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-add" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-delete-btn" title="删除勾画">
-                        <i class="fas fa-trash"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-trash" aria-hidden="true"></span>
                     </button>
                     <button class="roi-tool-btn" id="${this.options.prefix}roi-batch-update-btn" title="批量更新衍生ROI">
-                        <i class="fas fa-project-diagram"></i>
+                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-batch" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
@@ -539,7 +539,7 @@ class ROIComponent {
             header.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const category = header.parentElement;
-                const chevronIcon = header.querySelector('i.fas');
+                const chevronIcon = header.querySelector('.mozi-ui-icon');
                 
                 // 切换展开状态
                 category.classList.toggle('expanded');
@@ -547,10 +547,10 @@ class ROIComponent {
                 // 根据展开状态设置箭头方向
                 if (category.classList.contains('expanded')) {
                     // 展开时：箭头向下
-                    chevronIcon.className = 'fas fa-chevron-down';
+                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-down';
                 } else {
                     // 收起时：箭头向右
-                    chevronIcon.className = 'fas fa-chevron-right';
+                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-right';
                 }
             });
         });
@@ -591,7 +591,7 @@ class ROIComponent {
         // 表头眼睛图标点击事件（全部显示/隐藏）
         const structHeader = container.querySelector('.roi-struct-header');
         if (structHeader) {
-            const headerEyeIcon = structHeader.querySelector('.fa-eye');
+            const headerEyeIcon = structHeader.querySelector('.roi-header-eye');
             if (headerEyeIcon) {
                 headerEyeIcon.style.cursor = 'pointer';
                 headerEyeIcon.addEventListener('click', (e) => {
@@ -610,10 +610,10 @@ class ROIComponent {
                 
                 if (isVisible) {
                     icon.classList.remove('visible');
-                    icon.className = 'fas fa-eye-slash roi-visibility';
+                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility';
                 } else {
                     icon.classList.add('visible');
-                    icon.className = 'fas fa-eye roi-visibility visible';
+                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye roi-visibility visible';
                 }
                 
                 // 更新表头眼睛图标状态
@@ -1078,7 +1078,7 @@ class ROIComponent {
         menu.className = 'roi-context-menu';
         menu.innerHTML = `
             <div class="roi-context-menu-item" data-action="copy">
-                <i class="fas fa-copy"></i>
+                <span class="mozi-ui-icon mozi-ui-icon-copy"></span>
                 <span>复制勾画</span>
             </div>
         `;
@@ -1263,11 +1263,11 @@ class ROIComponent {
             if (allVisible) {
                 // 全部隐藏
                 icon.classList.remove('visible');
-                icon.className = 'fas fa-eye-slash roi-visibility';
+                icon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash roi-visibility';
             } else {
                 // 全部显示
                 icon.classList.add('visible');
-                icon.className = 'fas fa-eye roi-visibility visible';
+                icon.className = 'mozi-ui-icon mozi-ui-icon-eye roi-visibility visible';
             }
         });
         
@@ -1283,13 +1283,13 @@ class ROIComponent {
         const structHeader = container.querySelector('.roi-struct-header');
         if (!structHeader) return;
         
-        const headerEyeIcon = structHeader.querySelector('.fa-eye, .fa-eye-slash');
+        const headerEyeIcon = structHeader.querySelector('.roi-header-eye');
         if (!headerEyeIcon) return;
         
         const visibilityIcons = container.querySelectorAll('.roi-visibility');
         if (visibilityIcons.length === 0) {
             // 没有ROI时，显示默认的眼睛图标
-            headerEyeIcon.className = 'fas fa-eye';
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye roi-header-eye';
             headerEyeIcon.style.color = '#888';
             return;
         }
@@ -1300,10 +1300,10 @@ class ROIComponent {
         });
         
         if (allVisible) {
-            headerEyeIcon.className = 'fas fa-eye';
-            headerEyeIcon.style.color = '#3AACDE';
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye roi-header-eye';
+            headerEyeIcon.style.color = '#249BD9';
         } else {
-            headerEyeIcon.className = 'fas fa-eye-slash';
+            headerEyeIcon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash roi-header-eye';
             headerEyeIcon.style.color = '#888';
         }
     }

@@ -1,47 +1,68 @@
 /**
  * 患者概览组件
- * 用于在多个模块内复用患者基本信息展示
+ * 顶栏 56px 内两行信息，贴齐容器四周无外间距。
  */
 class PatientOverviewComponent {
     constructor(containerId, options = {}) {
         this.containerId = containerId;
-        this.patient = this.normalizePatient(options.patient || {});
+        const shared = window.CurrentPatient && typeof CurrentPatient.get === 'function'
+            ? CurrentPatient.get()
+            : (options.patient || {});
+        this.patient = this.normalizePatient(shared);
         this.injectStyles();
         this.render();
+        if (window.CurrentPatient && typeof CurrentPatient.subscribe === 'function') {
+            CurrentPatient.subscribe((patient) => this.setPatient(patient));
+        }
     }
 
-    // 注入一次样式，避免重复定义
     injectStyles() {
         if (document.getElementById('patient-overview-component-style')) return;
         const style = document.createElement('style');
         style.id = 'patient-overview-component-style';
         style.textContent = `
-            .patient-overview-card {
-                background: #3a3a3a;
-                border-radius: 8px;
-                padding: 12px 16px;
+            .patient-overview {
+                padding: 0 !important;
+                background: #2b2b2b !important;
+                border-right-color: #373737 !important;
+                box-sizing: border-box;
+                align-items: stretch !important;
+                justify-content: stretch !important;
+            }
+            .patient-overview-host {
                 width: 100%;
                 height: 100%;
+                min-height: 0;
+                display: flex;
+                align-items: stretch;
+                box-sizing: border-box;
+            }
+            .patient-overview-card {
+                background: #2b2b2b;
+                border-radius: 0;
+                padding: 0 10px;
+                width: 100%;
+                height: 100%;
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-                box-sizing: border-box;
             }
             .patient-overview-name {
-                font-size: 15px;
-                font-weight: 600;
-                color: #ffffff;
-                margin: 0 0 6px 0;
-                line-height: 1.2;
+                font-size: 13px;
+                font-weight: 400;
+                color: #eeeeee;
+                margin: 0;
+                line-height: 16px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
             .patient-overview-info {
-                font-size: 13px;
-                color: #cccccc;
-                margin: 0;
+                font-size: 12px;
+                color: #d4d4d4;
+                margin: 2px 0 0 0;
+                line-height: 15px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -50,42 +71,44 @@ class PatientOverviewComponent {
         document.head.appendChild(style);
     }
 
-    // 规范化患者数据
+    formatBirthDate(value) {
+        const digits = String(value || '').replace(/\D/g, '');
+        if (digits.length === 8) {
+            return digits.slice(0, 4) + '-' + digits.slice(4, 6) + '-' + digits.slice(6, 8);
+        }
+        return String(value || '').trim();
+    }
+
     normalizePatient(patient) {
         return {
             name: patient.name || '--',
             id: patient.id || '--',
-            birthDate: (patient.birthDate || '').replace(/-/g, ''),
-            gender: patient.gender || ''
+            birthDate: this.formatBirthDate(patient.birthDate),
+            gender: patient.gender || '',
+            machine: patient.machine || ''
         };
     }
 
-    // 设置患者信息并刷新 UI
     setPatient(patient) {
         this.patient = this.normalizePatient(patient || {});
         this.render();
     }
 
-    // 渲染组件
     render() {
         const container = document.getElementById(this.containerId);
         if (!container) return;
 
-        // 让容器自身占满可用空间，便于内部卡片铺满区域
-        container.style.width = '100%';
-        container.style.height = '100%';
-        container.style.display = 'flex';
+        container.classList.add('patient-overview-host');
 
-        const { name, id, birthDate, gender } = this.patient;
+        const { name, id, birthDate, gender, machine } = this.patient;
+        const meta = [birthDate, gender, machine].filter(Boolean).join('　');
         container.innerHTML = `
             <div class="patient-overview-card">
-                <div class="patient-overview-name">${name} (ID:${id})</div>
-                <div class="patient-overview-info">${birthDate} ${gender}</div>
+                <div class="patient-overview-name">${name}　(ID:${id})</div>
+                <div class="patient-overview-info">${meta}</div>
             </div>
         `;
     }
 }
 
-// 导出到全局，便于直接使用
 window.PatientOverviewComponent = PatientOverviewComponent;
-

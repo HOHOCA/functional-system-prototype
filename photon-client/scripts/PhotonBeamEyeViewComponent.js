@@ -1,6 +1,6 @@
 /**
  * 光子 BEV（射束眼视图）组件
- * - 示意 DRR、射野框（X1/X2/Y1/Y2）、方位字、刻度与左上角射束环
+ * - 示意 DRR、双层 MLC（坞门外蓝 / 坞门内黄）、方位字、刻度与左上角射束环
  * - 工具栏：DRR 设置（占位按钮）、缩放、移动、测量、最大化（与 2D 视图交互对齐）
  */
 class PhotonBeamEyeViewComponent {
@@ -40,9 +40,16 @@ class PhotonBeamEyeViewComponent {
         this.isDraggingIso = false;
         this.lastMousePos = { x: 0, y: 0 };
 
-        /** 射野半宽/半高（世界坐标，像素量级） */
+        /** 坞门半宽/半高（世界坐标，随画布同步） */
         this.field = { halfW: 140, halfH: 100 };
-        this.activeHandle = null;
+        /** 双层 MLC：下层黑线黑字，上层白线白字 */
+        this.mlc = {
+            leafHeight: 17,
+            leafCount: 18,
+            topNumber: 29,
+            carriageX: 280,
+            selected: new Set(['lower-L-9', 'upper-L-11'])
+        };
 
         this.isMaximized = false;
         this.beamList = [
@@ -113,36 +120,17 @@ class PhotonBeamEyeViewComponent {
                 </svg>
             </button>
             <button type="button" class="toolbar-btn-svg" id="${this.containerId}-zoom" title="缩放" data-active="${this.currentTool === 'zoom'}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">${this.gradDef('zoom')}
-                    <circle cx="10" cy="10" r="7" stroke="${g('zoom')}" stroke-width="2" fill="none"/>
-                    <line x1="15" y1="15" x2="21" y2="21" stroke="${g('zoom')}" stroke-width="2" stroke-linecap="round"/>
-                    <line x1="7" y1="10" x2="13" y2="10" stroke="${g('zoom')}" stroke-width="2" stroke-linecap="round"/>
-                    <line x1="10" y1="7" x2="10" y2="13" stroke="${g('zoom')}" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-            </button>
+                        <span class="mozi-view-icon mozi-view-icon-zoom" aria-hidden="true"></span>
+                    </button>
             <button type="button" class="toolbar-btn-svg" id="${this.containerId}-pan" title="移动" data-active="${this.currentTool === 'pan'}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">${this.gradDef('pan')}
-                    <path d="M9 6 C9 4 10 3 11 3 C12 3 13 4 13 6 L13 11 L14.5 9.5 C15.5 8.5 17 8.5 17.5 9.5 C18 10.5 18 11.5 17 12.5 L13.5 17 C12.5 18.5 11 19 9 19 L6 19 C4.5 19 3 17.5 3 16 L3 12 C3 10.5 4 9.5 5 9.5 C6 9.5 7 10 7 11 L7 6 C7 4 8 3 9 3 C9 3 9 4 9 6 Z" stroke="${g('pan')}" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
-                </svg>
-            </button>
+                        <span class="mozi-view-icon mozi-view-icon-pan" aria-hidden="true"></span>
+                    </button>
             <button type="button" class="toolbar-btn-svg" id="${this.containerId}-measure" title="测量" data-active="${this.currentTool === 'measure'}">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">${this.gradDef('measure')}
-                    <rect x="4" y="3" width="4" height="18" rx="1" stroke="${g('measure')}" stroke-width="2" fill="none"/>
-                    <line x1="8" y1="6" x2="11" y2="6" stroke="${g('measure')}" stroke-width="2"/>
-                    <line x1="8" y1="9" x2="10" y2="9" stroke="${g('measure')}" stroke-width="2"/>
-                    <line x1="8" y1="12" x2="11" y2="12" stroke="${g('measure')}" stroke-width="2"/>
-                    <line x1="8" y1="15" x2="10" y2="15" stroke="${g('measure')}" stroke-width="2"/>
-                    <line x1="8" y1="18" x2="11" y2="18" stroke="${g('measure')}" stroke-width="2"/>
-                </svg>
-            </button>
+                        <span class="mozi-view-icon mozi-view-icon-measure" aria-hidden="true"></span>
+                    </button>
             <button type="button" class="toolbar-btn-svg" id="${this.containerId}-maximize" title="最大化" data-active="false">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">${this.gradDef('maximize')}
-                    <path d="M3 3 L3 9 M3 3 L9 3" stroke="${g('maximize')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M21 3 L21 9 M21 3 L15 3" stroke="${g('maximize')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M3 21 L3 15 M3 21 L9 21" stroke="${g('maximize')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M21 21 L21 15 M21 21 L15 21" stroke="${g('maximize')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+                        <span class="mozi-view-icon mozi-view-icon-maximize" aria-hidden="true"></span>
+                    </button>
         `;
     }
 
@@ -214,6 +202,7 @@ class PhotonBeamEyeViewComponent {
         this.canvas.height = height;
         this.canvas.style.width = `${width}px`;
         this.canvas.style.height = `${height}px`;
+        this.syncMlcLayout(width, height);
 
         if (this.dialCanvas) {
             this.dialCanvas.width = 112;
@@ -258,11 +247,14 @@ class PhotonBeamEyeViewComponent {
                 return;
             }
 
-            const handle = this.hitTestFieldHandle(x, y);
-            if (handle && (this.currentTool === 'pan' || !this.currentTool)) {
-                this.activeHandle = handle;
-                this.isDragging = true;
-                this.lastMousePos = { x: e.clientX, y: e.clientY };
+            const leaf = this.hitTestLeaf(x, y);
+            if (leaf && (this.currentTool === 'pan' || !this.currentTool)) {
+                if (this.mlc.selected.has(leaf.id)) {
+                    this.mlc.selected.delete(leaf.id);
+                } else {
+                    this.mlc.selected.add(leaf.id);
+                }
+                this.renderAll();
                 return;
             }
 
@@ -300,28 +292,7 @@ class PhotonBeamEyeViewComponent {
                 return;
             }
 
-            if (this.activeHandle) {
-                const dx = (e.clientX - this.lastMousePos.x) / this.zoom;
-                const dy = (e.clientY - this.lastMousePos.y) / this.zoom;
-                const minHalf = 40;
-                if (this.activeHandle.includes('e')) {
-                    this.field.halfW = Math.max(minHalf, this.field.halfW + dx);
-                }
-                if (this.activeHandle.includes('w')) {
-                    this.field.halfW = Math.max(minHalf, this.field.halfW - dx);
-                }
-                if (this.activeHandle.includes('s')) {
-                    this.field.halfH = Math.max(minHalf, this.field.halfH + dy);
-                }
-                if (this.activeHandle.includes('n')) {
-                    this.field.halfH = Math.max(minHalf, this.field.halfH - dy);
-                }
-                this.lastMousePos = { x: e.clientX, y: e.clientY };
-                this.renderAll();
-                return;
-            }
-
-            if (this.isDragging && this.currentTool === 'pan' && !this.activeHandle) {
+            if (this.isDragging && this.currentTool === 'pan') {
                 const dx = e.clientX - this.lastMousePos.x;
                 const dy = e.clientY - this.lastMousePos.y;
                 this.panX += dx;
@@ -341,9 +312,6 @@ class PhotonBeamEyeViewComponent {
         });
 
         this.canvas.addEventListener('mouseup', () => {
-            if (this.activeHandle) {
-                this.activeHandle = null;
-            }
             this.isDragging = false;
             this.isZooming = false;
             this.isDraggingIso = false;
@@ -354,7 +322,6 @@ class PhotonBeamEyeViewComponent {
             this.isDragging = false;
             this.isZooming = false;
             this.isDraggingIso = false;
-            this.activeHandle = null;
             this.updateCursor();
         });
 
@@ -388,39 +355,106 @@ class PhotonBeamEyeViewComponent {
         }
     }
 
+    syncMlcLayout(width, height) {
+        const w = Math.max(1, width || (this.canvas && this.canvas.width) || 800);
+        const h = Math.max(1, height || (this.canvas && this.canvas.height) || 600);
+        this.mlc.leafCount = h < 240 ? 12 : 18;
+        this.mlc.topNumber = this.mlc.leafCount === 12 ? 26 : 29;
+        const desired = (h * 0.84) / (this.mlc.leafCount + 0.5);
+        this.mlc.leafHeight = Math.max(8, Math.min(18, desired));
+        this.mlc.carriageX = Math.max(80, w * 0.47);
+        this.field.halfW = this.mlc.carriageX * 0.36;
+        this.field.halfH = this.mlc.leafCount * this.mlc.leafHeight * 0.42;
+    }
+
     isoScreenPos() {
         const cx = this.canvas.width / 2 + this.panX + this.isocenter.x * this.zoom;
         const cy = this.canvas.height / 2 + this.panY + this.isocenter.y * this.zoom;
         return { x: cx, y: cy };
     }
 
-    fieldCornersScreen() {
-        const iso = this.isoScreenPos();
-        const hw = this.field.halfW * this.zoom;
-        const hh = this.field.halfH * this.zoom;
+    screenToWorld(px, py) {
         return {
-            left: iso.x - hw,
-            right: iso.x + hw,
-            top: iso.y - hh,
-            bottom: iso.y + hh
+            x: (px - this.canvas.width / 2 - this.panX) / this.zoom - this.isocenter.x,
+            y: (py - this.canvas.height / 2 - this.panY) / this.zoom - this.isocenter.y
         };
     }
 
-    hitTestFieldHandle(px, py) {
-        const c = this.fieldCornersScreen();
-        const hs = 8;
-        const pts = [
-            { name: 'nw', x: c.left, y: c.top },
-            { name: 'ne', x: c.right, y: c.top },
-            { name: 'sw', x: c.left, y: c.bottom },
-            { name: 'se', x: c.right, y: c.bottom }
+    getLeafTips(layerId, index) {
+        const n = this.mlc.leafCount;
+        const t = n <= 1 ? 0 : (index / (n - 1)) * 2 - 1;
+        const r = Math.sqrt(Math.max(0, 1 - t * t * 0.9));
+        const hw = this.field.halfW;
+        let openL = hw * (0.22 + r * 0.52);
+        let openR = hw * (0.22 + r * 0.52);
+        const seed = index * 17 + (layerId === 'upper' ? 5 : 0);
+        openL += Math.sin(seed * 0.37) * 16;
+        openR += Math.cos(seed * 0.29) * 14;
+        if (index === 12 || index === 13) {
+            openL *= 0.42;
+            openR *= 0.62;
+        }
+        if (index === 14) {
+            openL *= 0.5;
+            openR *= 0.48;
+        }
+        return {
+            leftTip: -Math.max(10, openL),
+            rightTip: Math.max(10, openR)
+        };
+    }
+
+    buildMlcLeaves() {
+        const leaves = [];
+        const h = this.mlc.leafHeight;
+        const n = this.mlc.leafCount;
+        const yStart = -(n * h) / 2;
+        const layers = [
+            { id: 'lower', yOffset: 0, border: '#000000', text: '#000000' },
+            { id: 'upper', yOffset: h / 2, border: '#FFFFFF', text: '#FFFFFF' }
         ];
-        for (const p of pts) {
-            if (Math.abs(px - p.x) <= hs && Math.abs(py - p.y) <= hs) {
-                if (p.name === 'nw') return 'nw';
-                if (p.name === 'ne') return 'ne';
-                if (p.name === 'sw') return 'sw';
-                if (p.name === 'se') return 'se';
+        layers.forEach((layer) => {
+            for (let i = 0; i < n; i++) {
+                const y = yStart + i * h + layer.yOffset;
+                const tips = this.getLeafTips(layer.id, i);
+                const num = this.mlc.topNumber - i;
+                const prefix = layer.id === 'lower' ? 'L' : 'U';
+                leaves.push({
+                    id: `${layer.id}-L-${i}`,
+                    layer: layer.id,
+                    side: 'L',
+                    x0: -this.mlc.carriageX,
+                    x1: tips.leftTip,
+                    y0: y,
+                    y1: y + h,
+                    label: `${prefix}${num}`,
+                    border: layer.border,
+                    text: layer.text
+                });
+                leaves.push({
+                    id: `${layer.id}-R-${i}`,
+                    layer: layer.id,
+                    side: 'R',
+                    x0: tips.rightTip,
+                    x1: this.mlc.carriageX,
+                    y0: y,
+                    y1: y + h,
+                    label: `${prefix}${num}`,
+                    border: layer.border,
+                    text: layer.text
+                });
+            }
+        });
+        return leaves;
+    }
+
+    hitTestLeaf(px, py) {
+        const w = this.screenToWorld(px, py);
+        const leaves = this.buildMlcLeaves();
+        for (let i = leaves.length - 1; i >= 0; i--) {
+            const leaf = leaves[i];
+            if (w.x >= leaf.x0 && w.x <= leaf.x1 && w.y >= leaf.y0 && w.y <= leaf.y1) {
+                return leaf;
             }
         }
         return null;
@@ -456,9 +490,8 @@ class PhotonBeamEyeViewComponent {
             return;
         }
         if (this.currentTool === 'pan' || !this.currentTool) {
-            const h = (typeof x === 'number' && typeof y === 'number') ? this.hitTestFieldHandle(x, y) : null;
-            const corner = { nw: 'nw-resize', ne: 'ne-resize', sw: 'sw-resize', se: 'se-resize' };
-            this.canvas.style.cursor = h ? (corner[h] || 'nwse-resize') : (this.currentTool === 'pan' ? 'grab' : 'default');
+            const leaf = (typeof x === 'number' && typeof y === 'number') ? this.hitTestLeaf(x, y) : null;
+            this.canvas.style.cursor = leaf ? 'pointer' : (this.currentTool === 'pan' ? 'grab' : 'default');
             return;
         }
         this.canvas.style.cursor = 'default';
@@ -560,7 +593,7 @@ class PhotonBeamEyeViewComponent {
     renderHorizontalGridWorld() {
         const ctx = this.ctx;
         const span = Math.max(this.canvas.width, this.canvas.height) * 2;
-        ctx.strokeStyle = 'rgba(80, 160, 255, 0.35)';
+        ctx.strokeStyle = 'rgba(80, 160, 255, 0.18)';
         ctx.lineWidth = 1 / this.zoom;
         const step = 24;
         for (let y = -span / 2; y <= span / 2; y += step) {
@@ -571,37 +604,58 @@ class PhotonBeamEyeViewComponent {
         }
     }
 
-    renderFieldWorld() {
+    renderMLCWorld() {
         const ctx = this.ctx;
-        const hw = this.field.halfW;
-        const hh = this.field.halfH;
-        ctx.fillStyle = 'rgba(255, 220, 120, 0.22)';
-        ctx.strokeStyle = 'rgba(255, 200, 80, 0.55)';
-        ctx.lineWidth = 1.5 / this.zoom;
-        ctx.fillRect(-hw, -hh, hw * 2, hh * 2);
-        ctx.strokeRect(-hw, -hh, hw * 2, hh * 2);
+        const inv = 1 / this.zoom;
+        const jx0 = -this.field.halfW;
+        const jx1 = this.field.halfW;
+        const jy0 = -this.field.halfH;
+        const jy1 = this.field.halfH;
+        const leaves = this.buildMlcLeaves();
 
-        const hs = 6 / this.zoom;
-        const corners = [
-            [-hw, -hh], [hw, -hh], [-hw, hh], [hw, hh]
-        ];
-        ctx.fillStyle = '#4a9eff';
-        corners.forEach(([fx, fy]) => {
-            ctx.fillRect(fx - hs, fy - hs, hs * 2, hs * 2);
+        leaves.forEach((leaf) => {
+            const w = leaf.x1 - leaf.x0;
+            const h = leaf.y1 - leaf.y0;
+            if (w <= 0 || h <= 0) return;
+
+            const selected = this.mlc.selected.has(leaf.id);
+            if (selected) {
+                ctx.fillStyle = 'rgba(36, 155, 217, 0.5)';
+                ctx.fillRect(leaf.x0, leaf.y0, w, h);
+            } else {
+                ctx.fillStyle = 'rgba(160, 190, 255, 0.3)';
+                ctx.fillRect(leaf.x0, leaf.y0, w, h);
+                const ix0 = Math.max(leaf.x0, jx0);
+                const ix1 = Math.min(leaf.x1, jx1);
+                const iy0 = Math.max(leaf.y0, jy0);
+                const iy1 = Math.min(leaf.y1, jy1);
+                if (ix1 > ix0 && iy1 > iy0) {
+                    ctx.fillStyle = 'rgba(248, 203, 47, 0.3)';
+                    ctx.fillRect(ix0, iy0, ix1 - ix0, iy1 - iy0);
+                }
+            }
+
+            ctx.strokeStyle = leaf.border;
+            ctx.lineWidth = inv;
+            ctx.strokeRect(leaf.x0, leaf.y0, w, h);
+
+            const leafPx = this.mlc.leafHeight * this.zoom;
+            if (leafPx >= 13 && w * this.zoom > 24) {
+                ctx.fillStyle = leaf.text;
+                const fontPx = Math.max(7, Math.min(9, leafPx * 0.55)) * inv;
+                ctx.font = `600 ${fontPx}px "PingFang SC", "Source Han Sans SC", sans-serif`;
+                ctx.textBaseline = 'middle';
+                const pad = (leaf.layer === 'upper' ? 4 : 12) * inv;
+                const cy = (leaf.y0 + leaf.y1) / 2;
+                if (leaf.side === 'L') {
+                    ctx.textAlign = 'right';
+                    ctx.fillText(leaf.label, leaf.x1 - pad, cy);
+                } else {
+                    ctx.textAlign = 'left';
+                    ctx.fillText(leaf.label, leaf.x0 + pad, cy);
+                }
+            }
         });
-
-        ctx.font = `${12 / this.zoom}px system-ui, sans-serif`;
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText('Y2', 0, -hh - 4 / this.zoom);
-        ctx.textBaseline = 'top';
-        ctx.fillText('Y1', 0, hh + 4 / this.zoom);
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'right';
-        ctx.fillText('X1', -hw - 6 / this.zoom, 0);
-        ctx.textAlign = 'left';
-        ctx.fillText('X2', hw + 6 / this.zoom, 0);
     }
 
     renderCrosshairScreen() {
@@ -692,7 +746,7 @@ class PhotonBeamEyeViewComponent {
 
         this.renderBackgroundWorld();
         this.renderHorizontalGridWorld();
-        this.renderFieldWorld();
+        this.renderMLCWorld();
 
         this.ctx.restore();
 

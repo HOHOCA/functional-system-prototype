@@ -36,11 +36,19 @@ const COMPONENTS_CONFIG = {
         },
         {
             id: 'dvh',
-            name: 'DVH',
-            displayName: 'DVH',
-            description: 'DVH曲线显示，支持积分/微分模式',
-            className: 'DVHComponent',
-            filePath: '../shared/scripts/components/DVHComponent.js'
+            name: 'SinglePlanDVH',
+            displayName: '单个计划DVH',
+            description: '单个计划 DVH：查询栏（ROI/覆盖体积/剂量）+ 曲线交互',
+            className: 'SinglePlanDVHComponent',
+            filePath: '../shared/scripts/components/SinglePlanDVHComponent.js'
+        },
+        {
+            id: 'multi-plan-dvh',
+            name: 'MultiPlanDVH',
+            displayName: '多个计划DVH',
+            description: '多个计划 DVH：计划图例线型区分 + 查询栏 + 曲线叠加',
+            className: 'MultiPlanDVHComponent',
+            filePath: '../shared/scripts/components/MultiPlanDVHComponent.js'
         },
         {
             id: 'roi',
@@ -183,6 +191,14 @@ const COMPONENTS_CONFIG = {
             description: '患者基本信息展示组件，可在多个模块复用',
             className: 'PatientOverviewComponent',
             filePath: '../shared/scripts/components/PatientOverviewComponent.js'
+        },
+        {
+            id: 'file-info',
+            name: 'FileInfo',
+            displayName: '文件信息',
+            description: '序列/文件元数据面板；支持更改图像属性弹窗，三端复用',
+            className: 'FileInfoComponent',
+            filePath: '../shared/scripts/components/FileInfoComponent.js'
         },
         {
             id: 'optimization-constraints',
@@ -467,7 +483,7 @@ const COMPONENTS_CONFIG = {
             id: 'photon-bev',
             name: 'PhotonBeamEyeView',
             displayName: '光子-BEV',
-            description: '光子射束眼视图：DRR 示意、射野框与十字线；工具含 DRR 设置（占位）、缩放、移动、测量、最大化',
+            description: '光子射束眼视图：DRR 示意、双层 MLC（坞门外蓝 / 坞门内黄）与十字线；工具含 DRR 设置（占位）、缩放、移动、测量、最大化',
             className: 'PhotonBeamEyeViewComponent',
             filePath: '../photon-client/scripts/PhotonBeamEyeViewComponent.js'
         },
