@@ -43,6 +43,12 @@ class ChannelListComponent {
         this.channelVisibility = new Map(); // channelId -> visible (boolean)
         this.channelLocked = new Map(); // channelId -> locked (boolean)
 
+        // 原型演示：后装机「唯一连续驻留段长度上限」写死为 5 列
+        this.maxContinuousDwellSpan = 5;
+        // 当前多选：{ channelId, indices: number[], anchor: number }，列号为驻留格下标
+        this.dwellSelection = null;
+        this._suppressDwellClick = false;
+
         // 初始化
         this.init();
     }
@@ -126,6 +132,7 @@ class ChannelListComponent {
                     <button class="channel-toolbar-btn" id="${this.options.prefix}createTemplateBtn" title="创建模板 将当前通道列表内容保存为模板" disabled>
                         <span class="mozi-ui-icon mozi-ui-icon-ch-bookmark"></span>
                     </button>
+                    <span class="channel-dwell-span-hint">假设连续驻留最多 ${this.maxContinuousDwellSpan} 列</span>
                 </div>
             </div>
         `;
@@ -279,14 +286,73 @@ class ChannelListComponent {
                 }
             });
 
-                // 驻留位置点击事件（切换激活状态）
-            tableBody.addEventListener('click', (e) => {
-                if (e.target.classList.contains('dwell-position-cell')) {
-                    const channelId = e.target.closest('tr')?.dataset.channelId;
-                    const position = parseFloat(e.target.dataset.position);
-                    if (channelId && position) {
-                        this.toggleDwellPosition(channelId, position);
+                // 驻留位置点击事件（切换激活状态 / 多选）
+            tableBody.addEventListener('mousedown', (e) => {
+                const cell = e.target.closest('.dwell-position-cell');
+                if (!cell || e.button !== 0 || e.shiftKey || e.ctrlKey || e.metaKey) return;
+                const channelId = cell.closest('tr')?.dataset.channelId;
+                const colIndex = Number(cell.dataset.colIndex);
+                if (!channelId || Number.isNaN(colIndex)) return;
+                const active = document.activeElement;
+                if (active && active.closest && active.closest('.channel-list-table') && active !== cell) {
+                    active.blur();
+                }
+                this._dwellDrag = {
+                    channelId,
+                    anchor: colIndex,
+                    x: e.clientX,
+                    y: e.clientY,
+                    moved: false
+                };
+                const onMove = (ev) => {
+                    if (!this._dwellDrag) return;
+                    if (!this._dwellDrag.moved) {
+                        const distance = Math.hypot(ev.clientX - this._dwellDrag.x, ev.clientY - this._dwellDrag.y);
+                        if (distance < 4) return;
+                        this._dwellDrag.moved = true;
                     }
+                    const over = document.elementFromPoint(ev.clientX, ev.clientY);
+                    const overCell = over && over.closest ? over.closest('.dwell-position-cell') : null;
+                    if (!overCell) return;
+                    if (overCell.closest('tr')?.dataset.channelId !== this._dwellDrag.channelId) return;
+                    const overIndex = Number(overCell.dataset.colIndex);
+                    if (Number.isNaN(overIndex)) return;
+                    this.selectDwellRange(this._dwellDrag.channelId, overIndex, this._dwellDrag.anchor);
+                };
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    if (this._dwellDrag && this._dwellDrag.moved) {
+                        this._suppressDwellClick = true;
+                        this.selectChannel(this._dwellDrag.channelId);
+                    }
+                    this._dwellDrag = null;
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+
+            tableBody.addEventListener('click', (e) => {
+                const cell = e.target.closest('.dwell-position-cell');
+                if (cell) {
+                    if (this._suppressDwellClick) {
+                        this._suppressDwellClick = false;
+                        return;
+                    }
+                    const channelId = cell.closest('tr')?.dataset.channelId;
+                    const colIndex = Number(cell.dataset.colIndex);
+                    if (!channelId || Number.isNaN(colIndex)) return;
+                    if (e.shiftKey) {
+                        this.selectDwellRange(channelId, colIndex);
+                        return;
+                    }
+                    if (e.ctrlKey || e.metaKey) {
+                        this.toggleDwellCellSelected(channelId, colIndex);
+                        return;
+                    }
+                    this.dwellSelection = null;
+                    this.toggleDwellColumn(channelId, colIndex);
+                    return;
                 }
                 
                 // 眼睛图标点击事件（可见性切换）
@@ -308,40 +374,65 @@ class ChannelListComponent {
                 }
             });
         }
+
+        if (!this._dwellKeyHandler) {
+            this._dwellKeyHandler = (e) => {
+                if (!this.dwellSelection || e.repeat) return;
+                if (document.querySelector('.custom-dialog-overlay')) return;
+                const tag = (e.target && e.target.tagName) || '';
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON') return;
+                if (e.ctrlKey || e.metaKey || e.altKey) return;
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.applyDwellEnter();
+                } else if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    this.applyDwellBackspace();
+                } else if (e.key === '1' || e.key === '2' || e.key === '3') {
+                    e.preventDefault();
+                    this.applyDwellPattern(Number(e.key));
+                }
+            };
+            document.addEventListener('keydown', this._dwellKeyHandler);
+        }
     }
 
     loadChannels() {
-        // 模拟数据 - 实际应用中应该从后端或数据源加载
+        // 演示数据。列号从出源长度右侧第一个驻留格算起。
+        // 单点：只有第 8 列，左右外侧超出 5 列的格子置灰。
+        // 占满5列：第 4、6、8 列驻留，跨度正好 5，段内空格可点，左右外侧置灰。
+        // 未驻留：还没有红点，可点击格子都能成为第一个驻留点。
+        const at = (column) => this.dwellPositions[column - 1];
         this.channels = [
             {
                 id: 'ch1',
                 number: 1,
-                name: '自定义',
+                name: '单点',
                 channel: 1,
                 dwellStep: 2.5,
                 sourceLength: 1130.0,
                 offset: 0.0,
-                activePositions: [1130, 1127.5, 1125, 1122.5, 1120, 1117.5, 1115, 1112.5, 1110, 1107.5, 1105, 1102.5, 1100, 1097.5, 1095, 1092.5, 1090, 1087.5, 1085, 1082.5, 1080, 1112.5]
+                activePositions: [at(8)]
             },
             {
                 id: 'ch2',
                 number: 2,
-                name: '自定义',
+                name: '占满5列',
                 channel: 2,
                 dwellStep: 2.5,
                 sourceLength: 1130.0,
                 offset: 0.0,
-                activePositions: [1130, 1127.5, 1125, 1117.5]
+                activePositions: [at(4), at(6), at(8)]
             },
             {
                 id: 'ch3',
                 number: 3,
-                name: '自定义',
+                name: '未驻留',
                 channel: 3,
                 dwellStep: 2.5,
                 sourceLength: 1130.0,
                 offset: 0.0,
-                activePositions: [1130, 1127.5, 1125, 1122.5, 1120, 1117.5, 1112.5, 1107.5, 1105, 1102.5, 1097.5, 1095, 109]
+                activePositions: []
             }
         ];
 
@@ -367,6 +458,7 @@ class ChannelListComponent {
         if (!tbody) return;
 
         if (this.channels.length === 0) {
+            this.dwellSelection = null;
             tbody.innerHTML = `
                 <tr>
                     <td colspan="${8 + this.dwellPositions.length}" style="text-align: center; padding: 40px; color: #888;">
@@ -447,19 +539,36 @@ class ChannelListComponent {
                                ${isLocked ? 'disabled' : ''}
                                style="width: 100%; background: #111; border: 1px solid #333; border-radius: 4px; color: #ddd; padding: 4px 6px; height: 28px; box-sizing: border-box;">
                     </td>
-                    ${this.dwellPositions.map(pos => {
+                    ${this.dwellPositions.map((pos, colIndex) => {
                         const isActive = channel.activePositions && channel.activePositions.includes(pos);
+                        const isGray = !isActive && (isLocked || this.isSpanGray(channel, colIndex));
+                        const classes = [
+                            'dwell-position-cell',
+                            isActive ? 'active' : 'inactive',
+                            isGray ? 'dwell-gray' : '',
+                            isLocked ? 'dwell-locked' : ''
+                        ].filter(Boolean).join(' ');
+                        const title = isLocked
+                            ? '通道已锁定'
+                            : (isGray ? `超出连续驻留段（最多 ${this.maxContinuousDwellSpan} 个位置）` : '');
+                        const mark = isActive
+                            ? '<span class="dwell-mark dwell-mark-on">●</span>'
+                            : (isGray
+                                ? '<svg class="dwell-ban" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="4.2" y1="11.8" x2="11.8" y2="4.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'
+                                : '');
                         return `
-                            <td class="dwell-position-cell ${isActive ? 'active' : 'inactive'}" 
+                            <td class="${classes}"
                                 data-position="${pos}"
-                                style="text-align: center; cursor: pointer; padding: 8px 4px;">
-                                ${isActive ? '<span style="color: #f44336; font-size: 16px;">●</span>' : '<span style="color: #666; font-size: 12px;">//</span>'}
+                                data-col-index="${colIndex}"
+                                ${title ? `title="${title}"` : ''}>
+                                ${mark}
                             </td>
                         `;
                     }).join('')}
                 </tr>
             `;
         }).join('');
+        this.paintDwellSelection();
     }
 
     selectChannel(channelId) {
@@ -519,24 +628,185 @@ class ChannelListComponent {
         this.options.onChannelChange(channel, fieldName, value);
     }
 
-    toggleDwellPosition(channelId, position) {
+    getActiveColumnIndices(channel) {
+        const indexByPos = new Map(this.dwellPositions.map((pos, index) => [pos, index]));
+        const indices = [];
+        (channel.activePositions || []).forEach(pos => {
+            const index = indexByPos.get(pos);
+            if (index !== undefined && !indices.includes(index)) indices.push(index);
+        });
+        indices.sort((a, b) => a - b);
+        return indices;
+    }
+
+    columnSpan(indices) {
+        if (!indices.length) return 0;
+        let min = indices[0];
+        let max = indices[0];
+        indices.forEach(index => {
+            if (index < min) min = index;
+            if (index > max) max = index;
+        });
+        return max - min + 1;
+    }
+
+    isChannelDwellLocked(channelId) {
+        return this.channelLocked.get(channelId) === true;
+    }
+
+    // 有红点时，点亮后最左到最右会超过 x 的格子置灰。段内空格保持可点。没有红点时不置灰。
+    isSpanGray(channel, colIndex) {
+        const active = this.getActiveColumnIndices(channel);
+        if (!active.length) return false;
+        const left = active[0];
+        const right = active[active.length - 1];
+        const limit = this.maxContinuousDwellSpan;
+        if (colIndex >= left && colIndex <= right) return false;
+        if (colIndex < left) return colIndex < right - limit + 1;
+        return colIndex > left + limit - 1;
+    }
+
+    setColumnDwells(channel, indices) {
+        const unique = [...new Set(indices)]
+            .filter(index => index >= 0 && index < this.dwellPositions.length)
+            .sort((a, b) => a - b);
+        channel.activePositions = unique.map(index => this.dwellPositions[index]);
+    }
+
+    dwellSpanMessage() {
+        return `选中的位置无法放进同一段连续驻留（最多 ${this.maxContinuousDwellSpan} 个位置），本次未设置`;
+    }
+
+    toggleDwellColumn(channelId, colIndex) {
         const channel = this.channels.find(c => c.id === channelId);
-        if (!channel) return;
+        if (!channel || this.isChannelDwellLocked(channelId)) return;
+        if (colIndex < 0 || colIndex >= this.dwellPositions.length) return;
 
-        if (!channel.activePositions) {
-            channel.activePositions = [];
-        }
-
-        const index = channel.activePositions.indexOf(position);
-        if (index > -1) {
-            channel.activePositions.splice(index, 1);
+        const active = this.getActiveColumnIndices(channel);
+        if (active.includes(colIndex)) {
+            this.setColumnDwells(channel, active.filter(index => index !== colIndex));
+        } else if (!this.isSpanGray(channel, colIndex)) {
+            this.setColumnDwells(channel, active.concat(colIndex));
         } else {
-            channel.activePositions.push(position);
+            return;
         }
 
-        // 重新渲染该行
         this.renderChannels();
-        this.selectChannel(channelId); // 恢复选中状态
+        this.selectChannel(channelId);
+    }
+
+    selectDwellRange(channelId, colIndex, anchor) {
+        const sameChannel = this.dwellSelection && this.dwellSelection.channelId === channelId;
+        const rangeAnchor = anchor !== undefined
+            ? anchor
+            : (sameChannel ? this.dwellSelection.anchor : colIndex);
+        const lo = Math.min(rangeAnchor, colIndex);
+        const hi = Math.max(rangeAnchor, colIndex);
+        const indices = [];
+        for (let index = lo; index <= hi; index += 1) indices.push(index);
+        this.dwellSelection = { channelId, indices, anchor: rangeAnchor };
+        this.paintDwellSelection();
+    }
+
+    toggleDwellCellSelected(channelId, colIndex) {
+        if (!this.dwellSelection || this.dwellSelection.channelId !== channelId) {
+            this.dwellSelection = { channelId, indices: [colIndex], anchor: colIndex };
+        } else {
+            const selected = new Set(this.dwellSelection.indices);
+            if (selected.has(colIndex)) selected.delete(colIndex);
+            else selected.add(colIndex);
+            const indices = [...selected].sort((a, b) => a - b);
+            this.dwellSelection = indices.length
+                ? { channelId, indices, anchor: colIndex }
+                : null;
+        }
+        this.paintDwellSelection();
+    }
+
+    paintDwellSelection() {
+        const tbody = document.getElementById(`${this.options.prefix}channelTableBody`);
+        if (!tbody) return;
+        if (this.dwellSelection && !this.channels.some(channel => channel.id === this.dwellSelection.channelId)) {
+            this.dwellSelection = null;
+        }
+        tbody.querySelectorAll('.dwell-position-cell.dwell-selected').forEach(cell => {
+            cell.classList.remove('dwell-selected');
+        });
+        if (!this.dwellSelection) return;
+        const row = tbody.querySelector(`tr[data-channel-id="${this.dwellSelection.channelId}"]`);
+        if (!row) return;
+        this.dwellSelection.indices.forEach(index => {
+            const cell = row.querySelector(`.dwell-position-cell[data-col-index="${index}"]`);
+            if (cell) cell.classList.add('dwell-selected');
+        });
+    }
+
+    async applyDwellEnter() {
+        if (!this.dwellSelection) return;
+        const channel = this.channels.find(item => item.id === this.dwellSelection.channelId);
+        if (!channel || this.isChannelDwellLocked(channel.id)) return;
+
+        const active = this.getActiveColumnIndices(channel);
+        const activeSet = new Set(active);
+        const candidates = this.dwellSelection.indices.filter(index => !this.isSpanGray(channel, index));
+        if (!candidates.length) return;
+
+        const proposed = [...new Set(active.concat(candidates))];
+        if (this.columnSpan(proposed) > this.maxContinuousDwellSpan) {
+            await this.showCustomAlert(this.dwellSpanMessage());
+            return;
+        }
+
+        const toTurnOn = candidates.filter(index => !activeSet.has(index));
+        if (!toTurnOn.length) return;
+        this.setColumnDwells(channel, proposed);
+        this.renderChannels();
+        this.selectChannel(channel.id);
+    }
+
+    applyDwellBackspace() {
+        if (!this.dwellSelection) return;
+        const channel = this.channels.find(item => item.id === this.dwellSelection.channelId);
+        if (!channel || this.isChannelDwellLocked(channel.id)) return;
+
+        const selected = new Set(this.dwellSelection.indices);
+        const active = this.getActiveColumnIndices(channel);
+        const remain = active.filter(index => !selected.has(index));
+        if (remain.length === active.length) return;
+        this.setColumnDwells(channel, remain);
+        this.renderChannels();
+        this.selectChannel(channel.id);
+    }
+
+    async applyDwellPattern(step) {
+        if (!this.dwellSelection) return;
+        const channel = this.channels.find(item => item.id === this.dwellSelection.channelId);
+        if (!channel || this.isChannelDwellLocked(channel.id)) return;
+
+        const selected = [...this.dwellSelection.indices].sort((a, b) => a - b);
+        if (!selected.length) return;
+
+        const active = this.getActiveColumnIndices(channel);
+        if (!active.length && this.columnSpan(selected) > this.maxContinuousDwellSpan) {
+            await this.showCustomAlert(this.dwellSpanMessage());
+            return;
+        }
+
+        const start = selected[0];
+        const hits = selected.filter(index => (index - start) % step === 0 && !this.isSpanGray(channel, index));
+        const activeSet = new Set(active);
+        const toTurnOn = hits.filter(index => !activeSet.has(index));
+        if (!toTurnOn.length) return;
+
+        const proposed = active.concat(toTurnOn);
+        if (this.columnSpan(proposed) > this.maxContinuousDwellSpan) {
+            await this.showCustomAlert(this.dwellSpanMessage());
+            return;
+        }
+
+        this.setColumnDwells(channel, proposed);
+        this.renderChannels();
+        this.selectChannel(channel.id);
     }
 
     toggleVisibility(channelId) {
