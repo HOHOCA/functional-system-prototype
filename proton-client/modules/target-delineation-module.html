@@ -477,13 +477,14 @@
     <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
     <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
     <script src="../../shared/scripts/components/ROIComponent.js?v=ui18"></script>
-    <script src="../../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/POIComponent.js?v=ui19"></script>
     <script src="../../shared/scripts/components/RegistrationComponent.js?v=ui2"></script>
     <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
     <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
     <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
     <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
-    <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
+    <script src="../../shared/scripts/components/ThreeDShapeModalComponent.js?v=4"></script>
+    <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=3"></script>
     <script src="../../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
 
     <script>
@@ -496,6 +497,7 @@
         let coronalViewComponent = null;
         let sagittalViewComponent = null;
         let moduleToolbar = null;
+        let threeDShapeModal = null;
         let doseComponent = null;
         let patientOverviewComponent = null;
         const defaultPatient = window.CurrentPatient.get();
@@ -539,6 +541,59 @@
             initComponents();
         });
 
+        function clearThreeDShapeToolActive() {
+            document.querySelectorAll('[data-tool="three-d-shape"]').forEach((button) => {
+                button.classList.remove('active');
+            });
+        }
+
+        function collectTargetRoiList() {
+            return [...document.querySelectorAll('#roiContainer .roi-item')].map((item) => {
+                const name = item.querySelector('.roi-name')?.textContent?.trim() || item.getAttribute('data-roi') || '';
+                const colorEl = item.querySelector('.roi-color');
+                return {
+                    id: item.getAttribute('data-roi') || name,
+                    name,
+                    color: colorEl ? colorEl.style.backgroundColor : '',
+                    type: 'ORGAN'
+                };
+            }).filter((roi) => roi.name);
+        }
+
+        function collectTargetPoiList() {
+            return [...document.querySelectorAll('#poiContainer .poi-item')].map((item) => {
+                const name = item.querySelector('.poi-name')?.textContent?.trim() || item.getAttribute('data-poi') || '';
+                return {
+                    id: item.getAttribute('data-poi') || name,
+                    name,
+                    x: Number(item.dataset.x),
+                    y: Number(item.dataset.y),
+                    z: Number(item.dataset.z)
+                };
+            }).filter((poi) => poi.name && [poi.x, poi.y, poi.z].every(Number.isFinite));
+        }
+
+        function openThreeDShapeModal() {
+            if (typeof ThreeDShapeModalComponent === 'undefined') return;
+            if (threeDShapeModal) {
+                threeDShapeModal.destroy();
+                threeDShapeModal = null;
+            }
+            threeDShapeModal = new ThreeDShapeModalComponent({
+                center: { x: 0, y: 0, z: 0 },
+                imageBounds: {
+                    x: { min: -30, max: 30 },
+                    y: { min: -30, max: 30 },
+                    z: { min: -25, max: 25 }
+                },
+                roiList: collectTargetRoiList(),
+                poiList: collectTargetPoiList(),
+                onConfirm: () => clearThreeDShapeToolActive(),
+                onCancel: () => clearThreeDShapeToolActive()
+            });
+            threeDShapeModal.show();
+        }
+
         // 初始化所有组件
         function initComponents() {
             // 初始化序列树组件
@@ -566,6 +621,7 @@
             if (typeof ModuleToolbarComponent !== 'undefined') {
                 const targetDelineationTools = [
                     { id: 'auto-delineation', icon: 'fas fa-magic', label: '自动勾画', tooltip: '自动勾画', category: '常规' },
+                    { id: 'three-d-shape', icon: 'fas fa-cube', label: '三维图形', tooltip: '三维图形', category: '常规' },
                     { id: 'brush', icon: 'fas fa-paint-brush', label: '画刷', tooltip: '画刷', category: '常规' },
                     { id: 'pen', icon: 'fas fa-pen', label: '画笔', tooltip: '画笔', category: '常规' },
                     { id: 'shape', icon: 'fas fa-shapes', label: '图形', tooltip: '图形', category: '常规' },
@@ -588,8 +644,7 @@
                     moduleId: 'target-delineation', // 模块标识，用于数据持久化
                     // accountId: 'user123', // 账号ID（可选，用于跟随账号存储）
                     onToolClick: (toolId) => {
-                        console.log('工具点击:', toolId);
-                        // 这里可以添加具体的工具功能
+                        if (toolId === 'three-d-shape') openThreeDShapeModal();
                     }
                 });
             }

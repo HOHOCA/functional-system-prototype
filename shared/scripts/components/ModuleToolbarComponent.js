@@ -136,18 +136,33 @@ class ModuleToolbarComponent {
         // 按配置的顺序组织工具
         const allTools = [...this.options.tools];
         
-        // 如果存在保存的工具顺序，使用它
+        // 已保存的顺序优先。配置里新增的工具插到它默认邻居旁边，避免被排到分类末尾。
         if (this.state.toolOrder.length > 0) {
-            const orderMap = new Map();
-            this.state.toolOrder.forEach((toolId, index) => {
-                orderMap.set(toolId, index);
+            const known = new Set(allTools.map((tool) => tool.id));
+            const placed = this.state.toolOrder.filter((id) => known.has(id));
+            allTools.forEach((tool, index) => {
+                if (placed.includes(tool.id)) return;
+                let insertAt = placed.length;
+                for (let i = index - 1; i >= 0; i -= 1) {
+                    const prevAt = placed.indexOf(allTools[i].id);
+                    if (prevAt !== -1) {
+                        insertAt = prevAt + 1;
+                        break;
+                    }
+                }
+                if (insertAt === placed.length) {
+                    for (let i = index + 1; i < allTools.length; i += 1) {
+                        const nextAt = placed.indexOf(allTools[i].id);
+                        if (nextAt !== -1) {
+                            insertAt = nextAt;
+                            break;
+                        }
+                    }
+                }
+                placed.splice(insertAt, 0, tool.id);
             });
-            
-            allTools.sort((a, b) => {
-                const orderA = orderMap.get(a.id) ?? Infinity;
-                const orderB = orderMap.get(b.id) ?? Infinity;
-                return orderA - orderB;
-            });
+            const orderMap = new Map(placed.map((id, index) => [id, index]));
+            allTools.sort((a, b) => orderMap.get(a.id) - orderMap.get(b.id));
         }
 
         // 按分类分组

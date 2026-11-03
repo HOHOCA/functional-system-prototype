@@ -36,27 +36,27 @@ class POIComponent {
             
             <div class="poi-list-section">
                 <div class="poi-tree">
-                            <div class="poi-item" data-poi="ISO" data-visible="true">
+                            <div class="poi-item" data-poi="ISO" data-x="0" data-y="0" data-z="0" data-visible="true">
                                 <div class="poi-color" style="background: #ff6b6b;"></div>
                                 <span class="poi-name">ISO</span>
                                 <i class="fas fa-crosshairs poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Laser" data-visible="true">
+                            <div class="poi-item" data-poi="Laser" data-x="0" data-y="-12.8" data-z="-5.6" data-visible="true">
                                 <div class="poi-color" style="background: #4ecdc4;"></div>
                                 <span class="poi-name">Laser</span>
                                 <i class="fas fa-crosshairs poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Marker1" data-visible="true">
+                            <div class="poi-item" data-poi="Marker1" data-x="3.2" data-y="-4.5" data-z="1.8" data-visible="true">
                                 <div class="poi-color" style="background: #45b7d1;"></div>
                                 <span class="poi-name">Marker1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Control1" data-visible="true">
+                            <div class="poi-item" data-poi="Control1" data-x="-6" data-y="2.4" data-z="8" data-visible="true">
                                 <div class="poi-color" style="background: #96ceb4;"></div>
                                 <span class="poi-name">Control1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
                             </div>
-                            <div class="poi-item" data-poi="Registration1" data-visible="true">
+                            <div class="poi-item" data-poi="Registration1" data-x="40" data-y="0" data-z="-2" data-visible="true">
                                 <div class="poi-color" style="background: #feca57;"></div>
                                 <span class="poi-name">Registration1</span>
                                 <i class="fas fa-map-marker-alt poi-type-icon"></i>
@@ -507,8 +507,10 @@ class POIComponent {
         const poiItem = document.createElement('div');
         poiItem.className = 'poi-item';
         poiItem.setAttribute('data-poi', poiData.name);
-        
         poiItem.setAttribute('data-visible', 'true');
+        if (Number.isFinite(Number(poiData.x))) poiItem.dataset.x = String(poiData.x);
+        if (Number.isFinite(Number(poiData.y))) poiItem.dataset.y = String(poiData.y);
+        if (Number.isFinite(Number(poiData.z))) poiItem.dataset.z = String(poiData.z);
         const typeIcon = poiData.type === 'ISO' || poiData.type === 'UNDEFINED' || poiData.type === 'INIT_LASER_ISO'
             ? 'fa-crosshairs' : 'fa-map-marker-alt';
         poiItem.innerHTML = `
