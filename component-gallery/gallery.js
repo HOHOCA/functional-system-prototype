@@ -1114,6 +1114,34 @@ class ComponentGallery {
                     }
                     break;
 
+                case 'ThreeDShapeModalComponent':
+                    if (typeof ThreeDShapeModalComponent !== 'undefined') {
+                        instance = new ThreeDShapeModalComponent({
+                            mountContainer: componentContainer,
+                            reopenable: true,
+                            center: { x: 0, y: 0, z: 0 },
+                            imageBounds: {
+                                x: { min: -30, max: 30 },
+                                y: { min: -30, max: 30 },
+                                z: { min: -25, max: 25 }
+                            },
+                            roiList: [
+                                { id: 'body', name: 'Body', color: '#c8c8c8', type: 'EXTERNAL' },
+                                { id: 'ptv', name: 'PTV', color: '#ff4d4f', type: 'PTV' },
+                                { id: 'cord', name: 'SpinalCord', color: '#f5d76e', type: 'ORGAN' }
+                            ],
+                            poiList: [
+                                { id: 'iso', name: 'ISO', x: 0, y: 0, z: 0 },
+                                { id: 'marker', name: 'Marker1', x: 12.5, y: -8, z: 4.2 },
+                                { id: 'ref-out', name: 'RefOut', x: 40, y: 0, z: 0 }
+                            ],
+                            onConfirm: (payload) => console.log('三维图形', payload),
+                            onCancel: () => console.log('三维图形已关闭')
+                        });
+                        instance.show();
+                    }
+                    break;
+
                 case 'PromptRichTextModalComponent':
                     if (typeof PromptRichTextModalComponent !== 'undefined') {
                         instance = new PromptRichTextModalComponent({ mountContainer: componentContainer });

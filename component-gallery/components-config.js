@@ -217,6 +217,14 @@ const COMPONENTS_CONFIG = {
             filePath: '../shared/scripts/components/SelectComponent.js'
         },
         {
+            id: 'three-d-shape',
+            name: 'ThreeDShape',
+            displayName: '三维图形',
+            description: '按长方体、圆柱体、球体参数生成 ROI；中心可选手动坐标或已有 POI，可新建结构或写入已有结构',
+            className: 'ThreeDShapeModalComponent',
+            filePath: '../shared/scripts/components/ThreeDShapeModalComponent.js'
+        },
+        {
             id: 'prompt-rich-text-modal',
             name: 'PromptRichTextModal',
             displayName: '提示-富文本类',
