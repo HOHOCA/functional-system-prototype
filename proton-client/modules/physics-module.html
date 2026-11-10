@@ -3,67 +3,544 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>物理 1.0.0.1 - MOZI Proton</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            height: 100vh;
-            background: #1a1a1a;
-            color: #e8e8e8;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-        .pm-titlebar {
-            height: 40px;
-            background: #2a2a2a;
-            border-bottom: 1px solid #3c3c3c;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px 0 16px;
-        }
-        .pm-title { font-size: 14px; }
-        .pm-titlebar-right { display: flex; align-items: center; gap: 14px; }
-        .pm-user { font-size: 13px; color: #cfcfcf; }
-        .pm-win-btn {
-            width: 32px; height: 28px; background: transparent; border: none;
-            color: #ddd; cursor: pointer; border-radius: 4px;
-        }
-        .pm-win-btn:hover { background: #404040; color: #fff; }
-        .pm-win-btn.close:hover { background: #e53935; }
-        .pm-body {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 12px;
-            color: #999;
-        }
-        .pm-body h1 { font-size: 22px; color: #e0e0e0; font-weight: 600; }
-        .pm-body p { font-size: 14px; }
-    </style>
+    <title>物理 4.0.0.0 - 质子加速器</title>
+    <link rel="stylesheet" href="../styles/physics-module.css?v=ct1">
 </head>
-<body>
+<body class="physics-module-page">
     <header class="pm-titlebar">
-        <div class="pm-title">物理 1.0.0.1 · 质子</div>
+        <div class="pm-title">物理 4.0.0.0</div>
         <div class="pm-titlebar-right">
-            <span class="pm-user">manteia</span>
-            <button type="button" class="pm-win-btn close" id="pmCloseBtn" title="关闭">&times;</button>
+            <button type="button" class="pm-user-btn" id="userBtn" aria-haspopup="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <circle cx="8" cy="5.5" r="2.4" stroke="currentColor" stroke-width="1.3"/>
+                    <path d="M3.2 13.2c.8-2.2 2.5-3.3 4.8-3.3s4 1.1 4.8 3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                manteia
+            </button>
+            <div class="pm-user-menu" id="userMenu" hidden>
+                <button type="button" id="logoutBtn">退出登录</button>
+            </div>
+            <div class="pm-window-controls">
+                <button type="button" class="pm-win-btn" id="minBtn" title="最小化" aria-label="最小化">
+                    <svg width="14" height="14" viewBox="0 0 16 16"><line x1="3" y1="8" x2="13" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+                <button type="button" class="pm-win-btn" id="maxBtn" title="最大化" aria-label="最大化">
+                    <svg width="14" height="14" viewBox="0 0 16 16"><rect x="3.5" y="3.5" width="9" height="9" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </button>
+                <button type="button" class="pm-win-btn close" id="closeBtn" title="关闭" aria-label="关闭">
+                    <svg width="14" height="14" viewBox="0 0 16 16">
+                        <line x1="4" y1="4" x2="12" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <line x1="12" y1="4" x2="4" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
+
+    <nav class="pm-tabbar" id="topTabs">
+        <button type="button" class="pm-tab active" data-tab="acc">加速器</button>
+        <button type="button" class="pm-tab" data-tab="ct">CT配置</button>
+        <button type="button" class="pm-tab" data-tab="qa">QA模体</button>
+        <button type="button" class="pm-tab" data-tab="mat">材料</button>
+    </nav>
+
     <main class="pm-body">
-        <h1>质子物理模块</h1>
-        <p>内容与后装不同，待后续按质子规格补充</p>
+        <section class="pm-panel active" id="panel-acc">
+            <div class="acc-layout">
+                <aside class="acc-tree" id="machineTree"></aside>
+                <div class="acc-main">
+                    <div class="acc-head">
+                        <h2 id="paneTitle">加速器</h2>
+                        <div class="acc-actions">
+                            <button type="button" class="pm-btn" id="editBtn" hidden>编辑</button>
+                            <button type="button" class="pm-btn" id="cancelEditBtn" hidden>取消</button>
+                            <button type="button" class="pm-btn primary" id="saveBtn" hidden>保存</button>
+                        </div>
+                    </div>
+
+                    <div class="acc-pane" id="machinePane">
+                        <div class="acc-subtabs" id="machineTabs">
+                            <button type="button" class="acc-subtab active" data-tab="general">通用</button>
+                            <button type="button" class="acc-subtab" data-tab="geom">几何参数</button>
+                            <button type="button" class="acc-subtab" data-tab="beamobj">射束对象</button>
+                            <button type="button" class="acc-subtab" data-tab="mlc" hidden>MLC</button>
+                            <button type="button" class="acc-subtab" data-tab="block" hidden>挡块</button>
+                        </div>
+                        <div class="acc-scroll">
+                            <div class="acc-tab-panel" id="tab-general">
+                                <div class="field-row">
+                                    <label class="acc-label" for="fCode"><i class="req">*</i>编号</label>
+                                    <input class="acc-input" id="fCode" maxlength="16" autocomplete="off">
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fName"><i class="req">*</i>机器名称</label>
+                                    <input class="acc-input" id="fName" maxlength="32" autocomplete="off">
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fModel"><i class="req">*</i>治疗机型号</label>
+                                    <select class="acc-select" id="fModel">
+                                        <option value="">请选择</option>
+                                        <option>ProBeam</option>
+                                        <option>Hitachi</option>
+                                        <option>IBA</option>
+                                        <option>Mevion S250i</option>
+                                        <option>P-Cure</option>
+                                    </select>
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fVersion"><i class="req">*</i>治疗机发布版本</label>
+                                    <input class="acc-input" id="fVersion" maxlength="32" autocomplete="off">
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fParticle"><i class="req">*</i>粒子种类</label>
+                                    <input class="acc-input" id="fParticle" value="Proton" readonly>
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fAccel"><i class="req">*</i>加速模式</label>
+                                    <input class="acc-input" id="fAccel" maxlength="32" autocomplete="off">
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fComment">备注</label>
+                                    <input class="acc-input" id="fComment" maxlength="32" autocomplete="off">
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" id="fByLabel">批准人</label>
+                                    <input class="acc-input" id="fBy" readonly>
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" id="fTimeLabel">调试完成时间</label>
+                                    <input class="acc-input" id="fTime" readonly>
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fFit">拟合算法</label>
+                                    <input class="acc-input" id="fFit" readonly>
+                                </div>
+                                <div class="field-row">
+                                    <label class="acc-label" for="fDose">剂量类型</label>
+                                    <input class="acc-input" id="fDose" value="RBE" readonly>
+                                </div>
+
+                                <div class="tech-block">
+                                    <div class="tech-title">
+                                        <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+                                            <rect x="1" y="1" width="6" height="6" fill="none" stroke="#9ec7e6" stroke-width="1.2"/>
+                                            <rect x="9" y="1" width="6" height="6" fill="none" stroke="#9ec7e6" stroke-width="1.2"/>
+                                            <rect x="1" y="9" width="6" height="6" fill="none" stroke="#9ec7e6" stroke-width="1.2"/>
+                                            <rect x="9" y="9" width="6" height="6" fill="none" stroke="#9ec7e6" stroke-width="1.2"/>
+                                        </svg>
+                                        可实现技术
+                                    </div>
+                                    <label class="acc-check"><input type="checkbox" id="fPbs"> PBS</label>
+                                </div>
+
+                                <div class="coord-block">
+                                    <div class="coord-title">治疗床坐标系统定义：</div>
+                                    <label class="coord-line">
+                                        <input type="radio" name="couchCoord" checked disabled>
+                                        <span>IEC 61217　对于 HFS（头先仰卧）患者：当头部朝向机架时，治疗床角度为 0 度。从上方观察时，正旋转方向为逆时针。</span>
+                                    </label>
+                                </div>
+                                <div class="coord-block">
+                                    <div class="coord-title">机架和准直器坐标系统定义：</div>
+                                    <label class="coord-line">
+                                        <input type="radio" name="gantryCoord" checked disabled>
+                                        <span>IEC 61217　当机架在正上方照射时，机架角度为 0 度。面对机架时，正旋转方向为顺时针。<br>当托盘开口面向机架时，准直器角度为 180 度。从源端观察，正旋转方向为逆时针。</span>
+                                    </label>
+                                </div>
+                                <div class="coord-block">
+                                    <div class="coord-title">射束坐标系统定义：</div>
+                                    <label class="coord-line">
+                                        <input type="radio" name="beamCoord" checked disabled>
+                                        <span>IEC 61217　射束坐标系由 IEC 61217 定义。</span>
+                                    </label>
+                                </div>
+                                <div class="coord-foot">所有其它坐标系都按 IEC 61217 定义</div>
+                            </div>
+
+                            <div class="acc-tab-panel" id="tab-geom" hidden>
+                                <div class="lock-hint" id="geomLock">请先保存通用信息。保存后可编辑几何参数和射束对象。</div>
+                                <div class="sec-block">
+                                    <div class="sec-title">机架参数</div>
+                                    <div class="field-row">
+                                        <label class="acc-label" for="fGantryType"><i class="req">*</i>机架类型</label>
+                                        <input class="acc-input" id="fGantryType" maxlength="32" style="width:160px" autocomplete="off">
+                                    </div>
+                                    <div class="angle-row" id="gantryRangeRow">
+                                        <span class="angle-name">机架支持角度范围</span>
+                                        <span class="angle-lab"><i class="req">*</i>起始</span>
+                                        <input class="num-input" id="fGantryStart" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                        <span class="angle-lab"><i class="req">*</i>终止</span>
+                                        <input class="num-input" id="fGantryStop" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                    </div>
+                                    <div class="angle-row" id="gantrySingleRow" hidden>
+                                        <span class="angle-name"><i class="req">*</i>机架角度</span>
+                                        <input class="num-input" id="fGantryAngle" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                    </div>
+                                </div>
+                                <div class="sec-block" id="supportBlock">
+                                    <div class="sec-title" id="supportTitle">治疗床范围</div>
+                                    <div class="angle-row">
+                                        <span class="angle-name">旋转角度范围</span>
+                                        <span class="angle-lab"><i class="req">*</i>起始</span>
+                                        <input class="num-input" id="fCouchRotStart" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                        <span class="angle-lab"><i class="req">*</i>终止</span>
+                                        <input class="num-input" id="fCouchRotStop" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                    </div>
+                                    <div class="angle-row">
+                                        <span class="angle-name">俯仰角度范围</span>
+                                        <span class="angle-lab"><i class="req">*</i>起始</span>
+                                        <input class="num-input" id="fCouchPitchStart" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                        <span class="angle-lab"><i class="req">*</i>终止</span>
+                                        <input class="num-input" id="fCouchPitchStop" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                    </div>
+                                    <div class="angle-row">
+                                        <span class="angle-name" id="rollName">翻滚角度范围</span>
+                                        <span class="angle-lab"><i class="req">*</i>起始</span>
+                                        <input class="num-input" id="fCouchRollStart" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                        <span class="angle-lab"><i class="req">*</i>终止</span>
+                                        <input class="num-input" id="fCouchRollStop" inputmode="decimal">
+                                        <span class="unit">deg</span>
+                                    </div>
+                                </div>
+                                <div class="sec-block">
+                                    <div class="sec-title">等中心点</div>
+                                    <div class="field-row">
+                                        <label class="acc-label" for="fIsoMax"><i class="req">*</i>等中心点最大数量</label>
+                                        <input class="num-input wide" id="fIsoMax" inputmode="numeric">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="acc-tab-panel" id="tab-beamobj" hidden>
+                                <div class="lock-hint" id="objLock">请先保存通用信息。保存后可编辑几何参数和射束对象。</div>
+                                <div class="obj-sec" id="sec-snout">
+                                    <button type="button" class="obj-tab active" data-obj="snout">Snout</button>
+                                    <div class="table-wrap">
+                                        <table class="acc-table snout">
+                                            <thead>
+                                                <tr>
+                                                    <th>名称</th>
+                                                    <th>形状</th>
+                                                    <th>最小位置[cm]（必填）</th>
+                                                    <th>最大位置[cm]（必填）</th>
+                                                    <th>喷嘴内部尺寸 X[cm]</th>
+                                                    <th>喷嘴内部尺寸 Y[cm]</th>
+                                                    <th>喷嘴外部尺寸 X[cm]</th>
+                                                    <th>喷嘴外部尺寸 Y[cm]</th>
+                                                    <th>Center X[cm]</th>
+                                                    <th>Center Y[cm]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="snoutBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="obj-sec" id="sec-shifter">
+                                    <button type="button" class="obj-tab" data-obj="shifter">Range Shifter</button>
+                                    <div class="table-wrap">
+                                        <table class="acc-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>类型</th>
+                                                    <th>材料名称</th>
+                                                    <th>质量密度[g/cm³]</th>
+                                                    <th>等效水厚度[cm]</th>
+                                                    <th>物理厚度[cm]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="shifterBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="obj-sec" id="sec-selector" hidden>
+                                    <button type="button" class="obj-tab" data-obj="selector">射程选择器</button>
+                                    <div class="table-wrap">
+                                        <table class="acc-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>类型</th>
+                                                    <th>材料</th>
+                                                    <th>质量密度[g/cm³]</th>
+                                                    <th>物理厚度[cm]</th>
+                                                    <th>参考位置[cm]</th>
+                                                    <th>等效水厚度[cm]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="selectorBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="obj-sec" id="sec-nozzle" hidden>
+                                    <button type="button" class="obj-tab" data-obj="nozzle">Nozzle Exit Window</button>
+                                    <div class="table-wrap">
+                                        <table class="acc-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>类型</th>
+                                                    <th>材料</th>
+                                                    <th>质量密度[g/cm³]</th>
+                                                    <th>物理厚度[cm]</th>
+                                                    <th>参考位置[cm]</th>
+                                                    <th>等效水厚度[cm]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="nozzleBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="obj-actions">
+                                    <button type="button" class="pm-btn" id="objAddBtn" disabled>新增</button>
+                                    <button type="button" class="pm-btn" id="objDelBtn" disabled>删除</button>
+                                </div>
+                            </div>
+
+                            <div class="acc-tab-panel" id="tab-mlc" hidden>
+                                <div class="lock-hint" id="mlcLock">请先保存通用信息。</div>
+                                <div class="table-wrap">
+                                    <table class="acc-table">
+                                        <thead>
+                                            <tr>
+                                                <th>叶片中心位置[cm]</th>
+                                                <th>宽度[cm]</th>
+                                                <th>材料类型</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="mlcBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="obj-actions">
+                                    <button type="button" class="pm-btn" id="mlcAddBtn" disabled>新增</button>
+                                    <button type="button" class="pm-btn" id="mlcDelBtn" disabled>删除</button>
+                                </div>
+                            </div>
+
+                            <div class="acc-tab-panel" id="tab-block" hidden>
+                                <div class="lock-hint" id="blockLock">请先保存通用信息。</div>
+                                <div class="table-wrap">
+                                    <table class="acc-table">
+                                        <thead>
+                                            <tr>
+                                                <th>直径[cm]</th>
+                                                <th>物理厚度[cm]</th>
+                                                <th>材料名字</th>
+                                                <th>质量密度[g/cm³]</th>
+                                                <th>平均激发能[eV]</th>
+                                                <th>原子序数</th>
+                                                <th>元素相对原子质量</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="blockBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="obj-actions">
+                                    <button type="button" class="pm-btn" id="blockAddBtn" disabled>新增</button>
+                                    <button type="button" class="pm-btn" id="blockDelBtn" disabled>删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="acc-pane" id="beamPane" hidden>
+                        <div class="acc-subtabs" id="beamTabs">
+                            <button type="button" class="acc-subtab active" data-btab="bgeneral">通用</button>
+                            <button type="button" class="acc-subtab" data-btab="spot">束斑参数</button>
+                            <button type="button" class="acc-subtab" data-btab="bragg">布拉格峰</button>
+                            <button type="button" class="acc-subtab" data-btab="dose">绝对剂量</button>
+                            <button type="button" class="acc-subtab" data-btab="discrete" hidden>离散能量</button>
+                        </div>
+                        <div class="acc-scroll">
+                            <div class="acc-tab-panel" id="btab-bgeneral">
+                                <div class="beam-grid" id="beamGeneral"></div>
+                            </div>
+                            <div class="acc-tab-panel" id="btab-spot" hidden></div>
+                            <div class="acc-tab-panel" id="btab-bragg" hidden></div>
+                            <div class="acc-tab-panel" id="btab-dose" hidden></div>
+                            <div class="acc-tab-panel" id="btab-discrete" hidden></div>
+                        </div>
+                    </div>
+
+                    <div class="blank-state" id="emptyPane" hidden>请在左侧选择一台加速器</div>
+                </div>
+            </div>
+        </section>
+        <section class="pm-panel" id="panel-ct">
+            <div class="acc-layout">
+                <aside class="acc-tree" id="ctTree"></aside>
+                <div class="ct-main">
+                    <div class="blank-state" id="ctEmpty" hidden>请在左侧选择一台CT扫描设备</div>
+                    <div class="ct-detail" id="ctDetail">
+                        <div class="ct-meta">
+                            <button type="button" class="pm-btn" id="ctEditBtn" hidden>编辑</button>
+                            <button type="button" class="pm-btn primary" id="ctSaveBtn" hidden>保存</button>
+                            <div class="ct-field">
+                                <label for="ctName"><i class="req">*</i>名称</label>
+                                <input class="acc-input" id="ctName" maxlength="32" autocomplete="off">
+                            </div>
+                            <div class="ct-field">
+                                <label for="ctMaker">生产商</label>
+                                <input class="acc-input" id="ctMaker" maxlength="32" autocomplete="off">
+                            </div>
+                            <div class="ct-field">
+                                <label for="ctBy">批准人</label>
+                                <input class="acc-input" id="ctBy" readonly>
+                            </div>
+                            <div class="ct-field">
+                                <label for="ctAt">审批数据</label>
+                                <input class="acc-input" id="ctAt" readonly>
+                            </div>
+                            <label class="ct-cavity" for="ctCavityOn">
+                                <input type="checkbox" id="ctCavityOn">
+                                <span>填充空腔HU至</span>
+                            </label>
+                            <input class="acc-input ct-cavity-input" id="ctCavity" autocomplete="off" placeholder="[-1050.00, 20000.00]">
+                        </div>
+                        <div class="ct-pair">
+                            <div class="ct-table-wrap">
+                                <div class="ct-table-scroll">
+                                    <table class="ct-table">
+                                        <thead><tr><th>HU</th><th>相对电子密度</th></tr></thead>
+                                        <tbody id="ctElectronBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="ct-actions">
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctElecAdd" disabled title="添加">+</button>
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctElecDel" disabled title="删除">−</button>
+                                </div>
+                            </div>
+                            <div class="ct-chart"><canvas id="ctElectronCanvas"></canvas></div>
+                        </div>
+                        <div class="ct-pair">
+                            <div class="ct-table-wrap">
+                                <div class="ct-table-scroll">
+                                    <table class="ct-table">
+                                        <thead><tr><th>HU</th><th>质量密度(g/cm³)</th></tr></thead>
+                                        <tbody id="ctMassBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="ct-actions">
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctMassAdd" disabled title="添加">+</button>
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctMassDel" disabled title="删除">−</button>
+                                </div>
+                            </div>
+                            <div class="ct-chart"><canvas id="ctMassCanvas"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="pm-panel" id="panel-qa">
+            <div class="pm-placeholder-panel">QA模体不在本次加速器原型中</div>
+        </section>
+        <section class="pm-panel" id="panel-mat">
+            <div class="pm-placeholder-panel">材料不在本次加速器原型中</div>
+        </section>
     </main>
-    <script>
-        document.getElementById('pmCloseBtn').addEventListener('click', function () {
-            if (window.history.length > 1) window.history.back();
-            else window.location.href = '../index.html';
-        });
-    </script>
-    <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>
+
+    <div class="pm-context-menu" id="ctxMenu" hidden></div>
+
+    <div class="pm-modal-mask" id="confirmMask">
+        <div class="pm-modal" role="dialog" aria-modal="true">
+            <div class="pm-modal-header">
+                <h3 id="confirmTitle">确认</h3>
+                <button type="button" class="pm-modal-close" data-close="confirmMask">&times;</button>
+            </div>
+            <div class="pm-modal-body">
+                <div id="confirmText"></div>
+                <div class="warn" id="confirmWarn"></div>
+            </div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn ghost" data-close="confirmMask">取消</button>
+                <button type="button" class="pm-btn primary" id="confirmOk">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pm-modal-mask" id="authMask">
+        <div class="pm-modal" role="dialog" aria-modal="true">
+            <div class="pm-modal-header">
+                <h3 id="authTitle">权限确认</h3>
+                <button type="button" class="pm-modal-close" data-close="authMask">&times;</button>
+            </div>
+            <div class="pm-modal-body">
+                <div class="modal-field">
+                    <label for="authUser">账号</label>
+                    <input class="acc-input" id="authUser" autocomplete="off">
+                </div>
+                <div class="modal-field">
+                    <label for="authPwd">密码</label>
+                    <input class="acc-input" id="authPwd" type="password" autocomplete="off">
+                </div>
+            </div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn ghost" data-close="authMask">取消</button>
+                <button type="button" class="pm-btn primary" id="authOk">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pm-modal-mask" id="commMask">
+        <div class="pm-modal wide" role="dialog" aria-modal="true">
+            <div class="pm-modal-header">
+                <h3>Commission</h3>
+                <button type="button" class="pm-modal-close" data-close="commMask">&times;</button>
+            </div>
+            <div class="pm-modal-body">
+                <div class="modal-field">
+                    <label for="pathIdd">深度剂量 IDD 目录</label>
+                    <div class="path-line">
+                        <input class="acc-input" id="pathIdd" autocomplete="off">
+                        <button type="button" class="pm-btn" data-pick="pathIdd">选择</button>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label for="pathSpot">束斑 Spot 目录</label>
+                    <div class="path-line">
+                        <input class="acc-input" id="pathSpot" autocomplete="off">
+                        <button type="button" class="pm-btn" data-pick="pathSpot">选择</button>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label for="pathClinic">临床数据目录</label>
+                    <div class="path-line">
+                        <input class="acc-input" id="pathClinic" autocomplete="off">
+                        <button type="button" class="pm-btn" data-pick="pathClinic">选择</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn ghost" data-close="commMask">取消</button>
+                <button type="button" class="pm-btn primary" id="commOk">Commission</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pm-modal-mask" id="restartMask">
+        <div class="pm-modal" role="dialog" aria-modal="true">
+            <div class="pm-modal-header">
+                <h3>提示</h3>
+                <button type="button" class="pm-modal-close" data-close="restartMask">&times;</button>
+            </div>
+            <div class="pm-modal-body">CT配置已修改，重启客户端后生效。</div>
+            <div class="pm-modal-footer">
+                <button type="button" class="pm-btn ghost" id="restartLater">稍后重启</button>
+                <button type="button" class="pm-btn primary" id="restartNow">立即重启</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pm-toast" id="toast" hidden></div>
+
+    <script src="../scripts/physics-module.js?v=ct1"></script>
 </body>
 </html>
