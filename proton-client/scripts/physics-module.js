@@ -1474,7 +1474,7 @@
     let selectedCtId = 'ge';
     let ctEditing = false;
     let ctDraft = null;
-    let ctRowSel = { electron: -1, mass: -1 };
+    let ctRowSel = { electron: -1, mass: -1, spr: -1 };
     let ctChanged = false;
     let restartLeave = null;
     let ctDupToast = '';
@@ -1499,10 +1499,19 @@
         ]);
     }
 
+    function geSpr() {
+        return ctPairs([
+            ['-1000', '0.000'], ['-808', '0.200'], ['-483', '0.500'], ['-70', '0.960'], ['-35', '0.990'],
+            ['0', '1.000'], ['44.5', '1.060'], ['47', '1.070'], ['100', '1.100'], ['236', '1.160'],
+            ['1000', '1.600'], ['3000', '2.800'], ['6000', '4.200'], ['10000', '6.000'], ['15000', '8.000']
+        ]);
+    }
+
     function shortCurve() {
         return {
             electron: ctPairs([['-1000', '0'], ['0', '1'], ['1000', '1.5']]),
-            mass: ctPairs([['-1000', '0.001'], ['0', '1'], ['1000', '1.5']])
+            mass: ctPairs([['-1000', '0.001'], ['0', '1'], ['1000', '1.5']]),
+            spr: ctPairs([['-1000', '0.000'], ['0', '1.000'], ['1000', '1.500']])
         };
     }
 
@@ -1510,32 +1519,32 @@
         {
             id: 'nm1', name: 'new Machine 1', manufacturer: 'GE MEDICAL SYSTEMS', approver: 'mpsadmin',
             approvedAt: '2026-09-28 09:40:18', group: 'commissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: geElectron(), mass: geMass()
+            electron: geElectron(), mass: geMass(), spr: geSpr()
         },
         {
             id: 'somatom', name: 'SOMATOM go.Open Pro', manufacturer: 'SIEMENS', approver: 'mpsadmin',
             approvedAt: '2026-09-28 09:12:06', group: 'commissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: geElectron(), mass: geMass()
+            electron: geElectron(), mass: geMass(), spr: geSpr()
         },
         {
             id: 'ge', name: 'GE MEDICAL SYSTEMS', manufacturer: 'GE MEDICAL SYSTEMS', approver: 'mpsadmin',
             approvedAt: '2021-03-29 09:50:28', group: 'commissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: geElectron(), mass: geMass()
+            electron: geElectron(), mass: geMass(), spr: geSpr()
         },
         {
             id: 'tpl', name: 'Default template', manufacturer: 'Manteia', approver: '',
             approvedAt: '', group: 'uncommissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: shortCurve().electron, mass: shortCurve().mass
+            electron: shortCurve().electron, mass: shortCurve().mass, spr: shortCurve().spr
         },
         {
             id: 'ctnew', name: 'new Machine', manufacturer: '', approver: '',
             approvedAt: '', group: 'uncommissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: [], mass: []
+            electron: [], mass: [], spr: []
         },
         {
             id: 'tplcopy', name: 'Default template_copy', manufacturer: 'Manteia', approver: '',
             approvedAt: '', group: 'uncommissioned', cavityOn: true, cavityHu: '-800.00',
-            electron: shortCurve().electron, mass: shortCurve().mass
+            electron: shortCurve().electron, mass: shortCurve().mass, spr: shortCurve().spr
         }
     ];
 
@@ -1638,7 +1647,7 @@
 
     function renderPairBody(bodyId, rows, which) {
         const body = $(bodyId);
-        const phVal = which === 'electron' ? '[0.000, 20.000]' : '[0.000, 25.000]';
+        const phVal = which === 'mass' ? '[0.000, 25.000]' : '[0.000, 20.000]';
         body.innerHTML = rows.map((r, i) => {
             const active = ctRowSel[which] === i ? ' class="active"' : '';
             if (!ctEditing) {
@@ -1805,6 +1814,7 @@
         if (!m || $('panel-ct') && !$('panel-ct').classList.contains('active')) return;
         drawChart('ctElectronCanvas', chartPoints(m.electron), 'HU转相对电子密度', '相对电子密度');
         drawChart('ctMassCanvas', chartPoints(m.mass), 'HU转质量密度', '质量密度(g/cm³)');
+        drawChart('ctSprCanvas', chartPoints(m.spr), 'HU转组织本领比', '组织本领比');
     }
 
     function renderCtDetail() {
@@ -1837,9 +1847,12 @@
         $('ctElecDel').disabled = lock;
         $('ctMassAdd').disabled = lock;
         $('ctMassDel').disabled = lock;
+        $('ctSprAdd').disabled = lock;
+        $('ctSprDel').disabled = lock;
         ['ctName', 'ctMaker', 'ctCavity'].forEach((id) => $(id).classList.remove('invalid'));
         renderPairBody('ctElectronBody', m.electron, 'electron');
         renderPairBody('ctMassBody', m.mass, 'mass');
+        renderPairBody('ctSprBody', m.spr || [], 'spr');
         requestAnimationFrame(drawCtCharts);
     }
 
@@ -1855,13 +1868,13 @@
                 ctEditing = false;
                 ctDraft = null;
                 selectedCtId = id;
-                ctRowSel = { electron: -1, mass: -1 };
+                ctRowSel = { electron: -1, mass: -1, spr: -1 };
                 renderCt();
             });
             return false;
         }
         selectedCtId = id;
-        ctRowSel = { electron: -1, mass: -1 };
+        ctRowSel = { electron: -1, mass: -1, spr: -1 };
         renderCt();
         return true;
     }
@@ -1875,7 +1888,7 @@
             const key = String(Number(r.hu));
             counts[key] = (counts[key] || 0) + 1;
         });
-        const body = $(which === 'electron' ? 'ctElectronBody' : 'ctMassBody');
+        const body = $(ctBodyId(which));
         let dup = false;
         body.querySelectorAll('input[data-field="hu"]').forEach((input) => {
             const bad = decOk(input.value, 2) && counts[String(Number(input.value))] > 1;
@@ -1897,14 +1910,58 @@
         const idx = Number(tr.dataset.idx);
         const row = ctDraft[which][idx];
         if (!row) return;
-        row[e.target.dataset.field] = e.target.value;
+        const field = e.target.dataset.field;
+        if (which === 'spr' && field === 'val') {
+            const text = e.target.value.trim();
+            const prev = e.target.dataset.prev != null ? e.target.dataset.prev : row.val;
+            if (text === '') row.val = '';
+            else {
+                const n = Number(text);
+                row.val = Number.isFinite(n) && n >= 0 && n <= 20 ? text : prev;
+            }
+        } else {
+            row[field] = e.target.value;
+        }
         markCtDup(which);
+        drawCtCharts();
+    }
+
+    function onSprValFocus(e) {
+        if (!ctDraft || e.target.tagName !== 'INPUT' || e.target.dataset.field !== 'val') return;
+        e.target.dataset.prev = e.target.value;
+    }
+
+    function onSprValBlur(e) {
+        if (!ctDraft || e.target.tagName !== 'INPUT' || e.target.dataset.field !== 'val') return;
+        const tr = e.target.closest('tr');
+        if (!tr) return;
+        const row = ctDraft.spr[Number(tr.dataset.idx)];
+        if (!row) return;
+        const text = e.target.value.trim();
+        const prev = e.target.dataset.prev != null ? e.target.dataset.prev : '';
+        if (text === '') {
+            row.val = '';
+            e.target.value = '';
+            drawCtCharts();
+            return;
+        }
+        const n = Number(text);
+        if (!Number.isFinite(n) || n < 0 || n > 20) {
+            e.target.value = prev;
+            row.val = prev;
+            drawCtCharts();
+            return;
+        }
+        const padded = n.toFixed(3);
+        e.target.value = padded;
+        row.val = padded;
+        e.target.dataset.prev = padded;
         drawCtCharts();
     }
 
     function selectCtRow(which, idx) {
         ctRowSel[which] = idx;
-        const body = $(which === 'electron' ? 'ctElectronBody' : 'ctMassBody');
+        const body = $(ctBodyId(which));
         body.querySelectorAll('tr').forEach((tr, i) => tr.classList.toggle('active', i === idx));
     }
 
@@ -1913,7 +1970,7 @@
         ctDraft[which].push({ hu: '', val: '' });
         ctRowSel[which] = ctDraft[which].length - 1;
         renderCtDetail();
-        const body = $(which === 'electron' ? 'ctElectronBody' : 'ctMassBody');
+        const body = $(ctBodyId(which));
         const input = body.querySelector('tr:last-child input');
         if (input) input.focus();
     }
@@ -1922,7 +1979,7 @@
         if (!ctEditing || !ctDraft) return;
         const idx = ctRowSel[which];
         if (idx < 0 || !ctDraft[which][idx]) {
-            toast(which === 'electron' ? '请选择一行相对电子密度删除' : '请选择一行质量密度删除');
+            toast(ctDeleteTip(which));
             return;
         }
         ctDraft[which].splice(idx, 1);
@@ -1930,18 +1987,35 @@
         renderCtDetail();
     }
 
+    function ctBodyId(which) {
+        if (which === 'electron') return 'ctElectronBody';
+        if (which === 'mass') return 'ctMassBody';
+        return 'ctSprBody';
+    }
+
+    function ctDeleteTip(which) {
+        if (which === 'electron') return '请选择一行相对电子密度删除';
+        if (which === 'mass') return '请选择一行质量密度删除';
+        return '请选择一行组织本领比删除';
+    }
+
+    function ctValRule(which) {
+        if (which === 'mass') return { label: '质量密度', maxV: 25 };
+        if (which === 'spr') return { label: '组织本领比', maxV: 20 };
+        return { label: '相对电子密度', maxV: 20 };
+    }
+
     function rowError(which, rows) {
-        const label = which === 'electron' ? '相对电子密度' : '质量密度';
-        const maxV = which === 'electron' ? 20 : 25;
+        const rule = ctValRule(which);
         const seen = new Set();
         for (let i = 0; i < rows.length; i += 1) {
             const r = rows[i];
-            if (String(r.hu).trim() === '' || String(r.val).trim() === '') return 'HU/' + label + '不能为空';
+            if (String(r.hu).trim() === '' || String(r.val).trim() === '') return 'HU/' + rule.label + '不能为空';
             const hu = Number(r.hu);
             if (!decOk(r.hu, 2) || hu < -1050 || hu > 20000) return 'HU须在 -1050.00 到 20000.00 之间，保留有效小数';
             const val = Number(r.val);
-            if (!decOk(r.val, 3) || val < 0 || val > maxV) {
-                return label + '须在 0.000 到 ' + maxV.toFixed(3) + ' 之间，保留有效小数';
+            if (!decOk(r.val, 3) || val < 0 || val > rule.maxV) {
+                return rule.label + '须在 0.000 到 ' + rule.maxV.toFixed(3) + ' 之间，保留有效小数';
             }
             const key = String(hu);
             if (seen.has(key)) return '存在相同的数值关系';
@@ -1962,7 +2036,7 @@
         if (!m || m.group !== 'uncommissioned') return;
         ctDraft = clone(m);
         ctEditing = true;
-        ctRowSel = { electron: -1, mass: -1 };
+        ctRowSel = { electron: -1, mass: -1, spr: -1 };
         renderCt();
     }
 
@@ -2013,6 +2087,12 @@
             markCtDup('mass');
             return;
         }
+        const sprErr = rowError('spr', ctDraft.spr || []);
+        if (sprErr) {
+            toast(sprErr);
+            markCtDup('spr');
+            return;
+        }
         const sortRows = (rows) => rows.slice().sort((a, b) => Number(a.hu) - Number(b.hu));
         const target = ctFind(ctDraft.id);
         target.name = name;
@@ -2021,6 +2101,7 @@
         target.cavityHu = ctDraft.cavityHu;
         target.electron = sortRows(ctDraft.electron);
         target.mass = sortRows(ctDraft.mass);
+        target.spr = sortRows(ctDraft.spr || []);
         ctEditing = false;
         ctDraft = null;
         ctChanged = true;
@@ -2043,6 +2124,8 @@
         if (elecErr) return elecErr;
         const massErr = rowError('mass', m.mass);
         if (massErr) return massErr;
+        const sprErr = rowError('spr', m.spr || []);
+        if (sprErr) return sprErr;
         const elec = ctHuSpan(m.electron);
         const mass = ctHuSpan(m.mass);
         const overlap = elec[0] <= mass[1] && mass[0] <= elec[1];
@@ -2095,7 +2178,8 @@
             cavityOn: true,
             cavityHu: '-800.00',
             electron: [],
-            mass: []
+            mass: [],
+            spr: []
         });
         selectedCtId = id;
         ctChanged = true;
@@ -2193,6 +2277,10 @@
             selectCtRow(which, Number(tr.dataset.idx));
         });
         body.addEventListener('input', (e) => onCtCell(which, e));
+        if (which === 'spr') {
+            body.addEventListener('focusin', onSprValFocus);
+            body.addEventListener('focusout', onSprValBlur);
+        }
     }
 
     function initCt() {
@@ -2217,8 +2305,11 @@
         $('ctElecDel').addEventListener('click', () => deleteCtRow('electron'));
         $('ctMassAdd').addEventListener('click', () => addCtRow('mass'));
         $('ctMassDel').addEventListener('click', () => deleteCtRow('mass'));
+        $('ctSprAdd').addEventListener('click', () => addCtRow('spr'));
+        $('ctSprDel').addEventListener('click', () => deleteCtRow('spr'));
         bindCtTable('ctElectronBody', 'electron');
         bindCtTable('ctMassBody', 'mass');
+        bindCtTable('ctSprBody', 'spr');
         $('ctName').addEventListener('input', () => {
             if (ctDraft) ctDraft.name = $('ctName').value;
             $('ctName').classList.remove('invalid');

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>物理 4.0.0.0 - 质子加速器</title>
-    <link rel="stylesheet" href="../styles/physics-module.css?v=ct1">
+    <link rel="stylesheet" href="../styles/physics-module.css?v=ct2">
 </head>
 <body class="physics-module-page">
     <header class="pm-titlebar">
@@ -435,6 +435,21 @@
                             </div>
                             <div class="ct-chart"><canvas id="ctMassCanvas"></canvas></div>
                         </div>
+                        <div class="ct-pair">
+                            <div class="ct-table-wrap">
+                                <div class="ct-table-scroll">
+                                    <table class="ct-table">
+                                        <thead><tr><th>HU</th><th>组织本领比</th></tr></thead>
+                                        <tbody id="ctSprBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="ct-actions">
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctSprAdd" disabled title="添加">+</button>
+                                    <button type="button" class="pm-btn ct-icon-btn" id="ctSprDel" disabled title="删除">−</button>
+                                </div>
+                            </div>
+                            <div class="ct-chart"><canvas id="ctSprCanvas"></canvas></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -541,6 +556,6 @@
 
     <div class="pm-toast" id="toast" hidden></div>
 
-    <script src="../scripts/physics-module.js?v=ct1"></script>
+    <script src="../scripts/physics-module.js?v=ct2"></script>
 </body>
 </html>
