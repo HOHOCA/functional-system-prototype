@@ -90,7 +90,6 @@
         .product-card:nth-child(2) { animation-delay: 0.2s; }
         .product-card:nth-child(3) { animation-delay: 0.3s; }
         .product-card:nth-child(4) { animation-delay: 0.4s; }
-        .product-card:nth-child(5) { animation-delay: 0.5s; }
 
         .product-card::before {
             content: '';
@@ -115,23 +114,10 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .product-card.disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .product-card.disabled:hover {
-            transform: none;
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.1);
-            box-shadow: none;
-        }
-
         /* 产品颜色 */
         .product-card.proton { --card-color: #4a9eff; }
         .product-card.brachy { --card-color: #10b981; }
         .product-card.photon { --card-color: #ef4444; }
-        .product-card.contour { --card-color: #f59e0b; }
         .product-card.gallery { --card-color: #8b5cf6; }
         .product-card.flow { --card-color: #22c55e; }
 
@@ -326,17 +312,6 @@
                             </div>
             </div>
 
-            <!-- 放疗工坊 -->
-            <div class="product-card contour disabled">
-                <div class="card-icon">
-                    <i class="fas fa-draw-polygon"></i>
-                    </div>
-                <div class="card-header">
-                    <h2 class="card-title">放疗工坊</h2>
-                    <p class="card-subtitle">RTFactory</p>
-                        </div>
-                    </div>
-
             <!-- 组件画廊 -->
             <div class="product-card gallery" onclick="navigateTo('component-gallery/index.html', this)">
                 <div class="card-icon">
@@ -355,10 +330,6 @@
 
     <script>
         function navigateTo(url, element) {
-            // 检查是否是disabled卡片
-            if (element && element.classList.contains('disabled')) {
-                return;
-            }
             window.location.href = url;
         }
 
