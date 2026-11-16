@@ -1,6 +1,6 @@
 /**
- * MOZI 4.0 平台外壳：顶栏、页签、窗控。
- * 视觉 token 对齐蓝湖（#000 / #232323 / #249BD9 / #EEEEEE）。
+ * MOZI 平台外壳：顶栏、页签、窗控。
+ * 视觉对齐「功能系统产品原型共享 - 朱琦」Photon 顶栏（48px / #232323 / #3AACDE）。
  * 由各产品 index.html 引用；iframe 模块继续走 styles.css 中的 :root。
  */
 
@@ -11,9 +11,9 @@
 }
 
 .mozi-app {
-    font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
-    background: var(--mozi-bg-page, #000000);
-    color: var(--mozi-text, #eeeeee);
+    font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+    background: #1a1a1a;
+    color: #ffffff;
     overflow: hidden;
 }
 
@@ -22,223 +22,217 @@
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    background: var(--mozi-bg-page, #000000);
+    background: #1a1a1a;
 }
 
 .mozi-app .top-nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 36px;
-    min-height: 36px;
-    background: var(--mozi-bg-header, #232323);
+    height: 48px;
+    min-height: 48px;
+    background: #232323;
     border-bottom: 1px solid rgba(55, 55, 55, 0.75);
-    padding: 0 8px 0 16px;
+    padding: 0 16px 0 20px;
     z-index: 1000;
     flex-shrink: 0;
     flex-wrap: nowrap;
-    overflow: hidden;
     gap: 12px;
 }
 
 .mozi-app .nav-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     min-width: 0;
-    flex-shrink: 0;
+    flex: 0 0 auto;
 }
 
 .mozi-app .logo {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #3AACDE;
     white-space: nowrap;
-    color: var(--mozi-text, #eeeeee);
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 18px;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    line-height: 28px;
+    display: inline-flex;
+    align-items: baseline;
 }
 
-.mozi-app .logo-wordmark {
-    width: 54px;
-    height: 18px;
-    display: block;
-    flex-shrink: 0;
-    background: url("../assets/images/mozi-wordmark.png") 0 0 no-repeat;
-    background-size: 322px 18px;
+.mozi-app .logo .logo-mo {
+    color: #3AACDE;
 }
 
-.mozi-app .logo-name {
-    display: none;
+.mozi-app .logo .logo-zi {
+    color: #4EC8DC;
 }
 
 .mozi-app .logo-version {
-    color: #4d9bd5;
-    font-size: 14px;
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(212, 212, 212, 0.55);
+    letter-spacing: 0.5px;
 }
 
-.mozi-app .nav-icons {
+.mozi-app .nav-icons,
+.mozi-app .right-tools {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    height: 28px;
 }
 
 .mozi-app .nav-icon-btn {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     background: transparent;
     border: none;
-    color: var(--mozi-text-muted, #d4d4d4);
+    color: #d4d4d4;
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
+}
+
+.mozi-app .nav-icon-btn i {
+    font-size: 14px;
     line-height: 1;
 }
 
-.mozi-app .nav-icon-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.mozi-app .nav-icon-btn img,
-.mozi-app .user-profile img,
-.mozi-app .window-control-btn img {
-    width: 14px;
-    height: 14px;
-    object-fit: contain;
+.mozi-app .nav-icon-btn img.nav-icon-img,
+.mozi-app .window-control-btn img.nav-icon-img,
+.mozi-app .user-profile .user-avatar {
+    width: 18px;
+    height: 18px;
     display: block;
-    image-rendering: auto;
+    object-fit: contain;
+    pointer-events: none;
 }
 
-.mozi-app .window-control-btn img {
-    width: 12px;
-    height: 12px;
+.mozi-app .nav-icon-btn:hover {
+    background: rgba(238, 238, 238, 0.08);
+    color: #eeeeee;
+}
+
+.mozi-app .nav-icon-btn:active,
+.mozi-app .nav-icon-btn.active {
+    color: #249BD9;
+    background: rgba(36, 155, 217, 0.16);
 }
 
 .mozi-app .nav-center {
-    flex: 1;
+    position: static;
+    left: auto;
+    transform: none;
+    flex: 1 1 auto;
     display: flex;
-    justify-content: center;
+    justify-content: safe center;
     min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.mozi-app .nav-center::-webkit-scrollbar {
+    display: none;
 }
 
 .mozi-app .main-nav {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    flex-shrink: 0;
 }
 
 .mozi-app .nav-item {
+    height: 32px;
+    padding: 0 14px;
+    color: #d4d4d4;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 32px;
+    white-space: nowrap;
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 22px;
-    padding: 0 10px;
-    color: var(--mozi-text, #eeeeee);
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 14px;
-    line-height: 19px;
-    white-space: nowrap;
+    gap: 6px;
+    box-sizing: border-box;
     border: none;
     background: transparent;
 }
 
 .mozi-app .nav-item:hover {
-    color: #ffffff;
     background: rgba(238, 238, 238, 0.08);
+    color: #eeeeee;
 }
 
 .mozi-app .nav-item.active {
-    background: var(--mozi-primary, #249bd9);
+    background: rgba(36, 155, 217, 0.28);
     color: #ffffff;
 }
 
 .mozi-app .nav-right {
     display: flex;
     align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.mozi-app .physics-module-btn {
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 2px;
-    color: var(--mozi-text-muted, #d4d4d4);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mozi-app .physics-module-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.mozi-app .physics-module-btn svg {
-    display: block;
-    width: 16px;
-    height: 16px;
-}
-
-.mozi-app .nav-divider {
-    width: 1px;
-    height: 14px;
-    background: rgba(238, 238, 238, 0.3);
-    flex-shrink: 0;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 0 0 auto;
 }
 
 .mozi-app .user-profile {
     display: flex;
     align-items: center;
-    gap: 5px;
-    color: var(--mozi-text-muted, #d4d4d4);
+    gap: 6px;
+    color: #d4d4d4;
     font-size: 12px;
     line-height: 16px;
+    font-weight: 400;
     cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 .mozi-app .user-profile:hover {
-    color: #ffffff;
-}
-
-.mozi-app .user-profile i {
-    font-size: 14px;
+    color: #eeeeee;
+    background: rgba(238, 238, 238, 0.08);
 }
 
 .mozi-app .window-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .mozi-app .window-control-btn {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     background: transparent;
     border: none;
-    color: var(--mozi-text-muted, #d4d4d4);
+    color: #d4d4d4;
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background 0.15s, color 0.15s;
 }
 
 .mozi-app .window-control-btn:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(238, 238, 238, 0.08);
+    color: #eeeeee;
 }
 
 .mozi-app .window-control-btn.close-btn:hover {
@@ -250,7 +244,7 @@
     flex: 1;
     position: relative;
     overflow: hidden;
-    background: var(--mozi-bg-page, #000000);
+    background: #1a1a1a;
     min-height: 0;
 }
 
@@ -258,7 +252,7 @@
     width: 100%;
     height: 100%;
     border: 0;
-    background: var(--mozi-bg-page, #000000);
+    background: #1a1a1a;
     display: none;
 }
 

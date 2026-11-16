@@ -44,8 +44,9 @@ class ROIComponent {
                 <div class="roi-tree">
                     <div class="roi-category expanded" data-category="target">
                         <div class="roi-category-header">
-                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
-                            <span>靶区(7)</span>
+                            <span class="mozi-ui-icon mozi-ui-icon-eye roi-category-visibility visible"></span>
+                            <span class="roi-category-title">靶区(7)</span>
+                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-category-chevron"></span>
                         </div>
                         <div class="roi-category-content">
                             <div class="roi-item" data-roi="CTV1">
@@ -305,8 +306,9 @@ class ROIComponent {
                     
                     <div class="roi-category expanded" data-category="non-target">
                         <div class="roi-category-header">
-                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down"></span>
-                            <span>非靶区(3)</span>
+                            <span class="mozi-ui-icon mozi-ui-icon-eye roi-category-visibility visible"></span>
+                            <span class="roi-category-title">非靶区(3)</span>
+                            <span class="mozi-ui-icon mozi-ui-icon-chevron-down roi-category-chevron"></span>
                         </div>
                         <div class="roi-category-content">
                             <div class="roi-item" data-roi="Bladder">
@@ -424,26 +426,26 @@ class ROIComponent {
             
             <div class="roi-toolbar-section">
                 <div class="roi-toolbar">
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-visibility-all-btn" title="全部显示/全部隐藏">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-eye" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-visibility" id="${this.options.prefix}roi-visibility-all-btn" title="全部显示/全部隐藏">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-fill-all-btn" title="全部填充/全部取消">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-fill" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-fill" id="${this.options.prefix}roi-fill-all-btn" title="全部填充/全部取消">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-bold-all-btn" title="全部加粗/全部取消">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-bold" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-bold" id="${this.options.prefix}roi-bold-all-btn" title="全部加粗/全部取消">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-assign-image-btn" title="显示/隐藏赋值HU的图像">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-image" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-image" id="${this.options.prefix}roi-assign-image-btn" title="显示/隐藏赋值HU的图像">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-add-btn" title="新建勾画">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-add" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-add" id="${this.options.prefix}roi-add-btn" title="新建勾画">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-delete-btn" title="删除勾画">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-trash" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-delete" id="${this.options.prefix}roi-delete-btn" title="删除勾画">
+                        <i class="roi-tool-icon"></i>
                     </button>
-                    <button class="roi-tool-btn" id="${this.options.prefix}roi-batch-update-btn" title="批量更新衍生ROI">
-                        <span class="mozi-ui-icon mozi-ui-icon-roi-tb-batch" aria-hidden="true"></span>
+                    <button class="roi-tool-btn roi-tool-batch" id="${this.options.prefix}roi-batch-update-btn" title="批量更新衍生ROI">
+                        <i class="roi-tool-icon"></i>
                     </button>
                 </div>
             </div>
@@ -486,29 +488,33 @@ class ROIComponent {
                                 <option value="Water">Water</option>
                                 <option value="Bone">Bone</option>
                             </select>
-                            <button class="roi-copy-btn" title="复制材料">
-                                <i class="fas fa-clipboard"></i>
-                            </button>
                         </div>
                     </div>
-                    
-                    <div class="roi-property-item">
-                        <label class="roi-property-label">HU填充至:</label>
-                        <div class="roi-property-input">
-                            <input type="text" class="roi-hu-input" id="${this.options.prefix}roi-hu-fill" placeholder="[-2000.00, 2000.00]" readonly disabled style="cursor: pointer;">
-                            <button class="roi-edit-btn" title="编辑">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
+
+                    <div class="roi-assign-block">
+                        <div class="roi-property-item">
+                            <label class="roi-property-label">赋值:</label>
+                            <div class="roi-property-input roi-hu-assign">
+                                <label class="roi-hu-radio">
+                                    <input type="radio" name="${this.options.prefix}roi-hu-mode" id="${this.options.prefix}roi-hu-mode-specify" value="specify" checked>
+                                    <span>指定</span>
+                                </label>
+                                <label class="roi-hu-radio">
+                                    <input type="radio" name="${this.options.prefix}roi-hu-mode" id="${this.options.prefix}roi-hu-mode-fill" value="fill">
+                                    <span>填充至</span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="roi-property-item">
-                        <label class="roi-property-label">指定HU值:</label>
-                        <div class="roi-property-input">
-                            <input type="text" class="roi-hu-input" id="${this.options.prefix}roi-hu-value" placeholder="[-99999.9999, 99999.9999]" readonly style="cursor: pointer;">
-                            <button class="roi-edit-btn" title="编辑">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
+                        <div class="roi-property-item roi-hu-value-row">
+                            <span class="roi-property-label"></span>
+                            <div class="roi-property-input roi-hu-value-fields">
+                                <input type="text" class="roi-hu-input" id="${this.options.prefix}roi-hu-value" value="62.02">
+                                <select class="roi-select roi-hu-unit-select" id="${this.options.prefix}roi-hu-unit">
+                                    <option value="hu">HU</option>
+                                    <option value="electron-density" selected>相对电子密度</option>
+                                    <option value="mass-density">质量密度</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
@@ -539,18 +545,16 @@ class ROIComponent {
             header.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const category = header.parentElement;
-                const chevronIcon = header.querySelector('.mozi-ui-icon');
+                const chevronIcon = header.querySelector('.roi-category-chevron');
                 
                 // 切换展开状态
                 category.classList.toggle('expanded');
                 
                 // 根据展开状态设置箭头方向
                 if (category.classList.contains('expanded')) {
-                    // 展开时：箭头向下
-                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-down';
+                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-down roi-category-chevron';
                 } else {
-                    // 收起时：箭头向右
-                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-right';
+                    chevronIcon.className = 'mozi-ui-icon mozi-ui-icon-chevron-right roi-category-chevron';
                 }
             });
         });
@@ -680,49 +684,38 @@ class ROIComponent {
             });
         }
         
-        // 指定HU值输入框
-        const huValueInput = container.querySelector(`#${prefix}roi-hu-value`);
-        if (huValueInput) {
-            // 点击进入编辑状态
-            huValueInput.addEventListener('click', () => {
-                if (huValueInput.readOnly) {
-                    huValueInput.readOnly = false;
-                    huValueInput.focus();
+        const huModeRadios = container.querySelectorAll(`input[name="${prefix}roi-hu-mode"]`);
+        huModeRadios.forEach((radio) => {
+            radio.addEventListener('change', () => {
+                this.updateHUValuePlaceholder();
+                const huValueInput = container.querySelector(`#${prefix}roi-hu-value`);
+                if (huValueInput && huValueInput.value) {
+                    this.handleHUValueInput(huValueInput);
                 }
             });
-            
-            // 失去焦点时验证并保存
+        });
+
+        const huUnitSelect = container.querySelector(`#${prefix}roi-hu-unit`);
+        if (huUnitSelect) {
+            huUnitSelect.addEventListener('change', () => {
+                this.updateHUValuePlaceholder();
+                const huValueInput = container.querySelector(`#${prefix}roi-hu-value`);
+                if (huValueInput && huValueInput.value) {
+                    this.handleHUValueInput(huValueInput);
+                }
+            });
+        }
+
+        const huValueInput = container.querySelector(`#${prefix}roi-hu-value`);
+        if (huValueInput) {
             huValueInput.addEventListener('blur', () => {
                 this.handleHUValueBlur(huValueInput);
             });
-            
-            // 输入时限制字符
             huValueInput.addEventListener('input', (e) => {
                 this.handleHUValueInput(e.target);
             });
         }
-        
-        // HU填充至输入框
-        const huFillInput = container.querySelector(`#${prefix}roi-hu-fill`);
-        if (huFillInput) {
-            // 点击进入编辑状态（仅在可用时）
-            huFillInput.addEventListener('click', () => {
-                if (!huFillInput.disabled && huFillInput.readOnly) {
-                    huFillInput.readOnly = false;
-                    huFillInput.focus();
-                }
-            });
-            
-            // 失去焦点时验证并保存
-            huFillInput.addEventListener('blur', () => {
-                this.handleHUFillBlur(huFillInput);
-            });
-            
-            // 输入时限制字符
-            huFillInput.addEventListener('input', (e) => {
-                this.handleHUFillInput(e.target);
-            });
-        }
+        this.updateHUValuePlaceholder();
         
         // 指定质量密度输入框
         const densityInput = container.querySelector(`#${prefix}roi-density`);
@@ -747,77 +740,65 @@ class ROIComponent {
         }
     }
     
+    getHUMode() {
+        const container = document.getElementById(this.containerId);
+        const radio = container && container.querySelector(`input[name="${this.options.prefix}roi-hu-mode"]:checked`);
+        return radio ? radio.value : 'specify';
+    }
+
+    getHUUnit() {
+        const select = document.getElementById(`${this.options.prefix}roi-hu-unit`);
+        return select ? select.value : 'electron-density';
+    }
+
+    getHUValueRange() {
+        const unit = this.getHUUnit();
+        const mode = this.getHUMode();
+        if (unit === 'electron-density') return { min: 0, max: 99.99, digits: 2 };
+        if (unit === 'mass-density') return { min: 0.001, max: 25, digits: 3 };
+        if (mode === 'fill') return { min: -2000, max: 2000, digits: 2 };
+        return { min: -1024, max: 3000, digits: 2 };
+    }
+
+    updateHUValuePlaceholder() {
+        const input = document.getElementById(`${this.options.prefix}roi-hu-value`);
+        if (!input) return;
+        const range = this.getHUValueRange();
+        input.placeholder = `[${range.min.toFixed(2)}, ${range.max.toFixed(2)}]`;
+    }
+
     // 材料变化处理
     handleMaterialChange(materialValue) {
         const prefix = this.options.prefix;
         const container = document.getElementById(this.containerId);
         const huValueInput = container?.querySelector(`#${prefix}roi-hu-value`);
-        const huFillInput = container?.querySelector(`#${prefix}roi-hu-fill`);
+        const huUnitSelect = container?.querySelector(`#${prefix}roi-hu-unit`);
+        const specifyRadio = container?.querySelector(`#${prefix}roi-hu-mode-specify`);
         const densityInput = container?.querySelector(`#${prefix}roi-density`);
-        
-        // 如果已填写质量密度，清空并启用材料/HU（互斥）
-        if (densityInput && densityInput.value) {
-            densityInput.value = '';
-            densityInput.disabled = false;
-            densityInput.readOnly = false;
-        }
-        
-        // 材料HU值范围定义
+
         const materialHURanges = {
-            'Water': { min: -100, max: 100, middle: 0 },
-            'Bone': { min: 200, max: 3000, middle: 1000 },
-            'None': { min: -99999.9999, max: 99999.9999, middle: null }
+            'Water': { middle: 0 },
+            'Bone': { middle: 1000 },
+            'None': { middle: null }
         };
-        
         const range = materialHURanges[materialValue] || materialHURanges['None'];
-        
-        // 如果选择了材料（非NONE），设置HU值为中间值
+
         if (materialValue !== 'None' && materialValue !== '') {
+            if (specifyRadio) specifyRadio.checked = true;
+            if (huUnitSelect) huUnitSelect.value = 'hu';
             if (huValueInput) {
-                huValueInput.value = range.middle.toString();
-                huValueInput.readOnly = false;
+                huValueInput.value = String(range.middle);
                 huValueInput.disabled = false;
-                // 更新placeholder显示范围
-                huValueInput.placeholder = `[${range.min}, ${range.max}]`;
             }
-            
-            // HU填充至置灰
-            if (huFillInput) {
-                huFillInput.disabled = true;
-                huFillInput.readOnly = true;
-                huFillInput.value = '';
-            }
-            
-            // 指定质量密度置灰（与材料、HU互斥）
             if (densityInput) {
                 densityInput.disabled = true;
                 densityInput.readOnly = true;
             }
-        } else {
-            // 材料为NONE或空，允许自定义HU值
-            if (huValueInput) {
-                huValueInput.readOnly = false;
-                huValueInput.disabled = false;
-                huValueInput.placeholder = '[-99999.9999, 99999.9999]';
-            }
-            
-            // HU填充至可用（仅在材料为NONE时）
-            if (huFillInput) {
-                huFillInput.disabled = false;
-                huFillInput.readOnly = false;
-            }
-            
-            // 指定质量密度可用（仅在材料为NONE时）
-            if (densityInput && !densityInput.value) {
-                densityInput.disabled = false;
-                densityInput.readOnly = false;
-            }
+        } else if (densityInput && !densityInput.value) {
+            densityInput.disabled = false;
+            densityInput.readOnly = false;
         }
-        
-        // 如果已填写质量密度，根据材料或HU值更新
-        if (densityInput && densityInput.value && !densityInput.disabled) {
-            this.updateDensityFromMaterial(materialValue, huValueInput?.value);
-        }
+        this.updateHUValuePlaceholder();
     }
     
     // 根据材料或HU值更新质量密度
@@ -854,82 +835,28 @@ class ROIComponent {
     
     // HU值输入处理
     handleHUValueInput(input) {
-        // 只允许数字、负号和小数点
         let value = input.value.replace(/[^\d.\-]/g, '');
-        
-        // 获取材料以确定范围
-        const materialSelect = document.getElementById(`${this.options.prefix}roi-material-select`);
-        const material = materialSelect?.value || 'None';
-        
-        let min = -99999.9999;
-        let max = 99999.9999;
-        
-        if (material !== 'None' && material !== '') {
-            const materialHURanges = {
-                'Water': { min: -100, max: 100 },
-                'Bone': { min: 200, max: 3000 }
-            };
-            const range = materialHURanges[material];
-            if (range) {
-                min = range.min;
-                max = range.max;
-            }
-        }
-        
-        // 限制范围
+        const range = this.getHUValueRange();
         const numValue = parseFloat(value);
         if (!isNaN(numValue) && value !== '' && value !== '-') {
-            if (numValue < min) {
-                value = min.toString();
-            } else if (numValue > max) {
-                value = max.toString();
-            }
+            if (numValue < range.min) value = range.min.toString();
+            else if (numValue > range.max) value = range.max.toString();
         }
-        
         input.value = value;
     }
-    
+
     // HU值失去焦点处理
     handleHUValueBlur(input) {
         const value = input.value.trim();
-        const materialSelect = document.getElementById(`${this.options.prefix}roi-material-select`);
-        const material = materialSelect?.value || 'None';
-        
-        // 如果材料不是NONE，检查HU值是否在材料范围内
-        if (material !== 'None' && material !== '') {
-            const materialHURanges = {
-                'Water': { min: -100, max: 100 },
-                'Bone': { min: 200, max: 3000 }
-            };
-            
-            const range = materialHURanges[material];
-            if (range && value) {
-                const numValue = parseFloat(value);
-                if (!isNaN(numValue)) {
-                    if (numValue < range.min) {
-                        input.value = range.min.toString();
-                    } else if (numValue > range.max) {
-                        input.value = range.max.toString();
-                    }
-                }
-            }
+        if (!value) {
+            this.updateHUValuePlaceholder();
+            return;
         }
-        
-        // 设置为只读
-        input.readOnly = true;
-        
-        // 如果已填写质量密度，根据HU值更新（互斥：如果填写了HU，清空质量密度）
-        const densityInput = document.getElementById(`${this.options.prefix}roi-density`);
-        if (densityInput && densityInput.value) {
-            // 如果填写了HU值，清空质量密度（互斥）
-            densityInput.value = '';
-            densityInput.disabled = false;
-            densityInput.readOnly = false;
-        }
-        
-        // 如果材料为NONE且有HU值，可以更新质量密度
-        if (material === 'None' && value && densityInput && !densityInput.value) {
-            this.updateDensityFromMaterial(material, input.value);
+        const range = this.getHUValueRange();
+        const numValue = parseFloat(value);
+        if (!isNaN(numValue)) {
+            const clamped = Math.min(range.max, Math.max(range.min, numValue));
+            input.value = clamped.toFixed(range.digits);
         }
     }
     

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>计划评估 - MOZI Proton</title>
-        <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui19">
+        <link rel="stylesheet" href="../../shared/styles/styles.css?v=ui24">
         <link rel="stylesheet" href="../../shared/styles/styles_view_3d.css">
         <link rel="stylesheet" href="../../shared/styles/styles_dvh.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -123,8 +123,8 @@
 
         .sidebar-tab {
             width: 100%;
-            min-height: 56px;
-            padding: 12px 0;
+            min-height: 0;
+            padding: 14px 0;
             background: transparent;
             border: none;
             color: #888;
@@ -136,9 +136,9 @@
             border-left: 3px solid transparent;
             writing-mode: vertical-rl;
             text-orientation: upright;
-            font-size: 13px;
-            letter-spacing: 4px;
-            font-weight: 500;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-weight: 400;
         }
 
         .sidebar-tab:hover {
@@ -745,7 +745,7 @@
             <button class="sidebar-tab" data-panel="robust" title="ROBUST">ROBUST</button>
             <button class="sidebar-tab" data-panel="roi" title="ROI">ROI</button>
             <button class="sidebar-tab" data-panel="poi" title="POI">POI</button>
-            <button class="sidebar-tab" data-panel="dose" title="DOSE">DOSE</button>
+            <button class="sidebar-tab" data-panel="dose" title="等剂量线">等剂量线</button>
         </div>
 
         <!-- 左侧栏内容区域 -->
@@ -838,19 +838,19 @@
     <script src="../../shared/scripts/CurrentPatient.js?v=2"></script>
     <script src="../../shared/scripts/components/PatientOverviewComponent.js?v=6"></script>
     <script src="../../shared/scripts/components/SequenceTreeComponent.js?v=ui2"></script>
-    <script src="../../shared/scripts/components/ROIComponent.js?v=ui18"></script>
-    <script src="../../shared/scripts/components/POIComponent.js?v=ui18"></script>
+    <script src="../../shared/scripts/components/ROIComponent.js?v=ui23"></script>
+    <script src="../../shared/scripts/components/POIComponent.js?v=ui22"></script>
     <script src="../../shared/scripts/components/RobustListComponent.js"></script>
     <script src="../../shared/scripts/components/CreateRobustnessEvaluationTemplateNameModalComponent.js"></script>
     <script src="../../shared/scripts/components/LoadRobustnessEvaluationTemplateModalComponent.js"></script>
-    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui6"></script>
-    <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui6"></script>
-    <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui6"></script>
+    <script src="../../shared/scripts/components/CrossSectionView2DComponent.js?v=ui7"></script>
+    <script src="../../shared/scripts/components/CoronalView2DComponent.js?v=ui7"></script>
+    <script src="../../shared/scripts/components/SagittalView2DComponent.js?v=ui7"></script>
     <script src="../../shared/scripts/components/DVHComponent.js"></script>
     <script src="../../shared/scripts/components/FourDCTRobustnessEvaluationDVHComponent.js"></script>
     <script src="../../shared/scripts/components/MoziToolbarIcons.js?v=ui9"></script>
     <script src="../../shared/scripts/components/ModuleToolbarComponent.js?v=2"></script>
-    <script src="../../shared/scripts/components/DOSEComponent.js?v=ui10"></script>
+    <script src="../../shared/scripts/components/DOSEComponent.js?v=ui21"></script>
     <script src="../scripts/ChannelListComponent.js?v=ui19"></script>
     <script src="../scripts/DwellControlComponent.js?v=ui19"></script>
     <script src="../../shared/scripts/components/ClinicalTargetComponent.js?v=ui9"></script>

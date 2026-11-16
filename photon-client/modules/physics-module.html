@@ -3,65 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>物理 1.0.0.1 - MOZI Photon</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>物理 4.0 - MOZI Photon</title>
+    <link rel="stylesheet" href="../../shared/styles/physics-chrome.css?v=ui3">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        body.physics-module-page {
             height: 100vh;
-            background: #1a1a1a;
-            color: #e8e8e8;
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif;
         }
         .pm-titlebar {
-            height: 40px;
-            background: #2a2a2a;
-            border-bottom: 1px solid #3c3c3c;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 12px 0 16px;
+            flex-shrink: 0;
         }
-        .pm-title { font-size: 14px; }
-        .pm-titlebar-right { display: flex; align-items: center; gap: 14px; }
-        .pm-user { font-size: 13px; color: #cfcfcf; }
-        .pm-win-btn {
-            width: 32px; height: 28px; background: transparent; border: none;
-            color: #ddd; cursor: pointer; border-radius: 4px;
-        }
-        .pm-win-btn:hover { background: #404040; color: #fff; }
-        .pm-win-btn.close:hover { background: #e53935; }
-        .pm-body {
-            flex: 1;
+        .pm-titlebar-right,
+        .pm-window-controls {
             display: flex;
             align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 12px;
-            color: #999;
         }
-        .pm-body h1 { font-size: 22px; color: #e0e0e0; font-weight: 600; }
-        .pm-body p { font-size: 14px; }
+        .pm-titlebar-right { gap: 12px; position: relative; }
+        .pm-win-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
     </style>
 </head>
-<body>
+<body class="physics-module-page">
     <header class="pm-titlebar">
-        <div class="pm-title">物理 1.0.0.1 · 光子</div>
+        <div class="pm-title">
+            <a class="pm-logo" href="../index.html" title="返回首页"><span class="logo-mo">MO</span><span class="logo-zi">ZI</span></a>
+            <span>物理 4.0</span>
+        </div>
         <div class="pm-titlebar-right">
-            <span class="pm-user">manteia</span>
-            <button type="button" class="pm-win-btn close" id="pmCloseBtn" title="关闭">&times;</button>
+            <span class="pm-user">
+                <img src="../../shared/assets/icons/ui/topnav-user.png" alt="">
+                mpadmin
+            </span>
+            <div class="pm-window-controls">
+                <button type="button" class="pm-win-btn" id="minBtn" title="最小化"><img src="../../shared/assets/icons/ui/topnav-win-min.png" alt=""></button>
+                <button type="button" class="pm-win-btn" id="maxBtn" title="最大化"><img src="../../shared/assets/icons/ui/topnav-win-max.png" alt=""></button>
+                <button type="button" class="pm-win-btn close" id="closeBtn" title="关闭"><img src="../../shared/assets/icons/ui/topnav-win-close.png" alt=""></button>
+            </div>
         </div>
     </header>
-    <main class="pm-body">
+    <main class="pm-placeholder">
         <h1>光子物理模块</h1>
         <p>内容与后装不同，待后续按光子规格补充</p>
     </main>
     <script>
-        document.getElementById('pmCloseBtn').addEventListener('click', function () {
+        document.getElementById('closeBtn').addEventListener('click', function () {
             if (window.history.length > 1) window.history.back();
             else window.location.href = '../index.html';
+        });
+        document.getElementById('maxBtn').addEventListener('click', function () {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+            else document.exitFullscreen?.();
         });
     </script>
     <script src="../../shared/scripts/MoziInstantTip.js?v=1"></script>

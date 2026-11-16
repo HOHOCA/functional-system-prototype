@@ -4,33 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOZI Proton - 质子治疗计划系统</title>
-    <link rel="stylesheet" href="../shared/styles/styles.css?v=ui19">
-    <link rel="stylesheet" href="../shared/styles/mozi-chrome.css?v=ui7">
+    <link rel="stylesheet" href="../shared/styles/styles.css?v=ui24">
+    <link rel="stylesheet" href="../shared/styles/mozi-chrome.css?v=ui8">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header class="top-nav">
             <div class="nav-left">
-                <div class="logo" title="MOZI Proton">
-                    <span class="logo-wordmark" aria-hidden="true"></span>
-                    <span class="logo-version">PROTON</span>
-                </div>
+                <a class="logo" href="../index.html" title="返回首页">
+                    <span class="logo-mo">MO</span><span class="logo-zi">ZI</span><span class="logo-version">PROTON</span>
+                </a>
                 <div class="nav-icons">
-                    <button class="nav-icon-btn" id="navWorkflowBtn" title="工作流">
-                        <img src="../shared/assets/icons/ui/chrome-workflow.png" alt="">
+                    <button class="nav-icon-btn" id="navLayoutBtn" title="布局">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-layout.png" alt="">
                     </button>
-                    <button class="nav-icon-btn" id="navSaveBtn" title="保存">
-                        <img src="../shared/assets/icons/ui/chrome-save.png" alt="">
+                    <button class="nav-icon-btn" id="navWorkflowBtn" title="工作流">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-workflow.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navCloseBtn" title="关闭">
-                        <img src="../shared/assets/icons/ui/chrome-close-case.png" alt="">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-close.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="navSaveBtn" title="保存">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-save.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="navGlobalExportBtn" title="全局导出">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-export.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navUndoBtn" title="撤销">
-                        <img src="../shared/assets/icons/ui/chrome-undo.png" alt="">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-undo.png" alt="">
                     </button>
                     <button class="nav-icon-btn" id="navRedoBtn" title="恢复">
-                        <img src="../shared/assets/icons/ui/chrome-redo.png" alt="">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-redo.png" alt="">
                     </button>
                 </div>
             </div>
@@ -47,32 +52,39 @@
             </div>
 
             <div class="nav-right">
-                <button type="button" class="physics-module-btn" id="physicsModuleBtn" title="物理模块" aria-label="物理模块">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4"/>
-                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4" transform="rotate(60 8 8)"/>
-                        <ellipse cx="8" cy="8" rx="6.5" ry="2.4" stroke="currentColor" stroke-width="1.4" transform="rotate(120 8 8)"/>
-                        <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
-                    </svg>
-                </button>
-                <button class="nav-icon-btn" id="navSettingsBtn" title="系统设置">
-                    <img src="../shared/assets/icons/ui/chrome-settings.png" alt="">
-                </button>
-                <span class="nav-divider"></span>
+                <div class="right-tools">
+                    <button class="nav-icon-btn" id="navProtocolBtn" title="协议">
+                        <i class="fas fa-clipboard-list"></i>
+                    </button>
+                    <button class="nav-icon-btn" id="navScriptBtn" title="脚本">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-script.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="physicsModuleBtn" title="物理设置" aria-label="物理设置">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-physics.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="navErrorLogBtn" title="错误记录">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-error.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="navSettingsBtn" title="系统设置">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-settings.png" alt="">
+                    </button>
+                    <button class="nav-icon-btn" id="navMoreBtn" title="更多">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-more.png" alt="">
+                    </button>
+                </div>
                 <div class="user-profile">
-                    <img src="../shared/assets/icons/ui/chrome-user.png" alt="">
+                    <img class="user-avatar" src="../shared/assets/icons/ui/topnav-user.png" alt="">
                     <span>mpadmin</span>
                 </div>
-                <span class="nav-divider"></span>
                 <div class="window-controls">
                     <button class="window-control-btn" title="最小化">
-                        <img src="../shared/assets/icons/ui/chrome-minimize.png" alt="">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-win-min.png" alt="">
                     </button>
-                    <button class="window-control-btn maximize-btn" title="最大化">
-                        <img src="../shared/assets/icons/ui/chrome-maximize.png" alt="">
+                    <button class="window-control-btn maximize-btn" title="缩小客户端">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-win-max.png" alt="">
                     </button>
-                    <button class="window-control-btn close-btn" title="关闭">
-                        <img src="../shared/assets/icons/ui/chrome-close-window.png" alt="">
+                    <button class="window-control-btn close-btn" title="关闭客户端">
+                        <img class="nav-icon-img" src="../shared/assets/icons/ui/topnav-win-close.png" alt="">
                     </button>
                 </div>
             </div>
@@ -115,6 +127,12 @@
                     document.getElementById(frameId).classList.add('active');
                 });
             });
+
+            const openModule = new URLSearchParams(location.search).get('module');
+            if (openModule) {
+                const opener = document.querySelector('.nav-item[data-module="' + openModule + '"]');
+                if (opener) opener.click();
+            }
 
             if (settingsBtn) {
                 settingsBtn.addEventListener('click', function() {

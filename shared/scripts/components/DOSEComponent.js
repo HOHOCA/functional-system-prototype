@@ -58,6 +58,12 @@ class DOSEComponent {
         this.init();
     }
 
+    static EYE_SRC = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAOCAYAAADwikbvAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAD6ADAAQAAAABAAAADgAAAAA6VvK5AAABSklEQVQoFcWQPUvDYBSF82WhU0iGENwEXcTBpT+g0m5ubg4OTnZy1EFwcXJwdlIoOItDBxGchLroH3DTRUggiUGqMR8+NzYlxe69cN57z73nvDdvFGVeoc5aHEXRSpZlu8zWwQ8Ypml66TjOe10/ZS6KQg+C4ADBMWjUhdShqqr7lmX1q/7EjHEhDMMBuTsefpPv4E1MG9SV9ty27Z5oNDkk2HhRM45odcCjpmk3mLeoCyCxh/ZIivI2SBvjvTTGcUV+A4fCMcv7e2hawomU3nK5Oc9z5683+2QuS6rNIjKAXW7mxgbbn2isyYQY0etwext8wF/h1+Tq3QPevVkRxfO8RV3XHxAsAYkvcAuaQN5f/Z9hkiRd13U/J2aGShzHDoNTtu1Ap2bwBJwxPxEj9T+B9BTf91tcsA1WoSmf/GwYRt80zZdSMPfjF6kgfYYGf2ugAAAAAElFTkSuQmCC";
+
+    eyeImg(extraClass, visible, title, extraAttrs = '') {
+        return `<img class="${extraClass}${visible ? ' visible' : ''}" src="${DOSEComponent.EYE_SRC}" alt="" title="${title}" draggable="false" ${extraAttrs}>`;
+    }
+
     init() {
         this.render();
         this.bindEvents();
@@ -71,7 +77,7 @@ class DOSEComponent {
                 <!-- 参考值区域 -->
                 <div class="dose-reference-section">
                     <div class="dose-reference-row">
-                        <label class="dose-label">参考值：</label>
+                        <label class="dose-label">参考值</label>
                         <div class="dose-reference-inputs">
                             <input type="number" class="dose-input dose-percent-input" 
                                    id="${this.options.prefix}doseReferencePercent" 
@@ -85,51 +91,29 @@ class DOSEComponent {
                         </div>
                     </div>
                     <div class="dose-current-max-row">
-                        <label class="dose-label">当前最大值：</label>
-                        <input type="number" class="dose-input dose-max-input" 
-                               id="${this.options.prefix}doseCurrentMax" 
-                               value="${this.currentMax.toFixed(2)}" step="0.01">
+                        <label class="dose-label dose-label-wide">当前最大值</label>
+                        <div class="dose-max-input-wrap">
+                            <input type="number" class="dose-input dose-max-input" 
+                                   id="${this.options.prefix}doseCurrentMax" 
+                                   value="${this.currentMax.toFixed(2)}" step="0.01">
+                            <span class="dose-unit">cGy</span>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- 剂量模板区域 -->
                 <div class="dose-template-section">
-                    <label class="dose-label">剂量模板：</label>
+                    <label class="dose-label">剂量模板</label>
                     <div class="dose-template-input-group">
                         <input type="text" class="dose-input dose-template-input" 
                                id="${this.options.prefix}doseTemplate" 
                                value="${this.doseTemplate}" 
-                               placeholder="选择或输入模板名称">
-                        <span class="mozi-ui-icon mozi-ui-icon-chevron-down dose-template-dropdown-icon" aria-hidden="true"></span>
+                               placeholder="默认">
+                        <i class="fas fa-chevron-down dose-template-dropdown-icon"></i>
                         <button class="dose-template-save-btn" id="${this.options.prefix}doseTemplateSave" title="保存模板">
-                            <span class="mozi-ui-icon mozi-ui-icon-ch-bookmark" aria-hidden="true"></span>
+                            <i class="fas fa-save"></i>
                         </button>
                     </div>
-                </div>
-                
-                <!-- 操作按钮区域 -->
-                <div class="dose-actions-section">
-                    <button class="dose-action-btn" 
-                            id="${this.options.prefix}doseFill" 
-                            title="填充">
-                        <span class="mozi-ui-icon mozi-ui-icon-fill" aria-hidden="true"></span>
-                    </button>
-                    <button class="dose-action-btn ${this.boldEnabled ? 'active' : ''}" 
-                            id="${this.options.prefix}doseBold" 
-                            title="加粗">
-                        <i class="fas fa-bold"></i>
-                    </button>
-                    <button class="dose-action-btn" 
-                            id="${this.options.prefix}doseActionAdd" 
-                            title="添加">
-                        <span class="mozi-ui-icon mozi-ui-icon-plus" aria-hidden="true"></span>
-                    </button>
-                    <button class="dose-action-btn" 
-                            id="${this.options.prefix}doseActionDelete" 
-                            title="删除"
-                            ${this.selectedLevelIndex === null ? 'disabled' : ''}>
-                        <span class="mozi-ui-icon mozi-ui-icon-trash" aria-hidden="true"></span>
-                    </button>
                 </div>
                 
                 <!-- 剂量等级表格 -->
@@ -137,8 +121,8 @@ class DOSEComponent {
                     <table class="dose-levels-table">
                         <thead>
                             <tr>
-                                <th class="dose-visibility-header">
-                                    <span class="mozi-ui-icon mozi-ui-icon-eye" aria-hidden="true"></span>
+                                <th class="dose-visibility-header" title="全部显示/全部隐藏">
+                                    ${this.eyeImg('dose-header-visibility', this.doseLevels.every(level => level.visible), '全部显示/全部隐藏')}
                                 </th>
                                 <th>颜色</th>
                                 <th>剂量[%]</th>
@@ -150,8 +134,7 @@ class DOSEComponent {
                                 <tr class="dose-level-row ${this.selectedLevelIndex === index ? 'selected' : ''}" 
                                     data-index="${index}">
                                     <td class="dose-visibility-cell">
-                                        <span class="mozi-ui-icon ${level.visible ? 'mozi-ui-icon-eye dose-visibility-icon visible' : 'mozi-ui-icon-eye-slash dose-visibility-icon'}" 
-                                           data-index="${index}" aria-hidden="true"></span>
+                                        ${this.eyeImg('dose-visibility-icon', level.visible, '显隐', `data-index="${index}"`)}
                                     </td>
                                     <td class="dose-color-cell">
                                         <div class="dose-color-box" style="background-color: ${level.color};"></div>
@@ -172,6 +155,41 @@ class DOSEComponent {
                             `).join('')}
                         </tbody>
                     </table>
+                </div>
+
+                <!-- 操作按钮区域（ICON：填充 / 加粗 / 添加 / 删除 / 剂量转勾画） -->
+                <div class="dose-actions-section">
+                    <button class="dose-action-btn dose-tool-fill ${this.fillEnabled ? 'active' : ''}" 
+                            id="${this.options.prefix}doseFill" 
+                            title="填充"
+                            type="button">
+                        <i class="dose-tool-icon"></i>
+                    </button>
+                    <button class="dose-action-btn dose-tool-bold ${this.boldEnabled ? 'active' : ''}" 
+                            id="${this.options.prefix}doseBold" 
+                            title="加粗"
+                            type="button">
+                        <i class="dose-tool-icon"></i>
+                    </button>
+                    <button class="dose-action-btn dose-tool-add" 
+                            id="${this.options.prefix}doseActionAdd" 
+                            title="添加"
+                            type="button">
+                        <i class="dose-tool-icon"></i>
+                    </button>
+                    <button class="dose-action-btn dose-tool-delete" 
+                            id="${this.options.prefix}doseActionDelete" 
+                            title="删除"
+                            type="button"
+                            ${this.selectedLevelIndex === null ? 'disabled' : ''}>
+                        <i class="dose-tool-icon"></i>
+                    </button>
+                    <button class="dose-action-btn dose-tool-to-roi" 
+                            id="${this.options.prefix}doseActionToRoi" 
+                            title="将指定的剂量线转勾画结构"
+                            type="button">
+                        <i class="dose-tool-icon"></i>
+                    </button>
                 </div>
             </div>
         `;
@@ -246,25 +264,39 @@ class DOSEComponent {
         if (deleteBtn) {
             deleteBtn.addEventListener('click', () => this.deleteSelectedLevel());
         }
+
+        // 剂量转勾画
+        const toRoiBtn = document.getElementById(`${this.options.prefix}doseActionToRoi`);
+        if (toRoiBtn) {
+            toRoiBtn.addEventListener('click', () => {
+                this.showDoseToRoiModal();
+            });
+        }
         
+        // 表头小眼睛：全部显示 / 全部隐藏
+        const headerEye = this.container.querySelector('.dose-visibility-header');
+        if (headerEye) {
+            headerEye.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleAllLevelsVisibility();
+            });
+        }
+
         // 剂量等级表格事件
         const tableBody = document.getElementById(`${this.options.prefix}doseLevelsTableBody`);
         if (tableBody) {
-            // 行选择
             tableBody.addEventListener('click', (e) => {
+                const visIcon = e.target.closest('.dose-visibility-icon');
+                if (visIcon) {
+                    e.stopPropagation();
+                    const index = parseInt(visIcon.dataset.index, 10);
+                    this.toggleLevelVisibility(index);
+                    return;
+                }
+
                 const row = e.target.closest('.dose-level-row');
                 if (row) {
-                    const index = parseInt(row.dataset.index);
-                    this.selectLevel(index);
-                }
-            });
-            
-            // 可见性切换
-            tableBody.addEventListener('click', (e) => {
-                if (e.target.classList.contains('dose-visibility-icon')) {
-                    e.stopPropagation();
-                    const index = parseInt(e.target.dataset.index);
-                    this.toggleLevelVisibility(index);
+                    this.selectLevel(parseInt(row.dataset.index, 10));
                 }
             });
             
@@ -300,6 +332,11 @@ class DOSEComponent {
         this.bindEvents();
     }
 
+    getSelectedLevel() {
+        if (this.selectedLevelIndex == null) return null;
+        return this.doseLevels[this.selectedLevelIndex] || null;
+    }
+
     updateDoseLevels() {
         // 根据参考值更新所有剂量等级的cGy值
         this.doseLevels.forEach((level, index) => {
@@ -317,21 +354,24 @@ class DOSEComponent {
     }
 
     toggleLevelVisibility(index) {
-        if (this.doseLevels[index]) {
-            const icon = document.querySelector(`.dose-visibility-icon[data-index="${index}"]`);
-            if (icon) {
-                const isVisible = icon.classList.contains('visible');
-                
-                if (isVisible) {
-                    icon.classList.remove('visible');
-                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye-slash dose-visibility-icon';
-                    this.doseLevels[index].visible = false;
-                } else {
-                    icon.classList.add('visible');
-                    icon.className = 'mozi-ui-icon mozi-ui-icon-eye dose-visibility-icon visible';
-                    this.doseLevels[index].visible = true;
-                }
-            }
+        if (!this.doseLevels[index]) return;
+        this.doseLevels[index].visible = !this.doseLevels[index].visible;
+        this.render();
+        this.bindEvents();
+        if (this.options.onLevelVisibilityToggle) {
+            this.options.onLevelVisibilityToggle(index, this.doseLevels[index].visible);
+        }
+    }
+
+    toggleAllLevelsVisibility() {
+        const allVisible = this.doseLevels.every(level => level.visible);
+        this.doseLevels.forEach(level => {
+            level.visible = !allVisible;
+        });
+        this.render();
+        this.bindEvents();
+        if (this.options.onGlobalVisibilityToggle) {
+            this.options.onGlobalVisibilityToggle(!allVisible);
         }
     }
 
@@ -427,6 +467,239 @@ class DOSEComponent {
         this.hasJointOptimization = hasJointOptimization;
         this.render();
         this.bindEvents();
+    }
+
+    /** 剂量线转勾画弹窗 */
+    showDoseToRoiModal() {
+        const existing = document.getElementById('doseToRoiModalMask');
+        if (existing) existing.remove();
+
+        const level = this.getSelectedLevel();
+        const doseMin = 10.00;
+        const doseMax = 15000.00;
+        const initialDose = level ? Number(level.cgy).toFixed(2) : '';
+        const initialColor = level ? level.color : '#ff0000';
+        const roiOptions = (this.options.roiList || [
+            { id: 'Body', name: 'Body' },
+            { id: 'PTV', name: 'PTV' },
+            { id: 'CTV', name: 'CTV' },
+            { id: 'Bladder', name: 'Bladder' },
+            { id: 'Rectum', name: 'Rectum' }
+        ]).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+
+        const doseLabel = initialDose !== '' ? `等剂量线${initialDose}` : '等剂量线';
+        const isoOption = `<option value="__isodose__" class="dose-to-roi-iso-opt">${doseLabel}</option>`;
+
+        const mask = document.createElement('div');
+        mask.id = 'doseToRoiModalMask';
+        mask.className = 'dose-to-roi-modal-mask';
+        mask.innerHTML = `
+            <div class="dose-to-roi-modal" role="dialog" aria-labelledby="doseToRoiTitle">
+                <div class="dose-to-roi-header">
+                    <span id="doseToRoiTitle">剂量线转勾画</span>
+                    <button type="button" class="dose-to-roi-close" aria-label="关闭">&times;</button>
+                </div>
+                <div class="dose-to-roi-body">
+                    <div class="dose-to-roi-row">
+                        <label class="dose-to-roi-label">剂量线</label>
+                        <div class="dose-to-roi-field-inline">
+                            <label class="dose-to-roi-color-wrap" title="选择颜色">
+                                <span class="dose-to-roi-color-swatch" id="doseToRoiColorSwatch" style="background:${initialColor}"></span>
+                                <input type="color" id="doseToRoiColor" value="${initialColor}" class="dose-to-roi-color-input">
+                            </label>
+                            <input type="number" class="dose-to-roi-input" id="doseToRoiDose"
+                                   value="${initialDose}"
+                                   placeholder="[${doseMin.toFixed(2)} ~ ${doseMax.toFixed(2)}]"
+                                   min="${doseMin}" max="${doseMax}" step="0.01">
+                            <span class="dose-to-roi-unit">cGy</span>
+                        </div>
+                    </div>
+                    <div class="dose-to-roi-row dose-to-roi-row-crop">
+                        <div class="dose-to-roi-crop-block">
+                            <div class="dose-to-roi-divider" aria-hidden="true"></div>
+                            <label class="dose-to-roi-check">
+                                <input type="checkbox" id="doseToRoiCrop">
+                                <i class="dose-to-roi-check-ui" aria-hidden="true"></i>
+                                <span>裁切</span>
+                            </label>
+                            <div class="dose-to-roi-row dose-to-roi-row-nested" id="doseToRoiMainRow">
+                                <label class="dose-to-roi-label">主结构</label>
+                                <select class="dose-to-roi-select" id="doseToRoiMainRoi" disabled>
+                                    <option value="">请选择</option>
+                                    ${isoOption}
+                                    ${roiOptions}
+                                </select>
+                            </div>
+                            <div class="dose-to-roi-radios" id="doseToRoiCropRadios">
+                                <label class="dose-to-roi-radio">
+                                    <input type="radio" name="doseToRoiCropType" value="overlap" disabled checked>
+                                    <i class="dose-to-roi-radio-ui" aria-hidden="true"></i>
+                                    <span>移除重叠部分</span>
+                                </label>
+                                <label class="dose-to-roi-radio">
+                                    <input type="radio" name="doseToRoiCropType" value="extend" disabled>
+                                    <i class="dose-to-roi-radio-ui" aria-hidden="true"></i>
+                                    <span>移除外延部分</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dose-to-roi-row" id="doseToRoiSubRow">
+                        <label class="dose-to-roi-label">副结构</label>
+                        <select class="dose-to-roi-select" id="doseToRoiSubRoi" disabled>
+                            <option value="">请选择</option>
+                            ${isoOption}
+                            ${roiOptions}
+                        </select>
+                    </div>
+                    <div class="dose-to-roi-row" id="doseToRoiMarginRow">
+                        <label class="dose-to-roi-label">主副结构边缘间距</label>
+                        <div class="dose-to-roi-field-inline">
+                            <input type="number" class="dose-to-roi-input dose-to-roi-input-sm"
+                                   id="doseToRoiMargin" value="0.5" min="0" max="5" step="0.1" disabled>
+                            <span class="dose-to-roi-unit">cm</span>
+                        </div>
+                    </div>
+                    <div class="dose-to-roi-divider" aria-hidden="true"></div>
+                    <div class="dose-to-roi-row">
+                        <label class="dose-to-roi-check dose-to-roi-derived">
+                            <input type="checkbox" id="doseToRoiDerived" checked>
+                            <i class="dose-to-roi-check-ui" aria-hidden="true"></i>
+                            <span>视为衍生ROI</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="dose-to-roi-footer">
+                    <button type="button" class="dose-to-roi-btn dose-to-roi-btn-cancel" id="doseToRoiCancel">取消</button>
+                    <button type="button" class="dose-to-roi-btn dose-to-roi-btn-ok" id="doseToRoiConfirm">确定</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(mask);
+        this.bindDoseToRoiModal(mask, level);
+    }
+
+    bindDoseToRoiModal(mask, level) {
+        const close = () => mask.remove();
+        const cropCb = mask.querySelector('#doseToRoiCrop');
+        const radios = mask.querySelectorAll('input[name="doseToRoiCropType"]');
+        const mainRoi = mask.querySelector('#doseToRoiMainRoi');
+        const subRoi = mask.querySelector('#doseToRoiSubRoi');
+        const margin = mask.querySelector('#doseToRoiMargin');
+        const doseInput = mask.querySelector('#doseToRoiDose');
+        const colorInput = mask.querySelector('#doseToRoiColor');
+        const swatch = mask.querySelector('#doseToRoiColorSwatch');
+
+        const formatIsoLabel = (raw) => {
+            const n = parseFloat(raw);
+            if (Number.isNaN(n)) return '等剂量线';
+            return `等剂量线${Number(n).toFixed(2)}`;
+        };
+
+        const setSelectValue = (sel, value) => {
+            // disabled 状态下直接赋值可能不生效，临时解除再设
+            const wasDisabled = sel.disabled;
+            sel.disabled = false;
+            sel.value = value;
+            const opt = [...sel.options].find(o => o.value === value);
+            if (opt) opt.selected = true;
+            sel.disabled = wasDisabled;
+        };
+
+        const syncIsoOptions = () => {
+            const raw = String(doseInput.value || '').trim();
+            const hasDose = raw !== '' && !Number.isNaN(parseFloat(raw));
+            const label = hasDose ? formatIsoLabel(raw) : '等剂量线';
+
+            mask.querySelectorAll('.dose-to-roi-iso-opt').forEach(opt => {
+                opt.textContent = label;
+                opt.hidden = !hasDose;
+                // 不用 option.disabled，避免设值失败
+            });
+
+            if (!hasDose) {
+                setSelectValue(mainRoi, '');
+                setSelectValue(subRoi, '');
+            } else {
+                // 有剂量时主结构立即默认「等剂量线xxx」（不依赖裁切勾选）
+                if (mainRoi.value === '' || mainRoi.value === '__isodose__') {
+                    setSelectValue(mainRoi, '__isodose__');
+                }
+                if (subRoi.value === '__isodose__') {
+                    setSelectValue(subRoi, '__isodose__');
+                }
+            }
+        };
+
+        syncIsoOptions();
+        doseInput.addEventListener('input', syncIsoOptions);
+        doseInput.addEventListener('change', syncIsoOptions);
+
+        const syncCropEnabled = () => {
+            const on = cropCb.checked;
+            radios.forEach(r => { r.disabled = !on; });
+            mainRoi.disabled = !on;
+            subRoi.disabled = !on;
+            margin.disabled = !on;
+            mask.querySelector('#doseToRoiCropRadios').classList.toggle('disabled', !on);
+            mainRoi.classList.toggle('disabled', !on);
+            subRoi.classList.toggle('disabled', !on);
+            margin.classList.toggle('disabled', !on);
+            mask.querySelector('#doseToRoiMainRow').classList.toggle('disabled', !on);
+            mask.querySelector('#doseToRoiSubRow').classList.toggle('disabled', !on);
+            mask.querySelector('#doseToRoiMarginRow').classList.toggle('disabled', !on);
+            // 勾选裁切时再同步一次，确保主结构显示正确
+            syncIsoOptions();
+        };
+        cropCb.addEventListener('change', syncCropEnabled);
+        syncCropEnabled();
+
+        colorInput.addEventListener('input', () => {
+            swatch.style.background = colorInput.value;
+        });
+
+        mask.querySelector('.dose-to-roi-close').addEventListener('click', close);
+        mask.querySelector('#doseToRoiCancel').addEventListener('click', close);
+        mask.addEventListener('click', (e) => {
+            if (e.target === mask) close();
+        });
+
+        mask.querySelector('#doseToRoiConfirm').addEventListener('click', () => {
+            const doseVal = parseFloat(doseInput.value);
+            if (Number.isNaN(doseVal) || doseVal < 10 || doseVal > 15000) {
+                alert('请输入有效的剂量线值（10.00 ~ 15000.00 cGy）');
+                return;
+            }
+            if (cropCb.checked && !mainRoi.value) {
+                alert('勾选裁切时请选择主结构');
+                return;
+            }
+            if (cropCb.checked && !subRoi.value) {
+                alert('勾选裁切时请选择副结构');
+                return;
+            }
+            const payload = {
+                doseCgy: doseVal,
+                color: colorInput.value,
+                crop: cropCb.checked,
+                cropType: cropCb.checked
+                    ? (mask.querySelector('input[name="doseToRoiCropType"]:checked') || {}).value
+                    : null,
+                mainRoiId: cropCb.checked ? mainRoi.value : null,
+                subRoiId: cropCb.checked ? subRoi.value : null,
+                marginCm: cropCb.checked ? parseFloat(margin.value) || 0.5 : null,
+                asDerivedRoi: mask.querySelector('#doseToRoiDerived').checked,
+                sourceLevelIndex: this.selectedLevelIndex,
+                sourceLevel: level || null
+            };
+            if (typeof this.options.onDoseToRoi === 'function') {
+                this.options.onDoseToRoi(payload);
+            } else {
+                console.log('剂量线转勾画确认', payload);
+            }
+            close();
+        });
     }
 }
 

@@ -120,7 +120,7 @@ const COMPONENTS_CONFIG = {
         {
             id: 'dose',
             name: 'DOSE',
-            displayName: 'DOSE',
+            displayName: '等剂量线',
             description: '剂量分布显示',
             className: 'DOSEComponent',
             layout: 'sidebar', // 标记为侧边栏布局
@@ -138,7 +138,7 @@ const COMPONENTS_CONFIG = {
         {
             id: 'registration',
             name: 'Registration',
-            displayName: 'REG',
+            displayName: '配准记录',
             description: '图像配准组件',
             className: 'RegistrationComponent',
             layout: 'sidebar', // 标记为侧边栏布局

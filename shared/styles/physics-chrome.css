@@ -1,0 +1,259 @@
+/* 物理模块外壳：结构保持原样，颜色、页签和弹窗对齐 TPS */
+
+body.physics-module-page {
+    margin: 0;
+}
+
+.physics-module-page .pm-titlebar {
+    height: 48px;
+    background: #232323;
+    border-bottom: 1px solid rgba(55, 55, 55, 0.75);
+    padding: 0 16px 0 20px;
+}
+
+.physics-module-page .pm-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #d4d4d4;
+}
+
+.physics-module-page .pm-logo {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    line-height: 28px;
+    text-decoration: none;
+}
+
+.physics-module-page .pm-logo .logo-mo { color: #3AACDE; }
+.physics-module-page .pm-logo .logo-zi { color: #4EC8DC; }
+
+.physics-module-page .pm-user-btn,
+.physics-module-page .pm-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    color: #d4d4d4;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: default;
+}
+
+.physics-module-page .pm-user-btn { cursor: pointer; }
+
+.physics-module-page .pm-user-btn img,
+.physics-module-page .pm-user img,
+.physics-module-page .pm-win-btn img {
+    width: 18px;
+    height: 18px;
+    display: block;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.physics-module-page .pm-user-btn:hover {
+    color: #eeeeee;
+    background: rgba(238, 238, 238, 0.08);
+}
+
+.physics-module-page .pm-window-controls {
+    gap: 6px;
+}
+
+.physics-module-page .pm-win-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    color: #d4d4d4;
+}
+
+.physics-module-page .pm-win-btn:hover {
+    background: rgba(238, 238, 238, 0.08);
+    color: #eeeeee;
+}
+
+.physics-module-page .pm-win-btn.close:hover {
+    background: #e53935;
+    color: #ffffff;
+}
+
+.physics-module-page .pm-user-menu {
+    top: 40px;
+    right: 108px;
+    background: #232323;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.physics-module-page .pm-user-menu button:hover {
+    background: rgba(36, 155, 217, 0.28);
+}
+
+.physics-module-page .pm-tabbar {
+    width: auto;
+    height: 48px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 16px;
+    gap: 4px;
+    background: #232323;
+    border-right: none;
+    border-bottom: 1px solid rgba(55, 55, 55, 0.75);
+    overflow: visible;
+}
+
+.physics-module-page .pm-tab {
+    width: auto;
+    height: 32px;
+    min-height: 0;
+    padding: 0 14px;
+    border: none;
+    border-left: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #d4d4d4;
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    letter-spacing: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 32px;
+}
+
+.physics-module-page .pm-tab:hover {
+    background: rgba(238, 238, 238, 0.08);
+    color: #eeeeee;
+}
+
+.physics-module-page .pm-tab.active {
+    background: rgba(36, 155, 217, 0.28);
+    color: #ffffff;
+    border-left-color: transparent;
+}
+
+.physics-module-page .acc-tree,
+.physics-module-page .pm-tree {
+    background: #252525;
+    border-right: 1px solid #404040;
+}
+
+.physics-module-page .tree-group-hd:hover,
+.physics-module-page .tree-machine:hover,
+.physics-module-page .tree-pbs:hover,
+.physics-module-page .pm-tree-item:hover,
+.physics-module-page .pm-tree-group-title:hover {
+    background: #2a2a2a;
+}
+
+.physics-module-page .tree-machine.active,
+.physics-module-page .tree-pbs.active,
+.physics-module-page .pm-tree-item.active {
+    background: rgba(36, 155, 217, 0.1);
+    border-left-color: #249BD9;
+    color: #249BD9;
+}
+
+.physics-module-page .pm-modal-mask {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.physics-module-page .pm-modal {
+    background: #2a2a2a;
+    border: 1px solid #373737;
+    border-radius: 4px;
+    color: #eeeeee;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+
+.physics-module-page .pm-modal-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #373737;
+    background: #2b2b2b;
+}
+
+.physics-module-page .pm-modal-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #eeeeee;
+    line-height: 20px;
+}
+
+.physics-module-page .pm-modal-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    color: #d4d4d4;
+    font-size: 16px;
+}
+
+.physics-module-page .pm-modal-close:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.physics-module-page .pm-modal-body {
+    color: #eeeeee;
+}
+
+.physics-module-page .pm-modal-footer {
+    border-top: 1px solid #373737;
+    gap: 12px;
+}
+
+.physics-module-page .pm-modal-footer .pm-btn {
+    min-width: 88px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid #575757;
+    background: #3f3f3f;
+    color: #d2d2d2;
+    font-weight: 500;
+}
+
+.physics-module-page .pm-modal-footer .pm-btn:hover:not(:disabled) {
+    background: #4a4a4a;
+    border-color: #575757;
+    color: #ffffff;
+}
+
+.physics-module-page .pm-modal-footer .pm-btn.primary,
+.physics-module-page .pm-modal-footer .pm-btn.primary:hover:not(:disabled) {
+    border-color: #249BD9;
+    background: #249BD9;
+    color: #ffffff;
+}
+
+.physics-module-page .pm-modal-footer .pm-btn.ghost {
+    background: #3f3f3f;
+}
+
+.physics-module-page .pm-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    color: #999;
+}
+
+.physics-module-page .pm-placeholder h1 {
+    font-size: 22px;
+    color: #e0e0e0;
+    font-weight: 600;
+}
+
+.physics-module-page .pm-placeholder p {
+    font-size: 14px;
+}

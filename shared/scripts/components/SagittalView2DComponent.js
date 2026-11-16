@@ -165,9 +165,6 @@ renderToolbar() {
                     </button>
                     <button class="toolbar-btn-svg" id="${this.containerId}-grid" title="网格" data-active="false">
                         <span class="mozi-view-icon mozi-view-icon-grid" aria-hidden="true"></span>
-                        <svg width="8" height="8" viewBox="0 0 8 8" style="margin-left: 2px;">
-                            <polygon points="4,6 2,2 6,2" fill="#00d4ff"/>
-                        </svg>
                     </button>
                 </div>
             </div>

@@ -1188,6 +1188,10 @@
     function initWindowControls() {
         $('#pmCloseBtn').addEventListener('click', closePage);
         $('#pmMinimizeBtn').addEventListener('click', closePage);
+        $('#pmMaximizeBtn').addEventListener('click', function () {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+            else document.exitFullscreen?.();
+        });
     }
 
     const CT_MATERIALS_OPTIONS = [
